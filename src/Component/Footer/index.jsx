@@ -1,9 +1,8 @@
 import React from "react";
 import {
   Search24Regular,
-  Mail24Regular,
-  Globe24Regular,
-  ChevronRight20Regular
+  ChevronRight20Regular,
+  Globe24Regular
 } from "@fluentui/react-icons";
 
 import {
@@ -12,13 +11,30 @@ import {
   Typography,
   TextField,
   IconButton,
-  Button,
   Select,
   MenuItem,
-  InputBase
+  useTheme
 } from "@mui/material";
 
+import YouTubeIcon from "@mui/icons-material/YouTube";
+import FacebookIcon from "@mui/icons-material/Facebook";
+import TwitterIcon from "@mui/icons-material/Twitter";
+import InstagramIcon from "@mui/icons-material/Instagram";
+import LinkedInIcon from "@mui/icons-material/LinkedIn";
+
 const Footer = () => {
+  const theme = useTheme();
+
+  // Social Media
+  const socialLinks = [
+    { icon: <YouTubeIcon />, name: "YouTube" },
+    { icon: <FacebookIcon />, name: "Facebook" },
+    { icon: <TwitterIcon />, name: "Twitter" },
+    { icon: <InstagramIcon />, name: "Instagram" },
+    { icon: <LinkedInIcon />, name: "LinkedIn" }
+  ];
+
+  // Footer Links
   const footerLinks = {
     Company: [
       { name: "About Us", href: "#" },
@@ -50,47 +66,28 @@ const Footer = () => {
     ]
   };
 
-  const socialLinks = [
-    { icon: "📺", name: "YouTube" },
-    { icon: "👍", name: "Facebook" },
-    { icon: "🐦", name: "Twitter" },
-    { icon: "📷", name: "Instagram" },
-    { icon: "💼", name: "LinkedIn" }
-  ];
-
   return (
     <Box
       component="footer"
       sx={{
-        color: "white",
-        position: "relative",
-        background: "linear-gradient(135deg, #111827, #1e293b, #111827)"
+        color: theme.palette.primary.contrastText,
+        // backgroundColor: theme.palette.background.footer,
+        background:'linear-gradient(135deg, #111827, #1e293b, #111827)',
+        position: "relative"
       }}
     >
       <Box sx={{ maxWidth: "1200px", mx: "auto", px: 3, py: 8 }}>
         <Grid container spacing={6}>
-          <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+          <Grid size={{xs:12, md:4, lg:4 }}>
             <Box display="flex" alignItems="center" gap={2} mb={3}>
               <Box
-                sx={{
-                  width: 56,
-                  height: 56,
-                  borderRadius: 3,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  background: "linear-gradient(135deg, #fb923c, #ea580c)",
-                  boxShadow: 3
-                }}
-              >
-                <Typography sx={{ fontSize: 28 }}>👤</Typography>
-              </Box>
-              <Typography variant="h4" fontWeight="bold">
-                BMG
-              </Typography>
+                component="img"
+                src="/Logo/Logo.png"
+                sx={{ width: 90, height: "auto" }}
+              />
             </Box>
 
-            <Typography sx={{ color: "gray", mb: 3 }}>
+            <Typography sx={{ color: theme.palette.primary.contrastText, mb: 3 }}>
               Empowering businesses with cutting-edge AI solutions and digital
               marketing services. Transform your vision into reality with BMG.
             </Typography>
@@ -102,23 +99,25 @@ const Footer = () => {
                 placeholder="Search services..."
                 variant="outlined"
                 sx={{
-                  "& .MuiInputBase-root": {
-                    bgcolor: "rgba(31,41,55,0.6)",
-                    borderRadius: 2,
-                    color: "white"
+                  "& input": { color: theme.palette.text.primary },
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: theme.palette.divider
                   },
-                  "& input": { color: "white" }
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: theme.palette.primary.main
+                  }
                 }}
               />
+
               <IconButton
                 sx={{
                   position: "absolute",
                   right: 8,
                   top: "50%",
                   transform: "translateY(-50%)",
-                  bgcolor: "#f97316",
-                  "&:hover": { bgcolor: "#ea580c" },
-                  color: "white"
+                  bgcolor: theme.palette.primary.main,
+                  "&:hover": { bgcolor: theme.palette.primary.dark },
+                  color: theme.palette.primary.contrastText
                 }}
               >
                 <Search24Regular />
@@ -137,28 +136,34 @@ const Footer = () => {
                     width: 40,
                     height: 40,
                     borderRadius: 2,
-                    bgcolor: "#1f2937",
+                    bgcolor: theme.palette.primary.contrastText,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     transition: "0.2s",
                     "&:hover": {
                       transform: "scale(1.1)",
-                      boxShadow: 3,
-                      bgcolor: "#ea580c"
+                      bgcolor: theme.palette.primary.main,
+                      color: theme.palette.primary.contrastText
                     },
-                    textDecoration: "none"
+                    textDecoration: "none",
+                    color: theme.palette.text.primary
                   }}
                 >
-                  <span style={{ fontSize: 20 }}>{s.icon}</span>
+                  {s.icon}
                 </Box>
               ))}
             </Box>
           </Grid>
 
           {Object.entries(footerLinks).map(([category, links]) => (
-            <Grid size={{ xs:6, md:3, lg:2 }} key={category}>
-              <Typography variant="h6" fontWeight="bold" mb={3}>
+            <Grid size={{ xs:6, md:2, lg:2 }} key={category}>
+              <Typography
+                variant="h6"
+                fontWeight="bold"
+                mb={3}
+                sx={{ color: theme.palette.primary.contrastText, }}
+              >
                 {category}
               </Typography>
 
@@ -167,14 +172,14 @@ const Footer = () => {
                   key={idx}
                   component="a"
                   href={link.href}
+                  style={{ textDecoration: "none" }}
                   sx={{
                     display: "flex",
                     alignItems: "center",
                     gap: 1,
                     mb: 1.5,
-                    color: "gray",
-                    textDecoration: "none",
-                    "&:hover": { color: "#fb923c" }
+                    color: theme.palette.primary.contrastText,
+                    "&:hover": { color: theme.palette.primary.main }
                   }}
                 >
                   <ChevronRight20Regular />
@@ -188,7 +193,7 @@ const Footer = () => {
 
       <Box
         sx={{
-          borderTop: "1px solid #1f2937",
+          borderTop: `1px solid ${theme.palette.divider}`,
           py: 3,
           px: 3
         }}
@@ -206,48 +211,39 @@ const Footer = () => {
         >
           {/* COPYRIGHT */}
           <Box display="flex" alignItems="center" gap={2}>
-            <Box
-              sx={{
-                width: 32,
-                height: 32,
-                borderRadius: 2,
-                background: "linear-gradient(135deg, #fb923c, #ea580c)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center"
-              }}
-            >
-              <span>👤</span>
-            </Box>
-
-            <Typography sx={{ color: "gray" }}>
-              <strong style={{ color: "white" }}>ADVANTEK</strong> © 2025. All
-              rights reserved.
+            <Typography sx={{ color: theme.palette.primary.contrastText, }}>
+              <strong style={{ color: theme.palette.primary.contrastText, }}>
+                BestMarketingGiggs
+              </strong>{" "}
+              © 2025. All rights reserved.
             </Typography>
           </Box>
 
+          {/* LINKS */}
           <Box
             display="flex"
             alignItems="center"
             gap={3}
-            sx={{ color: "gray" }}
+            sx={{ color: theme.palette.primary.contrastText, }}
           >
-            <a href="#" style={{ color: "gray" }}>Terms</a>
-            •
-            <a href="#" style={{ color: "gray" }}>Privacy</a>
-            •
-            <a href="#" style={{ color: "gray" }}>Contact</a>
+            <a href="#" style={{ color: theme.palette.primary.contrastText, }}>Terms</a> •
+            <a href="#" style={{ color: theme.palette.primary.contrastText,}}>Privacy</a> •
+            <a href="#" style={{ color: theme.palette.primary.contrastText, }}>Contact</a>
           </Box>
 
+          {/* LANGUAGE SELECT */}
           <Box display="flex" alignItems="center" gap={2}>
-            <Globe24Regular style={{ color: "gray" }} />
+            <Globe24Regular style={{ color: theme.palette.primary.contrastText, }} />
+
             <Select
               defaultValue="EN"
               sx={{
-                bgcolor: "#1f2937",
-                color: "white",
+                bgcolor: theme.palette.primary.light,
+                color: theme.palette.primary.contrastText,
                 borderRadius: 2,
-                px: 2
+                "& .MuiSvgIcon-root": {
+                  color: theme.palette.primary.contrastText,
+                }
               }}
             >
               <MenuItem value="EN">EN - English</MenuItem>

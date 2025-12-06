@@ -7,55 +7,60 @@ import {
     Card,
     CardMedia,
     CardContent,
+    useTheme,
+    Container
 } from "@mui/material";
 import { ArrowRight24Filled } from "@fluentui/react-icons";
+import { FONT_FAMILY } from "../../Config/font";
 
 const trendingServices = [
     {
         id: 1,
         title: "AI",
-        image:
-            "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=600&fit=crop",
-        gradient: "linear-gradient(to top, rgba(147,51,234,0.2), rgba(37,99,235,0.2))",
+        image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800",
+        // Use theme.primary + theme.secondary as gradient
+        // getGradient: (theme) =>
+        //     `linear-gradient(to top, ${theme.palette.primary.light}40, ${theme.palette.secondary.main}40)`
     },
     {
         id: 2,
         title: "Business Development",
-        image:
-            "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop",
-        gradient: "linear-gradient(to top, rgba(100,116,139,0.2), rgba(31,41,55,0.2))",
+        image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800",
+        // getGradient: (theme) =>
+        //     `linear-gradient(to top, ${theme.palette.text.secondary}40, ${theme.palette.background.paper}40)`
     },
     {
         id: 3,
         title: "Web Design",
-        image:
-            "https://images.unsplash.com/photo-1559028012-481c04fa702d?w=800&h=600&fit=crop",
-        gradient: "linear-gradient(to top, rgba(59,130,246,0.2), rgba(6,182,212,0.2))",
+        image: "https://images.unsplash.com/photo-1559028012-481c04fa702d?w=800",
+        // getGradient: (theme) =>
+        //     `linear-gradient(to top, ${theme.palette.info.main}40, ${theme.palette.info.light}40)`
     },
     {
         id: 4,
         title: "Vibe Coding",
-        image:
-            "https://images.unsplash.com/photo-1571171637578-41bc2dd41cd2?w=800&h=600&fit=crop",
-        gradient: "linear-gradient(to top, rgba(79,70,229,0.2), rgba(147,51,234,0.2))",
+        image: "https://images.unsplash.com/photo-1571171637578-41bc2dd41cd2?w=800",
+        // getGradient: (theme) =>
+        //     `linear-gradient(to top, ${theme.palette.secondary.dark}40, ${theme.palette.primary.main}40)`
     },
 ];
 
 export default function TrendingService() {
+    const theme = useTheme();
+
     return (
         <Box
             sx={{
                 minHeight: "100vh",
-                background: "linear-gradient(to bottom right, #f9fafb, #ffffff, #f3f4f6)",
+                bgcolor:theme.palette.primary.lightBg,
                 py: 6,
                 px: 2,
             }}
         >
-            <Box maxWidth="lg" mx="auto">
-                {/* Top Header Section */}
-                <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={6}>
-                    <Box>
-                        <Typography variant="h2" fontWeight="bold" color="text.primary" mb={2}>
+            <Container maxWidth="lg" mx="auto">
+                <Box display={{ xs:"block", md:"flex" }} justifyContent="space-between" alignItems="flex-start" mb={4}>
+                    <Box sx={{ mb: { xs: 3, md: 0 } }}>
+                        <Typography sx={{fontFamily:FONT_FAMILY.tertiary}} variant="h2" fontWeight="bold" color="text.primary" mb={2}>
                             TRENDING
                         </Typography>
 
@@ -64,18 +69,18 @@ export default function TrendingService() {
                             sx={{
                                 display: "inline-block",
                                 px: 2,
-                                py: 1,
-                                borderRadius: "50px",
-                                backgroundColor: "orange.50",
-                                border: "1px solid #fed7aa",
+                                py: 0.3,
+                                borderRadius: 1,
+                                backgroundColor: theme.palette.warning.light + "40",
+                                border: `1px solid ${theme.palette.warning.light}`,
                             }}
                         >
-                            <Typography variant="caption" fontWeight="bold" color="orange">
+                            <Typography variant="caption" fontWeight="bold" color="warning.main">
                                 Weekly Spotlight
                             </Typography>
                         </Box>
 
-                        <Typography variant="body1" color="text.secondary" maxWidth="600px">
+                        <Typography sx={{fontFamily:FONT_FAMILY.tertiary}} variant="body1" color="text.secondary" maxWidth="600px">
                             Bite-sized digital marketing services to help you grow your business.
                         </Typography>
                     </Box>
@@ -84,29 +89,30 @@ export default function TrendingService() {
                         variant="contained"
                         endIcon={<ArrowRight24Filled />}
                         sx={{
-                            background: "linear-gradient(to right, #f97316, #ea580c)",
-                            px: 4,
+                            background: theme.palette.warning.light,
+                            px: 3,
                             py: 1.5,
-                            borderRadius: "12px",
+                            borderRadius: 2,
                             fontWeight: "bold",
                             textTransform: "none",
                             boxShadow: 3,
                             "&:hover": {
-                                background: "linear-gradient(to right, #ea580c, #c2410c)",
+                                background: `linear-gradient(to right, 
+                                    ${theme.palette.warning.dark}, 
+                                    ${theme.palette.warning.main}
+                                )`,
                                 transform: "translateY(-3px)",
                                 boxShadow: 6,
                             },
-                            transition: "0.3s",
-                            whiteSpace: "nowrap",
                         }}
                     >
                         View More
                     </Button>
                 </Box>
 
-                <Grid container spacing={3}>
+                <Grid container spacing={2}>
                     {trendingServices.map((service) => (
-                        <Grid size={{xs:12, sm:6, md:4, lg:3 }} key={service.id}>
+                        <Grid key={service.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
                             <Card
                                 sx={{
                                     borderRadius: "20px",
@@ -115,41 +121,36 @@ export default function TrendingService() {
                                     cursor: "pointer",
                                     "&:hover .zoomImage": { transform: "scale(1.12)" },
                                     "&:hover .shine": { transform: "translateX(100%)" },
-                                    "&:hover .borderEffect": { borderColor: "rgba(251,146,60,0.5)" },
+                                    "&:hover .borderEffect": {
+                                        borderColor: theme.palette.warning.main + "80",
+                                    },
                                     transition: "0.5s",
                                 }}
                             >
-                                {/* Image */}
                                 <CardMedia
                                     component="img"
                                     height="280"
                                     image={service.image}
                                     alt={service.title}
                                     className="zoomImage"
-                                    sx={{
-                                        transition: "0.7s",
-                                    }}
+                                    sx={{ transition: "0.7s" }}
                                 />
 
-                                {/* Gradient Overlay */}
+                                {/* Gradient */}
                                 <Box
                                     sx={{
                                         position: "absolute",
                                         inset: 0,
-                                        background: service.gradient,
                                     }}
                                 />
 
-                                {/* Dark Overlay */}
                                 <Box
                                     sx={{
                                         position: "absolute",
-                                        inset: 0,
-                                        background: "linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0.3), transparent)",
+                                        inset: 0,                                      
                                     }}
                                 />
 
-                                {/* Hover Border */}
                                 <Box
                                     className="borderEffect"
                                     sx={{
@@ -161,7 +162,6 @@ export default function TrendingService() {
                                     }}
                                 />
 
-                                {/* Title */}
                                 <CardContent
                                     sx={{
                                         position: "absolute",
@@ -173,7 +173,7 @@ export default function TrendingService() {
                                 >
                                     <Box
                                         sx={{
-                                            backgroundColor: "rgba(255,255,255,0.9)",
+                                            backgroundColor: theme.palette.background.paper + "dd",
                                             backdropFilter: "blur(6px)",
                                             py: 1.5,
                                             borderRadius: "12px",
@@ -182,7 +182,7 @@ export default function TrendingService() {
                                             transition: "0.3s",
                                             "&:hover": {
                                                 transform: "scale(1.05)",
-                                                backgroundColor: "#fff",
+                                                backgroundColor: theme.palette.background.paper,
                                             },
                                         }}
                                     >
@@ -192,15 +192,14 @@ export default function TrendingService() {
                                     </Box>
                                 </CardContent>
 
-                                {/* Shine Effect */}
+                                {/* Shine */}
                                 <Box
                                     className="shine"
                                     sx={{
                                         position: "absolute",
                                         inset: 0,
                                         transform: "translateX(-100%)",
-                                        background:
-                                            "linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent)",
+                                        background: `linear-gradient(to right, transparent, ${theme.palette.background.paper}55, transparent)`,
                                         transition: "1s",
                                     }}
                                 />
@@ -209,9 +208,8 @@ export default function TrendingService() {
                     ))}
                 </Grid>
 
-                {/* Bottom Call to Action */}
                 <Box textAlign="center" mt={6}>
-                    <Typography color="text.secondary" mb={2}>
+                    <Typography color="text.secondary" sx={{fontFamily:FONT_FAMILY.tertiary}} mb={2}>
                         Explore more trending services and boost your business today
                     </Typography>
 
@@ -223,16 +221,19 @@ export default function TrendingService() {
                                     height: 8,
                                     width: i === 0 ? 32 : 12,
                                     borderRadius: 5,
-                                    backgroundColor: i === 0 ? "orange" : "grey.400",
+                                    backgroundColor:
+                                        i === 0
+                                            ? theme.palette.warning.main
+                                            : theme.palette.divider,
                                     cursor: "pointer",
-                                    "&:hover": { backgroundColor: "orange" },
+                                    "&:hover": { backgroundColor: theme.palette.warning.main },
                                     transition: "0.3s",
                                 }}
                             />
                         ))}
                     </Box>
                 </Box>
-            </Box>
+            </Container>
         </Box>
     );
 }

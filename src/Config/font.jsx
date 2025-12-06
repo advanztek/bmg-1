@@ -1,7 +1,7 @@
 export const FONT_FAMILY = {
-    primary: 'Syne',
-    secondary: 'Work Sans',
-    tertiary: 'Jost',
+    primary: 'Urbanist',
+    secondary: 'Urbanist',
+    tertiary: 'Syne',
 }
 
 export const typographySettings = {

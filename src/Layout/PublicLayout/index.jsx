@@ -4,7 +4,7 @@ import {Header, Footer} from '../../Component'
 function PublicLayout({ children }) {
   const location = useLocation();
 
-  const noLayoutRoutes = ["/login", "/register"];
+  const noLayoutRoutes = ["/login", "/register", "/forgot-password", "/reset-password", "/reset-success", "/verify-email", "/otp-verify"];
 
   const hideLayout = noLayoutRoutes.includes(location.pathname);
   return (

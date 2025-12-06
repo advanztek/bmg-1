@@ -1,68 +1,80 @@
 import React from "react";
-import { Box, Typography, Button, Grid } from "@mui/material";
+import { Box, Typography, Button, Container } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import { FONT_FAMILY } from "../../Config/font";
+import Marquee from "react-fast-marquee";
 
 const PortfolioSection = () => {
+    const theme = useTheme();
+
     const items = [
         "/Images/Img_4.jpg",
-        "https://source.unsplash.com/300x300/?studio",
-        "https://source.unsplash.com/300x300/?team",
-        "https://source.unsplash.com/300x300/?branding",
-        "https://source.unsplash.com/300x300/?marketing",
-        "https://source.unsplash.com/300x300/?socialmedia",
-        "https://source.unsplash.com/300x300/?printing",
-        "https://source.unsplash.com/300x300/?design",
-        "https://source.unsplash.com/300x300/?technology",
-        "https://source.unsplash.com/300x300/?documents",
-        "https://source.unsplash.com/300x300/?laptop",
-        "https://source.unsplash.com/300x300/?brochure",
-        "https://source.unsplash.com/300x300/?pdf",
-        "https://source.unsplash.com/300x300/?email",
+        "/Images/Img_5.jpg",
+        "/Images/Img_4.jpg",
+        "/Images/Img_5.jpg",
+        "/Images/Img_1.jpg",
+        "/Images/Img_5.jpg",
+        "/Images/Img_5.jpg",
+        "/Images/Img_4.jpg",
+        "/Images/Img_5.jpg",
+        "/Images/Img_4.jpg",
+        "/Images/Img_5.jpg",
+        "/Images/Img_4.jpg",
+        "/Images/Img_1.jpg",
+        "/Images/Img_4.jpg",
     ];
 
     return (
         <Box
             sx={{
                 width: "100%",
-                backgroundColor: "#f4f4ff",
                 py: 6,
                 px: 3,
                 borderRadius: 4,
             }}
         >
-            <Box textAlign="center" mb={4}>
-                <Typography
-                    variant="h4"
-                    fontWeight="700"
-                    color="text.primary"
-                    sx={{ mb: 1 }}
-                >
-                    Portfolio
-                </Typography>
+            <Container maxWidth="lg">
 
-                <Typography
-                    variant="body1"
-                    color="text.secondary"
-                    maxWidth="700px"
-                    mx="auto"
-                >
-                    Take advantage of our special marketing Kit for bulk SMS, mailing
-                    among others
-                </Typography>
-            </Box>
+                {/* Header */}
+                <Box textAlign="center" mb={4}>
+                    <Typography
+                        variant="h3"
+                        fontWeight="700"
+                        color="text.primary"
+                        sx={{ mb: 1 }}
+                    >
+                        Portfolio
+                    </Typography>
 
-            <Grid container spacing={2} justifyContent="center">
-                {items.map((img, index) => (
-                    <Grid size={ {xs:4, sm:3, md:2 }} key={index}>
+                    <Typography
+                        variant="body1"
+                        color="text.secondary"
+                        maxWidth="700px"
+                        mx="auto"
+                        sx={{ fontFamily: FONT_FAMILY.tertiary }}
+                    >
+                        Take advantage of our special marketing Kit for bulk SMS,
+                        mailing among others
+                    </Typography>
+                </Box>
+
+                <Marquee pauseOnHover speed={40} gradient={false} style={{ padding: "5px 0" }}>
+                    {items.map((img, index) => (
                         <Box
+                            key={`row1-${index}`}
                             sx={{
-                                width: "100%",
+                                width: 150,
                                 height: 100,
-                                borderRadius: 3,
+                                borderRadius: 2,
                                 overflow: "hidden",
                                 boxShadow: 2,
                                 cursor: "pointer",
+                                mx: 1.5,
                                 transition: "0.3s",
-                                "&:hover": { transform: "translateY(-5px)", boxShadow: 5 },
+                                "&:hover": {
+                                    transform: "translateY(-5px)",
+                                    boxShadow: 5
+                                }
                             }}
                         >
                             <img
@@ -71,32 +83,70 @@ const PortfolioSection = () => {
                                 style={{
                                     width: "100%",
                                     height: "100%",
-                                    objectFit: "cover",
+                                    objectFit: "cover"
                                 }}
                             />
                         </Box>
-                    </Grid>
-                ))}
-            </Grid>
+                    ))}
+                </Marquee>
 
-            <Box textAlign="center" mt={5}>
-                <Button
-                    variant="contained"
-                    sx={{
-                        backgroundColor: "#1e1b4b",
-                        px: 5,
-                        py: 1.5,
-                        fontWeight: "bold",
-                        borderRadius: 2,
-                        textTransform: "none",
-                        "&:hover": {
-                            backgroundColor: "#312e81",
-                        },
-                    }}
+                <Marquee
+                    pauseOnHover
+                    speed={40}
+                    gradient={false}
+                    direction="right"
+                    style={{ padding: "5px 0" }}
                 >
-                    View Portfolio
-                </Button>
-            </Box>
+                    {items.map((img, index) => (
+                        <Box
+                            key={`row2-${index}`}
+                            sx={{
+                                width: 150,
+                                height: 100,
+                                borderRadius: 2,
+                                overflow: "hidden",
+                                boxShadow: 2,
+                                cursor: "pointer",
+                                mx: 1.5,
+                                transition: "0.3s",
+                                "&:hover": {
+                                    transform: "translateY(-5px)",
+                                    boxShadow: 5
+                                }
+                            }}
+                        >
+                            <img
+                                src={img}
+                                alt="portfolio"
+                                style={{
+                                    width: "100%",
+                                    height: "100%",
+                                    objectFit: "cover"
+                                }}
+                            />
+                        </Box>
+                    ))}
+                </Marquee>
+
+                <Box textAlign="center" mt={5}>
+                    <Button
+                        variant="contained"
+                        sx={{
+                            backgroundColor: theme.palette.primary.main,
+                            px: 5,
+                            py: 1.5,
+                            fontWeight: "bold",
+                            borderRadius: 2,
+                            textTransform: "none",
+                            "&:hover": {
+                                backgroundColor: theme.palette.primary.bg,
+                            },
+                        }}
+                    >
+                        View Portfolio
+                    </Button>
+                </Box>
+            </Container>
         </Box>
     );
 };

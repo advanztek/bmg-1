@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
 import {
     Button,
     Container,
@@ -7,46 +7,48 @@ import {
     TextField,
     InputAdornment,
     Chip,
-    Avatar
-} from '@mui/material';
-import {
-    Search,
-    Close,
-    ArrowForward
-} from '@mui/icons-material';
-import { FONT_FAMILY } from '../../Config/font';
-import { Search20Filled, SearchFilled } from '@fluentui/react-icons';
+    Avatar,
+    IconButton,
+    Fade
+} from "@mui/material";
+import { Close, ArrowForward } from "@mui/icons-material";
+import { Search20Filled } from "@fluentui/react-icons";
+import CircleIcon from "@mui/icons-material/Circle";
+import { useTheme } from "@mui/material/styles";
 
 export const HeroSection = () => {
-    const [searchValue, setSearchValue] = useState('');
-    const services = ['Web Design', 'Logo Design', 'Video Editing', 'Marketing'];
+    const theme = useTheme();
+    const [searchValue, setSearchValue] = useState("");
+    const [slide, setSlide] = useState(0);
+
+    const services = ["Web Design", "Logo Design", "Video Editing", "Marketing"];
+
+    const sliderContent = [
+        { title1: "Perfect Service", title2: "for your Business." },
+        { title1: "Grow Your Brand", title2: "with Confidence." },
+        { title1: "Smart Solutions", title2: "Modern Teams." }
+    ];
+
+    useEffect(() => {
+        const interval = setInterval(
+            () => setSlide((prev) => (prev + 1) % sliderContent.length),
+            8000
+        );
+        return () => clearInterval(interval);
+    }, []);
 
     return (
-        <Box
-            sx={{
-                // background: 'linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%)',
-                // py: { xs: 6, md: 10 },
-                position: 'relative',
-                overflow: 'hidden'
-            }}
-        >
+        <Box sx={{ position: "relative", overflow: "hidden" }}>
             <Box
                 sx={{
-                    display: 'flex',
-                    flexDirection: { xs: 'column', md: 'row' },
-                    alignItems: 'center',
-                    minHeight: { md: '600px' }
+                    display: "flex",
+                    flexDirection: { xs: "column", md: "row" },
+                    alignItems: "center",
+                    minHeight: { md: "600px" }
                 }}
             >
-                <Box
-                    sx={{
-                        flex: { md: '0 0 55%' },
-                        width: { xs: '100%', md: '50%' },
-                        display: 'flex',
-                        // justifyContent: { md: 'flex-end' },
-                        // px: { xs: 2, sm: 3 }
-                    }}
-                >
+                {/* LEFT */}
+                <Box sx={{ flex: { md: "0 0 55%" }, width: "100%" }}>
                     <Container
                         maxWidth="lg"
                         sx={{
@@ -54,85 +56,124 @@ export const HeroSection = () => {
                             pr: { xs: 2, md: 6, lg: 10 }
                         }}
                     >
-                        <Box sx={{
-                            zIndex: 2,
-                            maxWidth: { md: '550px', lg: '600px' }
-                        }}>
-                            <Typography
-                                variant="h1"
-                                sx={{
-                                    fontSize: { xs: '2.5rem', md: '3rem', lg: '4rem' },
-                                    fontWeight: 800,
-                                    fontFamily:FONT_FAMILY.secondary,
-                                    color: '#1e3a8a',
-                                    lineHeight: 1.2,
-                                    mb: 3
-                                }}
-                            >
-                                Perfect Service
-                                <br />
-                                for your Business.
-                            </Typography>
+                        <Box sx={{ maxWidth: { md: "550px", lg: "600px" } }}>
+                            
+                            {/* SLIDER TITLES */}
+                            <Fade in key={slide} timeout={700}>
+                                <Box sx={{ mt: 12, mb: 3 }}>
+                                    <Typography
+                                        variant="h1"
+                                        sx={{
+                                            fontSize: { xs: "2.5rem", md: "3rem", lg: "4rem" },
+                                            fontWeight: 800,
+                                            color: theme.palette.primary.dark, 
+                                            lineHeight: 1.2
+                                        }}
+                                    >
+                                        {sliderContent[slide].title1} <br />
+                                        {sliderContent[slide].title2}
+                                    </Typography>
+                                </Box>
+                            </Fade>
+
+                            <Box sx={{ display: "flex", gap: 1, mb: 4 }}>
+                                {sliderContent.map((_, index) => (
+                                    <IconButton
+                                        key={index}
+                                        onClick={() => setSlide(index)}
+                                        sx={{ p: 0.5 }}
+                                    >
+                                        <CircleIcon
+                                            sx={{
+                                                fontSize: 14,
+                                                color:
+                                                    index === slide
+                                                        ? theme.palette.warning.dark
+                                                        : theme.palette.warning.light,
+                                                transition: "0.3s"
+                                            }}
+                                        />
+                                    </IconButton>
+                                ))}
+                            </Box>
 
                             <Button
                                 variant="outlined"
                                 endIcon={<ArrowForward />}
                                 sx={{
-                                    borderColor: '#fbbf24',
-                                    color: '#f59e0b',
-                                    fontSize: '1rem',
+                                    borderColor: theme.palette.warning.light,
+                                    color: theme.palette.warning.light,
+                                    fontSize: "1rem",
                                     px: 3,
                                     py: 1.5,
                                     borderRadius: 2,
                                     mb: 4,
-                                    textTransform: 'none',
+                                    textTransform: "none",
                                     fontWeight: 600,
-                                    '&:hover': {
-                                        borderColor: '#f59e0b',
-                                        backgroundColor: 'rgba(251, 191, 36, 0.1)'
+                                    "&:hover": {
+                                        borderColor: theme.palette.warning.main,
+                                        backgroundColor: theme.palette.warning.light + "33"
                                     }
                                 }}
                             >
                                 Explore BMG
                             </Button>
 
+                            {/* REVIEW CARD */}
                             <Box
                                 sx={{
                                     p: 3,
-                                    backgroundColor: 'white',
+                                    backgroundColor: theme.palette.background.paper,
                                     borderRadius: 3,
-                                    boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+                                    boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
                                     mb: 4
                                 }}
                             >
                                 <Typography
                                     sx={{
-                                        fontStyle: 'italic',
-                                        color: '#374151',
+                                        fontStyle: "italic",
+                                        color: theme.palette.text.secondary,
                                         mb: 2,
-                                        fontSize: '0.95rem',
+                                        fontSize: "0.95rem",
                                         lineHeight: 1.6
                                     }}
                                 >
                                     "Viverra viverra nibh enim et aliquam, enim. Tempor, sit mus viverra orci dui
                                     consequat turpis scelerisque faucibus."
                                 </Typography>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+
+                                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                                     <Avatar
-                                        src=""
-                                        sx={{ width: 48, height: 48, bgcolor: '#3b49df' }}
+                                        src="/Images/Img_5.jpg"
+                                        sx={{
+                                            width: 48,
+                                            height: 48,
+                                            bgcolor: theme.palette.primary.main
+                                        }}
                                     />
                                     <Box>
-                                        <Typography sx={{ fontWeight: 600, color: '#1f2937' }}>
+                                        <Typography
+                                            sx={{
+                                                fontWeight: 600,
+                                                color: theme.palette.text.primary
+                                            }}
+                                        >
                                             Rwanda Melflor
                                         </Typography>
-                                        <Typography sx={{ fontSize: '0.85rem', color: '#6b7280' }}>
+
+                                        <Typography
+                                            sx={{
+                                                fontSize: "0.85rem",
+                                                color: theme.palette.text.secondary
+                                            }}
+                                        >
                                             zerowaste.com
                                         </Typography>
                                     </Box>
                                 </Box>
                             </Box>
-                            
+
+                            {/* SEARCH BOX */}
                             <TextField
                                 fullWidth
                                 placeholder="Search for services"
@@ -141,7 +182,12 @@ export const HeroSection = () => {
                                 InputProps={{
                                     startAdornment: (
                                         <InputAdornment position="start">
-                                            <Search20Filled style={{ marginLeft:18, color: '#9ca3af' }} />
+                                            <Search20Filled
+                                                style={{
+                                                    marginLeft: 18,
+                                                    color: theme.palette.text.secondary
+                                                }}
+                                            />
                                         </InputAdornment>
                                     ),
                                     endAdornment: (
@@ -149,15 +195,15 @@ export const HeroSection = () => {
                                             <Button
                                                 variant="contained"
                                                 sx={{
-                                                    backgroundColor: '#fbbf24',
-                                                    color: 'white',
+                                                    backgroundColor: theme.palette.warning.light,
+                                                    color: theme.palette.text.light,
                                                     px: 4,
                                                     py: 1.3,
                                                     borderRadius: 1,
-                                                    textTransform: 'none',
+                                                    textTransform: "none",
                                                     fontWeight: 600,
-                                                    '&:hover': {
-                                                        backgroundColor: '#f59e0b'
+                                                    "&:hover": {
+                                                        backgroundColor: theme.palette.warning.dark
                                                     }
                                                 }}
                                             >
@@ -168,47 +214,59 @@ export const HeroSection = () => {
                                 }}
                                 sx={{
                                     mb: 2,
-                                    '& .MuiOutlinedInput-root': {
-                                        p:0,
-                                        boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
-                                        '& fieldset': { border: 'none' },
-                                        // pr: 1
+                                    "& .MuiOutlinedInput-root": {
+                                        p: 0,
+                                        boxShadow: "0 2px 12px rgba(0,0,0,0.08)",
+                                        "& fieldset": { border: "none" }
                                     }
                                 }}
                             />
 
-
-                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 3 }}>
+                            {/* TAGS */}
+                            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 3 }}>
                                 {services.map((service) => (
                                     <Chip
                                         key={service}
                                         label={service}
-                                        onDelete={() => { }}
-                                        deleteIcon={<Close sx={{ fontSize: '1rem' }} />}
+                                        onDelete={() => {}}
+                                        deleteIcon={<Close sx={{ fontSize: "1rem" }} />}
                                         sx={{
-                                            backgroundColor: 'white',
-                                            border: '1px solid #e5e7eb',
+                                            backgroundColor: theme.palette.background.paper,
+                                            border: `1px solid ${theme.palette.divider}`,
                                             fontWeight: 500,
-                                            '&:hover': {
-                                                backgroundColor: '#f9fafb'
+                                            "&:hover": {
+                                                backgroundColor: theme.palette.background.default
                                             }
                                         }}
                                     />
                                 ))}
                             </Box>
 
+                            {/* RATINGS */}
                             <Box
                                 sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
+                                    display: "flex",
+                                    alignItems: "center",
                                     gap: 2,
-                                    flexWrap: 'wrap'
+                                    flexWrap: "wrap"
                                 }}
                             >
-                                <Typography sx={{ fontWeight: 600, color: '#1f2937', fontSize: '0.9rem' }}>
+                                <Typography
+                                    sx={{
+                                        fontWeight: 600,
+                                        color: theme.palette.text.primary,
+                                        fontSize: "0.9rem"
+                                    }}
+                                >
                                     Rated 5/5 based on Customer Reviews
                                 </Typography>
-                                <Typography sx={{ color: '#6b7280', fontSize: '0.85rem' }}>
+
+                                <Typography
+                                    sx={{
+                                        color: theme.palette.text.secondary,
+                                        fontSize: "0.85rem"
+                                    }}
+                                >
                                     Trusted by 25,000+ Brands
                                 </Typography>
                             </Box>
@@ -216,45 +274,44 @@ export const HeroSection = () => {
                     </Container>
                 </Box>
 
+                {/* RIGHT IMAGE */}
                 <Box
                     sx={{
-                        flex: { md: '0 0 50%' },
-                        width: { xs: '100%', md: '100%' },
-                        position: 'relative',
-                        // height: { xs: '500px', md: '600px', lg: '300px' },
-                        display: { xs: 'none', md: 'block' }
+                        flex: { md: "0 0 60%" },
+                        width: "100%",
+                        position: "relative",
+                        display: { xs: "none", md: "block" }
                     }}
                 >
-                
+                    <Container maxWidth="xl">
                         <img
-                            src="/Images/Img_2.png"
+                            src="/Images/Img_1.jpg"
                             alt="Business Services"
                             style={{
-                                width: '100%',
-                                height: '100%',
-                                objectFit: 'cover',
-                                objectPosition: 'center',
+                                width: "100%",
+                                height: "750px",
+                                borderRadius: "50%",
+                                objectFit: "cover",
+                                objectPosition: "center"
                             }}
                         />
+                    </Container>
 
                     <Box
                         sx={{
-                            position: 'absolute',
-                            bottom:-20,
-                            left: 180,
-                            width: { md: '60%', lg: '55%' },
-                            height: { md: '35%', lg: '40%' },
+                            position: "absolute",
+                            bottom: 0,
+                            left: -30,
+                            width: { md: "60%", lg: "55%" },
+                            height: { md: "35%", lg: "40%" },
                             zIndex: 2
                         }}
                     >
                         <Box
-                           component="img"
+                            component="img"
                             src="/Illus/shape.png"
                             alt="Decorative Shape"
-                            sx={{
-                                width: '100%',
-                                height: '100%',
-                            }}
+                            sx={{ width: "100%", height: "100%" }}
                         />
                     </Box>
                 </Box>

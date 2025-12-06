@@ -12,73 +12,37 @@ import {
     useTheme,
     useMediaQuery,
 } from '@mui/material';
+
 import {
     ChevronLeft24Regular,
     ChevronRight24Regular,
     ArrowRight24Regular,
 } from '@fluentui/react-icons';
-import { services } from './data';
 
+import { services } from './data';
 
 export default function ServiceSlider() {
     const [currentIndex, setCurrentIndex] = useState(0);
     const theme = useTheme();
+
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const isTablet = useMediaQuery(theme.breakpoints.down('md'));
 
     const cardsToShow = isMobile ? 1 : isTablet ? 2 : 4;
     const maxIndex = Math.max(0, services.length - cardsToShow);
 
-    const handlePrev = () => {
-        setCurrentIndex((prev) => Math.max(0, prev - 1));
-    };
-
-    const handleNext = () => {
-        setCurrentIndex((prev) => Math.min(maxIndex, prev + 1));
-    };
+    const handlePrev = () => setCurrentIndex(prev => Math.max(0, prev - 1));
+    const handleNext = () => setCurrentIndex(prev => Math.min(maxIndex, prev + 1));
 
     return (
         <Box
             sx={{
                 minHeight: '100vh',
-                background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
                 py: 8,
+                background: `linear-gradient(135deg, ${theme.palette.background.default}, ${theme.palette.accent.lightBlue})`,
             }}
         >
             <Container maxWidth="lg">
-                {/* Header */}
-                <Box
-                    sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        mb: 4,
-                    }}
-                >
-                    <Button
-                        variant="contained"
-                        sx={{
-                            bgcolor: '#2d3561',
-                            color: 'white',
-                            px: 4,
-                            py: 1.5,
-                            borderRadius: '25px',
-                            textTransform: 'none',
-                            fontSize: '16px',
-                            fontWeight: 500,
-                            boxShadow: '0 4px 20px rgba(45, 53, 97, 0.3)',
-                            '&:hover': {
-                                bgcolor: '#1f2540',
-                                transform: 'translateY(-2px)',
-                                boxShadow: '0 6px 25px rgba(45, 53, 97, 0.4)',
-                            },
-                            transition: 'all 0.3s ease',
-                        }}
-                    >
-                        Find the Services you need
-                    </Button>
-                </Box>
-
-                {/* Services Title and Discover Link */}
                 <Box
                     sx={{
                         display: 'flex',
@@ -91,44 +55,44 @@ export default function ServiceSlider() {
                         variant="h3"
                         sx={{
                             fontWeight: 700,
-                            color: '#1a1a1a',
+                            color: theme.palette.text.heading,
                         }}
                     >
                         Services
                     </Typography>
+
                     <Button
                         endIcon={<ArrowRight24Regular />}
                         sx={{
-                            color: '#2d3561',
+                            color: theme.palette.primary.main,
                             textTransform: 'none',
                             fontSize: '16px',
                             fontWeight: 600,
+                            transition: '0.3s',
                             '&:hover': {
-                                bgcolor: 'transparent',
                                 transform: 'translateX(5px)',
+                                bgcolor: 'transparent',
                             },
-                            transition: 'all 0.3s ease',
                         }}
                     >
                         Discover More Services
                     </Button>
                 </Box>
 
-                {/* Description */}
+                {/* DESCRIPTION */}
                 <Typography
                     sx={{
-                        color: '#666',
+                        color: theme.palette.text.secondary,
                         mb: 4,
                         maxWidth: '600px',
                         lineHeight: 1.6,
                     }}
                 >
-                    Ac urna elementum purus vulputate tincidunt. Quam maecenas feugiat congue orci, eget tellus pellentesque aliquet. Felis
+                    Ac urna elementum purus vulputate tincidunt. Quam maecenas feugiat congue orci, eget tellus pellentesque aliquet.
                 </Typography>
 
-                {/* Slider Container */}
                 <Box sx={{ position: 'relative' }}>
-                    {/* Navigation Buttons */}
+
                     <IconButton
                         onClick={handlePrev}
                         disabled={currentIndex === 0}
@@ -138,25 +102,26 @@ export default function ServiceSlider() {
                             top: '50%',
                             transform: 'translateY(-50%)',
                             zIndex: 2,
-                            bgcolor: '#ff9800',
-                            color: 'white',
+                            bgcolor: theme.palette.warning.light,
+                            color: theme.palette.warning.contrastText,
                             width: 48,
                             height: 48,
-                            boxShadow: '0 4px 15px rgba(255, 152, 0, 0.4)',
+                            boxShadow: `0 4px 15px ${theme.palette.warning.light}55`,
+                            transition: '0.3s',
                             '&:hover': {
-                                bgcolor: '#f57c00',
+                                bgcolor: theme.palette.warning.main,
                                 transform: 'translateY(-50%) scale(1.1)',
                             },
                             '&:disabled': {
-                                bgcolor: '#ccc',
-                                color: '#888',
+                                bgcolor: theme.palette.divider,
+                                color: theme.palette.text.disabled,
                             },
-                            transition: 'all 0.3s ease',
                         }}
                     >
                         <ChevronLeft24Regular />
                     </IconButton>
 
+                    {/* NEXT BUTTON */}
                     <IconButton
                         onClick={handleNext}
                         disabled={currentIndex === maxIndex}
@@ -166,47 +131,47 @@ export default function ServiceSlider() {
                             top: '50%',
                             transform: 'translateY(-50%)',
                             zIndex: 2,
-                            bgcolor: '#ff9800',
-                            color: 'white',
+                            bgcolor: theme.palette.warning.light,
+                            color: theme.palette.warning.contrastText,
                             width: 48,
                             height: 48,
-                            boxShadow: '0 4px 15px rgba(255, 152, 0, 0.4)',
+                            boxShadow: `0 4px 15px ${theme.palette.warning.light}55`,
+                            transition: '0.3s',
                             '&:hover': {
-                                bgcolor: '#f57c00',
+                                bgcolor: theme.palette.warning.main,
                                 transform: 'translateY(-50%) scale(1.1)',
                             },
                             '&:disabled': {
-                                bgcolor: '#ccc',
-                                color: '#888',
+                                bgcolor: theme.palette.divider,
+                                color: theme.palette.text.disabled,
                             },
-                            transition: 'all 0.3s ease',
                         }}
                     >
                         <ChevronRight24Regular />
                     </IconButton>
 
-                    {/* Cards Container */}
                     <Box sx={{ overflow: 'hidden', px: 2 }}>
                         <Box
                             sx={{
                                 display: 'flex',
-                                gap: 3,
+                                gap: 2,
                                 transform: `translateX(-${currentIndex * (100 / cardsToShow + 3)}%)`,
                                 transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
                             }}
                         >
-                            {services.map((service) => (
+                            {services.map(service => (
                                 <Card
                                     key={service.id}
                                     sx={{
                                         minWidth: `calc(${100 / cardsToShow}% - 24px)`,
-                                        borderRadius: '16px',
+                                        borderRadius: 3,
                                         overflow: 'hidden',
-                                        boxShadow: '0 8px 30px rgba(0, 0, 0, 0.12)',
-                                        transition: 'all 0.3s ease',
+                                        background: theme.palette.background.paper,
+                                        boxShadow: `0 8px 30px ${theme.palette.primary.main}20`,
+                                        transition: '0.3s',
                                         '&:hover': {
                                             transform: 'translateY(-10px)',
-                                            boxShadow: '0 15px 40px rgba(0, 0, 0, 0.2)',
+                                            boxShadow: `0 15px 40px ${theme.palette.primary.main}30`,
                                         },
                                     }}
                                 >
@@ -216,28 +181,30 @@ export default function ServiceSlider() {
                                             height="200"
                                             image={service.image}
                                             alt={service.title}
-                                            sx={{
-                                                objectFit: 'cover',
-                                            }}
+                                            sx={{ objectFit: 'cover' }}
                                         />
+
                                         <Chip
                                             label={service.discount}
                                             sx={{
                                                 position: 'absolute',
                                                 top: 12,
                                                 left: 12,
-                                                bgcolor: '#2d3561',
-                                                color: 'white',
+                                                borderRadius:1,
+                                                bgcolor: theme.palette.primary.main,
+                                                color: theme.palette.primary.contrastText,
                                                 fontWeight: 600,
                                                 fontSize: '14px',
                                             }}
                                         />
                                     </Box>
+
+                                    {/* CONTENT */}
                                     <CardContent sx={{ p: 3 }}>
                                         <Typography
                                             variant="caption"
                                             sx={{
-                                                color: '#666',
+                                                color: theme.palette.text.secondary,
                                                 textTransform: 'uppercase',
                                                 letterSpacing: '0.5px',
                                                 fontWeight: 600,
@@ -246,6 +213,7 @@ export default function ServiceSlider() {
                                         >
                                             {service.category}
                                         </Typography>
+
                                         <Box
                                             sx={{
                                                 display: 'flex',
@@ -259,39 +227,42 @@ export default function ServiceSlider() {
                                                 variant="h6"
                                                 sx={{
                                                     fontWeight: 600,
-                                                    color: '#1a1a1a',
+                                                    color: theme.palette.text.primary,
                                                     fontSize: '16px',
                                                 }}
                                             >
                                                 {service.title}
                                             </Typography>
+
                                             <Chip
                                                 label={service.price}
                                                 sx={{
-                                                    bgcolor: '#2d3561',
-                                                    color: 'white',
+                                                    bgcolor: theme.palette.primary.main,
+                                                    color: theme.palette.primary.contrastText,
                                                     fontWeight: 600,
                                                     fontSize: '14px',
                                                 }}
                                             />
                                         </Box>
+
+                                        {/* BUTTON */}
                                         <Button
                                             fullWidth
                                             variant="contained"
                                             sx={{
-                                                bgcolor: '#2d3561',
-                                                color: 'white',
-                                                py: 1.2,
-                                                borderRadius: '8px',
+                                                bgcolor: theme.palette.primary.main,
+                                                color: theme.palette.primary.contrastText,
+                                                py: 1,
+                                                borderRadius:2,
                                                 textTransform: 'none',
                                                 fontSize: '15px',
                                                 fontWeight: 600,
+                                                transition: '0.3s',
                                                 '&:hover': {
-                                                    bgcolor: '#1f2540',
+                                                    bgcolor: theme.palette.primary.dark,
                                                     transform: 'translateY(-2px)',
-                                                    boxShadow: '0 6px 20px rgba(45, 53, 97, 0.3)',
+                                                    boxShadow: `0 6px 20px ${theme.palette.primary.main}30`,
                                                 },
-                                                transition: 'all 0.3s ease',
                                             }}
                                         >
                                             Start Now

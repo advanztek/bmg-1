@@ -1,16 +1,17 @@
 import React, { useState } from "react";
-import { Stack, Box, Typography, Button, Paper, IconButton, Container } from "@mui/material";
+import { Stack, Box, Typography, Button, Paper, IconButton, Container, useTheme } from "@mui/material";
 import { ChevronLeft24Regular, ChevronRight24Regular, ArrowRight24Regular } from "@fluentui/react-icons";
 
 export default function CategoriesSection() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const theme = useTheme();
 
   const categories = [
     { title: "GRAPHIC DESIGN", subtitle: "Logo Design", image: "/Images/Img_4.jpg" },
     { title: "VIDEO EDITING", subtitle: "Video Content Production", image: "/Images/Img_5.jpg" },
-    { title: "MARKETING", subtitle: "Digital Marketing", image: "/images/marketing.jpg" },
-    { title: "ANIMATION", subtitle: "3D Design", image: "/images/animation.jpg" },
-    { title: "WEB DEVELOPMENT", subtitle: "Full Stack Development", image: "/images/web-development.jpg" },
+    { title: "MARKETING", subtitle: "Digital Marketing", image: "/Images/Img_4.jpg" },
+    { title: "ANIMATION", subtitle: "3D Design", image: "/Images/Img_5.jpg" },
+    { title: "WEB DEVELOPMENT", subtitle: "Full Stack Development", image: "/Images/Img_4.jpg" },
   ];
 
   const nextSlide = () => setCurrentIndex((prev) => (prev + 1) % categories.length);
@@ -21,16 +22,16 @@ export default function CategoriesSection() {
       <Box
         sx={{
           width: "100%",
-          py: 12,
-          px: 3,
+          py: 8,
+          px: { xs: 4, md: 8 },
           borderRadius: 5,
-          background: "linear-gradient(135deg, #312e81, #4338ca, #312e81)",
+          background: `linear-gradient(135deg, ${theme.palette.primary.dark}, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
         }}
       >
         <Box sx={{ maxWidth: "1200px", mx: "auto" }}>
           {/* Header */}
-          <Stack direction="row" justifyContent="space-between" alignItems="flex-start" mb={5}>
-            <Box>
+          <Stack direction={{ xs: "column", md: "row" }} justifyContent="space-between" alignItems="flex-start" mb={5}>
+            <Box sx={{ mb: { xs: 3, md: 0 } }}>
               <Typography variant="h3" color="common.white" fontWeight="bold" mb={1}>
                 Categories
               </Typography>
@@ -43,7 +44,8 @@ export default function CategoriesSection() {
               sx={{
                 color: "common.white",
                 borderColor: "common.white",
-                "&:hover": { backgroundColor: "common.white", color: "primary.dark" },
+                borderRadius: 2,
+                "&:hover": { backgroundColor: "common.white", color: theme.palette.primary.dark },
               }}
               endIcon={<ArrowRight24Regular />}
             >
@@ -51,26 +53,41 @@ export default function CategoriesSection() {
             </Button>
           </Stack>
 
-          {/* Slider */}
           <Box sx={{ position: "relative", overflow: "hidden" }}>
             <Stack
               direction="row"
               spacing={2}
               sx={{
-                transform: `translateX(-${currentIndex * 25}%)`,
+                // On xs → translate 100% per slide
+                // On md+ → translate 25% per slide
+                transform: {
+                  xs: `translateX(-${currentIndex * 100}%)`,
+                  md: `translateX(-${currentIndex * 25}%)`,
+                },
                 transition: "transform 0.5s ease-in-out",
-                width: `${categories.length * 25}%`,
+
+                // Total width adjusts: xs → categories * 100%, md → categories * 25%
+                width: {
+                  xs: `${categories.length * 100}%`,
+                  md: `${categories.length * 25}%`,
+                },
               }}
             >
               {categories.map((category, index) => (
-                <Box key={index} sx={{ minWidth: "25%" }}>
+                <Box
+                  key={index}
+                  sx={{
+                    // xs: each item takes 100% width (single item)
+                    // md+: each takes 25%
+                    minWidth: { xs: "100%", md: "25%" },
+                  }}
+                >
                   <Paper
                     sx={{
                       position: "relative",
-                      height: 256,
-                      borderRadius: 3,
+                      height: 356,
+                      borderRadius: 2,
                       overflow: "hidden",
-                      border: "4px solid #6366f1",
                       backgroundImage: `url(${category.image})`,
                       backgroundSize: "cover",
                       backgroundPosition: "center",
@@ -85,11 +102,19 @@ export default function CategoriesSection() {
                         backgroundColor: "rgba(0,0,0,0.4)",
                       }}
                     />
-                    {/* Content */}
+
+                    {/* Text */}
                     <Box sx={{ position: "relative", zIndex: 10, p: 2 }}>
-                      <Typography variant="caption" fontWeight="bold" color="common.white" mb={0.5} letterSpacing={1}>
+                      <Typography
+                        variant="caption"
+                        fontWeight="bold"
+                        color="common.white"
+                        mb={0.5}
+                        letterSpacing={1}
+                      >
                         {category.title}
                       </Typography>
+
                       <Typography variant="body2" color="common.white">
                         {category.subtitle}
                       </Typography>
@@ -112,7 +137,7 @@ export default function CategoriesSection() {
               }}
               aria-label="Previous"
             >
-              <ChevronLeft24Regular style={{ color: "#312e81" }} />
+              <ChevronLeft24Regular style={{ color: theme.palette.primary.dark }} />
             </IconButton>
 
             <IconButton
@@ -127,7 +152,7 @@ export default function CategoriesSection() {
               }}
               aria-label="Next"
             >
-              <ChevronRight24Regular style={{ color: "#312e81" }} />
+              <ChevronRight24Regular style={{ color: theme.palette.primary.dark }} />
             </IconButton>
           </Box>
         </Box>

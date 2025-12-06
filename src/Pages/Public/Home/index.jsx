@@ -6,6 +6,7 @@ const HomePage = () => {
     <>
       <HowBMGWorks />
       <CategoriesSection />
+      <AIServicesShowcase />
       <ServiceSlider />
       <AIServicesSection />
       <HeroMarketingSection />
@@ -13,7 +14,6 @@ const HomePage = () => {
       <ConsultantForm />
       <PortfolioMarquee />
       <BlogSection />
-      <AIServicesShowcase />
       <TestimonialsSection />
       <FAQSection />
     </>
