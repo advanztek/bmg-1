@@ -10,9 +10,9 @@ export const dbColors = {
 
 export const lightModeColors = {
   primary: {
-    main: "#1976d2",
-    light: "#42a5f5",
-    dark: "#1565c0",
+    main: "#2f317c",
+    light: "#2f317c",
+    dark: "#2f317c",
     contrastText: "#ffffff",
     lightBg: "#e3f2fd",
     bg: "#0f1419"
@@ -50,6 +50,7 @@ export const lightModeColors = {
   background: {
     default: "#f5f5f5",
     paper: "#ffffff",
+    footer: "#030e1aff",
     glass: "rgba(255, 255, 255, 0.95)"
   },
   text: {
@@ -74,7 +75,7 @@ export const darkModeColors = {
   primary: {
     main: "#90caf9",
     light: "#e3f2fd",
-    dark: "#42a5f5",
+    dark: "#2f317c",
     contrastText: "rgba(0, 0, 0, 0.87)",
     lightBg: "#1e293b",
     bg: "rgba(15, 20, 25, 0.95)"
