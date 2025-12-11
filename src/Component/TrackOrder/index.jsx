@@ -7,6 +7,7 @@ import {
     Paper,
     Grid,
     Avatar,
+    useTheme,
 } from "@mui/material";
 
 import LinkIcon from "@mui/icons-material/Link";
@@ -17,6 +18,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import { useNavigate } from "react-router-dom";
 
 const steps = [
     { id: 1, title: "Link to your website", subtitle: "Step 1 of 6", icon: <LinkIcon /> },
@@ -24,10 +26,12 @@ const steps = [
     { id: 3, title: "Description", subtitle: "Step 3 of 6", icon: <DescriptionIcon /> },
     { id: 4, title: "Contact Info", subtitle: "Step 4 of 6", icon: <PhoneIcon /> },
     { id: 5, title: "Confirm Order Details", subtitle: "Step 5 of 6", icon: <CheckCircleIcon /> },
-    { id: 6, title: "Order Complete", subtitle: "Step 6 of 6", icon: <InventoryIcon /> },
+    { id: 6, title: "Checkout Order", subtitle: "Step 6 of 6", icon: <InventoryIcon /> },
 ];
 
 export default function OrderTracker() {
+    const theme = useTheme();
+
     const [currentStep, setCurrentStep] = useState(1);
     const [formData, setFormData] = useState({
         websiteLink: "",
@@ -39,17 +43,12 @@ export default function OrderTracker() {
         socialMedia: "",
     });
 
-    const handleNext = () => {
-        if (currentStep < steps.length) setCurrentStep(currentStep + 1);
-    };
+    const navigate = useNavigate();
+    const handleNext = () => currentStep < steps.length && setCurrentStep(currentStep + 1);
+    const handlePrev = () => currentStep > 1 && setCurrentStep(currentStep - 1);
 
-    const handlePrev = () => {
-        if (currentStep > 1) setCurrentStep(currentStep - 1);
-    };
-
-    const handleInputChange = (e) => {
+    const handleInputChange = (e) =>
         setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
 
     const handleFileUpload = (e) => {
         const file = e.target.files[0];
@@ -61,7 +60,7 @@ export default function OrderTracker() {
             case 1:
                 return (
                     <Box>
-                        <Box textAlign="center" mb={5}>
+                        <Box textAlign="center" mb={4}>
                             <Typography variant="h4" fontWeight="bold">
                                 Link to your website & Socials
                             </Typography>
@@ -77,27 +76,45 @@ export default function OrderTracker() {
                             value={formData.websiteLink}
                             onChange={handleInputChange}
                             placeholder="https://yourwebsite.com"
-                            sx={{ mb: 3 }}
+                            sx={{
+                                mb: 3,
+                                "& .MuiOutlinedInput-root": {
+                                    borderRadius: 2,
+                                },
+                            }}
                         />
 
                         <Paper
                             elevation={0}
                             sx={{
-                                border: "2px solid #ffedd5",
-                                background: "linear-gradient(to bottom right, #fff7ed, #fffbeb)",
+                                border: `2px dashed ${theme.palette.divider}`,
                                 p: 5,
-                                borderRadius: 3,
-                                textAlign: "center",
+                                borderRadius: 2,
                                 cursor: "pointer",
+                                textAlign: "center",
+                                bgcolor: "transparent",
                             }}
                         >
                             <label style={{ cursor: "pointer" }}>
                                 <input type="file" hidden onChange={handleFileUpload} />
-                                <Avatar sx={{ bgcolor: "#fff", p: 2, mb: 2 }}>
-                                    <ImageIcon sx={{ color: "#ea580c", fontSize: 40 }} />
+
+                                <Avatar
+                                    sx={{
+                                        bgcolor: theme.palette.accent.gray,
+                                        width: 70,
+                                        height: 70,
+                                        margin: "0 auto",
+                                        mb: 2,
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                    }}
+                                >
+                                    <ImageIcon sx={{ fontSize: 40, color: theme.palette.primary.main }} />
                                 </Avatar>
-                                <Typography fontWeight={500}>Upload File</Typography>
-                                <Typography variant="body2" color="text.secondary">
+
+                                <Typography fontWeight={600}>Upload File</Typography>
+                                <Typography color="text.secondary" fontSize={13}>
                                     Optional: upload screenshots
                                 </Typography>
                             </label>
@@ -118,12 +135,13 @@ export default function OrderTracker() {
                         </Box>
 
                         <Paper
+                            elevation={0}
                             sx={{
                                 textAlign: "center",
-                                border: "2px dashed #93c5fd",
-                                background: "linear-gradient(to bottom right, #eff6ff, #eef2ff)",
-                                p: 10,
-                                borderRadius: 4,
+                                border: `2px dashed ${theme.palette.divider}`,
+                                bgcolor: "transparent",
+                                p: 8,
+                                borderRadius: 2,
                             }}
                         >
                             <label style={{ cursor: "pointer" }}>
@@ -136,28 +154,33 @@ export default function OrderTracker() {
 
                                 <Avatar
                                     sx={{
-                                        bgcolor: "#fff",
-                                        p: 3,
+                                        bgcolor: theme.palette.accent.gray,
                                         width: 100,
                                         height: 100,
                                         margin: "0 auto",
                                         mb: 2,
-                                        boxShadow: 2,
                                     }}
                                 >
-                                    <ImageIcon sx={{ color: "#3b82f6", fontSize: 50 }} />
+                                    <ImageIcon sx={{ fontSize: 50, color: theme.palette.primary.main }} />
                                 </Avatar>
 
-                                <Typography fontSize={16} fontWeight="600">
-                                    Drop logo or inspiration images here
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
+                                <Typography fontWeight={600}>Drop logo here</Typography>
+                                <Typography color="text.secondary" fontSize={13}>
                                     Formats: JPG, PNG, PDF
                                 </Typography>
 
                                 {formData.logoFile && (
-                                    <Paper sx={{ p: 1, mt: 2, display: "inline-block" }}>
-                                        <Typography color="green">
+                                    <Paper
+                                        elevation={0}
+                                        sx={{
+                                            p: 1,
+                                            mt: 2,
+                                            display: "inline-block",
+                                            bgcolor: "transparent",
+                                            border: `1px solid ${theme.palette.divider}`,
+                                        }}
+                                    >
+                                        <Typography color={theme.palette.success.main}>
                                             ✓ {formData.logoFile.name}
                                         </Typography>
                                     </Paper>
@@ -187,6 +210,11 @@ export default function OrderTracker() {
                             label="Design Details"
                             value={formData.description}
                             onChange={handleInputChange}
+                            sx={{
+                                "& .MuiOutlinedInput-root": {
+                                    borderRadius: 2,
+                                },
+                            }}
                         />
 
                         <Button
@@ -195,12 +223,10 @@ export default function OrderTracker() {
                             sx={{
                                 mt: 3,
                                 py: 1.5,
-                                background: "linear-gradient(to right, #fb923c, #f97316)",
-                                color: "#fff",
-                                fontWeight: "bold",
-                                "&:hover": {
-                                    background: "linear-gradient(to right, #f97316, #fb923c)",
-                                },
+                                borderRadius: 2,
+                                bgcolor: theme.palette.primary.main,
+                                color: theme.palette.primary.contrastText,
+                                "&:hover": { bgcolor: theme.palette.primary.dark },
                             }}
                         >
                             Submit
@@ -221,20 +247,26 @@ export default function OrderTracker() {
                         </Box>
 
                         <Grid container spacing={3}>
-                            <Grid item xs={12}>
-                                <TextField fullWidth label="Brand Name" name="brandName" onChange={handleInputChange} />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField fullWidth label="Email" name="email" onChange={handleInputChange} />
-                            </Grid>
-
-                            <Grid item xs={12} md={6}>
-                                <TextField fullWidth label="Phone Number" name="phone" onChange={handleInputChange} />
-                            </Grid>
-
-                            <Grid item xs={12} md={6}>
-                                <TextField fullWidth label="Social Media Handle" name="socialMedia" onChange={handleInputChange} />
-                            </Grid>
+                            {[
+                                { label: "Brand Name", name: "brandName" },
+                                { label: "Email", name: "email" },
+                                { label: "Phone Number", name: "phone" },
+                                { label: "Social Media Handle", name: "socialMedia" },
+                            ].map((field, idx) => (
+                                <Grid item xs={12} md={idx < 2 ? 12 : 6} key={field.name}>
+                                    <TextField
+                                        fullWidth
+                                        label={field.label}
+                                        name={field.name}
+                                        onChange={handleInputChange}
+                                        sx={{
+                                            "& .MuiOutlinedInput-root": {
+                                                borderRadius: 2,
+                                            },
+                                        }}
+                                    />
+                                </Grid>
+                            ))}
                         </Grid>
 
                         <Button
@@ -243,12 +275,10 @@ export default function OrderTracker() {
                             sx={{
                                 mt: 3,
                                 py: 1.5,
-                                background: "linear-gradient(to right, #fb923c, #f97316)",
-                                color: "#fff",
-                                fontWeight: "bold",
-                                "&:hover": {
-                                    background: "linear-gradient(to right, #f97316, #fb923c)",
-                                },
+                                borderRadius: 2,
+                                bgcolor: theme.palette.primary.main,
+                                color: theme.palette.primary.contrastText,
+                                "&:hover": { bgcolor: theme.palette.primary.dark },
                             }}
                         >
                             Submit
@@ -268,52 +298,42 @@ export default function OrderTracker() {
                             </Typography>
                         </Box>
 
-                        <Paper sx={{ p: 4, borderRadius: 3 }}>
+                        <Paper elevation={0} sx={{ p: 4, borderRadius: 2, bgcolor: "transparent" }}>
                             <Grid container spacing={3}>
-                                <Grid item xs={12} md={6}>
-                                    <Paper sx={{ p: 2 }}>
-                                        <Typography fontWeight="bold">Website Link</Typography>
-                                        <Typography>{formData.websiteLink || "Not Provided"}</Typography>
-                                    </Paper>
-                                </Grid>
-
-                                <Grid item xs={12} md={6}>
-                                    <Paper sx={{ p: 2 }}>
-                                        <Typography fontWeight="bold">Logo File</Typography>
-                                        <Typography>{formData.logoFile?.name || "Not Uploaded"}</Typography>
-                                    </Paper>
-                                </Grid>
-
-                                <Grid item xs={12} md={6}>
-                                    <Paper sx={{ p: 2 }}>
-                                        <Typography fontWeight="bold">Brand Name</Typography>
-                                        <Typography>{formData.brandName || "Not Provided"}</Typography>
-                                    </Paper>
-                                </Grid>
-
-                                <Grid item xs={12} md={6}>
-                                    <Paper sx={{ p: 2 }}>
-                                        <Typography fontWeight="bold">Email</Typography>
-                                        <Typography>{formData.email || "Not Provided"}</Typography>
-                                    </Paper>
-                                </Grid>
-
-                                <Grid item xs={12} md={6}>
-                                    <Paper sx={{ p: 2 }}>
-                                        <Typography fontWeight="bold">Phone</Typography>
-                                        <Typography>{formData.phone || "Not Provided"}</Typography>
-                                    </Paper>
-                                </Grid>
-
-                                <Grid item xs={12} md={6}>
-                                    <Paper sx={{ p: 2 }}>
-                                        <Typography fontWeight="bold">Social Media</Typography>
-                                        <Typography>{formData.socialMedia || "Not Provided"}</Typography>
-                                    </Paper>
-                                </Grid>
+                                {[
+                                    ["Website Link", formData.websiteLink],
+                                    ["Logo File", formData.logoFile?.name],
+                                    ["Brand Name", formData.brandName],
+                                    ["Email", formData.email],
+                                    ["Phone", formData.phone],
+                                    ["Social Media", formData.socialMedia],
+                                ].map(([label, value]) => (
+                                    <Grid item xs={12} md={6} key={label}>
+                                        <Paper
+                                            elevation={0}
+                                            sx={{
+                                                p: 2,
+                                                borderRadius: 2,
+                                                bgcolor: "transparent",
+                                                border: `1px solid ${theme.palette.divider}`,
+                                            }}
+                                        >
+                                            <Typography fontWeight="bold">{label}</Typography>
+                                            <Typography>{value || "Not Provided"}</Typography>
+                                        </Paper>
+                                    </Grid>
+                                ))}
 
                                 <Grid item xs={12}>
-                                    <Paper sx={{ p: 2 }}>
+                                    <Paper
+                                        elevation={0}
+                                        sx={{
+                                            p: 2,
+                                            borderRadius: 2,
+                                            bgcolor: "transparent",
+                                            border: `1px solid ${theme.palette.divider}`,
+                                        }}
+                                    >
                                         <Typography fontWeight="bold">Description</Typography>
                                         <Typography>{formData.description || "Not Provided"}</Typography>
                                     </Paper>
@@ -328,41 +348,54 @@ export default function OrderTracker() {
                     <Box textAlign="center" py={7}>
                         <Avatar
                             sx={{
-                                bgcolor: "#bbf7d0",
                                 width: 120,
                                 height: 120,
                                 margin: "0 auto",
                                 mb: 3,
+                                bgcolor: theme.palette.success.light,
                             }}
                         >
-                            <CheckCircleIcon sx={{ fontSize: 70, color: "#059669" }} />
+                            <CheckCircleIcon sx={{ fontSize: 70, color: theme.palette.success.main }} />
                         </Avatar>
 
                         <Typography variant="h3" fontWeight="bold" mb={2}>
-                            Order Complete! 🎉
+                            Check Out 🎉
                         </Typography>
 
                         <Typography variant="h6" color="text.secondary">
-                            Thank you for your submission!
+                            Your order details are ready.
                         </Typography>
 
                         <Paper
+                            elevation={0}
                             sx={{
                                 p: 4,
                                 mt: 4,
-                                borderRadius: 3,
-                                background: "linear-gradient(to bottom right, #eff6ff, #eef2ff)",
-                                border: "2px solid #e0e7ff",
+                                borderRadius: 2,
+                                bgcolor: "transparent",
+                                border: `1px solid ${theme.palette.divider}`,
                                 maxWidth: 600,
                                 mx: "auto",
                             }}
                         >
                             <Typography mb={2}>
-                                We've received all your information and will start immediately.
+                                Click below to proceed to your checkout page.
                             </Typography>
-                            <Typography color="text.secondary" fontSize={14}>
-                                You will receive a confirmation email soon.
-                            </Typography>
+
+                            <Button
+                                variant="contained"
+                                size="large"
+                                fullWidth
+                                sx={{
+                                    mt: 3,
+                                    py: 1.5,
+                                    fontWeight: 700,
+                                    borderRadius: 2,
+                                }}
+                                onClick={() => navigate("/checkout")}
+                            >
+                                Go to Checkout
+                            </Button>
                         </Paper>
                     </Box>
                 );
@@ -370,22 +403,20 @@ export default function OrderTracker() {
             default:
                 return null;
         }
-    };
+    }
 
     return (
         <Box
             sx={{
                 minHeight: "100vh",
-                background: "linear-gradient(to bottom right, #eef2ff, #fdf2f8)",
+                // background: theme.palette.accent.lightBlue,
                 py: 6,
                 px: 2,
             }}
         >
             <Box maxWidth="900px" mx="auto">
-                {/* STEP INDICATOR */}
-                <Paper sx={{ p: 4, mb: 4, borderRadius: 3 }}>
+                <Paper elevation={0} sx={{ p: 4, mb: 4, borderRadius: 2, background: theme.palette.accent.lightBlue }}>
                     <Box display="flex" justifyContent="space-between" position="relative">
-                        {/* Progress Line */}
                         <Box
                             sx={{
                                 position: "absolute",
@@ -393,47 +424,48 @@ export default function OrderTracker() {
                                 left: "3%",
                                 right: "3%",
                                 height: 4,
-                                background: "#e5e7eb",
+                                bgcolor: theme.palette.divider,
                             }}
                         >
                             <Box
                                 sx={{
                                     height: "100%",
-                                    background: "linear-gradient(to right, #10b981, #0d9488)",
                                     width: `${((currentStep - 1) / (steps.length - 1)) * 100}%`,
+                                    bgcolor: theme.palette.success.light,
                                     transition: "0.4s ease",
                                 }}
                             />
                         </Box>
 
-                        {/* Steps */}
                         {steps.map((step) => {
                             const isCompleted = currentStep > step.id;
                             const isCurrent = currentStep === step.id;
 
                             return (
-                                <Box key={step.id} textAlign="center" width="16%">
+                                <Box key={step.id} width="16%" textAlign="center">
                                     <Avatar
                                         sx={{
                                             width: 48,
                                             height: 48,
                                             margin: "0 auto",
-                                            transition: "0.3s",
                                             bgcolor: isCompleted
-                                                ? "linear-gradient(to right, #10b981, #0d9488)"
+                                                ? theme.palette.success.main
                                                 : isCurrent
-                                                    ? "#fb923c"
-                                                    : "#fff",
-                                            border: isCurrent ? "4px solid #fed7aa" : "2px solid #d1d5db",
+                                                    ? theme.palette.primary.main
+                                                    : theme.palette.background.paper,
+                                            border: `2px solid ${theme.palette.divider}`,
                                             transform: isCurrent ? "scale(1.2)" : "scale(1)",
+                                            transition: "0.3s",
                                         }}
                                     >
                                         {isCompleted ? (
-                                            <CheckCircleIcon sx={{ color: "#fff" }} />
+                                            <CheckCircleIcon sx={{ color: theme.palette.primary.contrastText }} />
                                         ) : (
                                             React.cloneElement(step.icon, {
                                                 style: {
-                                                    color: isCurrent ? "#fff" : "#9ca3af",
+                                                    color: isCurrent
+                                                        ? theme.palette.primary.contrastText
+                                                        : theme.palette.text.secondary,
                                                 },
                                             })
                                         )}
@@ -441,14 +473,14 @@ export default function OrderTracker() {
 
                                     <Typography
                                         fontSize={11}
-                                        fontWeight="bold"
+                                        fontWeight={600}
                                         mt={1}
                                         color={
                                             isCurrent
-                                                ? "orange"
+                                                ? theme.palette.primary.main
                                                 : isCompleted
-                                                    ? "teal"
-                                                    : "text.secondary"
+                                                    ? theme.palette.success.main
+                                                    : theme.palette.text.secondary
                                         }
                                     >
                                         {step.title}
@@ -463,10 +495,10 @@ export default function OrderTracker() {
                     </Box>
                 </Paper>
 
-                {/* STEP CONTENT */}
-                <Paper sx={{ p: 5, borderRadius: 4 }}>{renderStepContent()}</Paper>
+                <Paper elevation={0} sx={{ p: 5, borderRadius: 2, border: `1px solid ${theme.palette.divider}`, }}>
+                    {renderStepContent()}
+                </Paper>
 
-                {/* NAVIGATION BUTTONS */}
                 {currentStep < 6 && (
                     <Box display="flex" justifyContent="center" gap={2} mt={4}>
                         <Button
@@ -475,13 +507,17 @@ export default function OrderTracker() {
                             startIcon={<ChevronLeftIcon />}
                             sx={{
                                 px: 4,
-                                py: 1.5,
-                                borderRadius: 3,
+                                py: 1,
+                                borderRadius: 2,
                                 fontWeight: "bold",
-                                bgcolor: currentStep === 1 ? "#e5e7eb" : "#fb923c",
-                                color: currentStep === 1 ? "#9ca3af" : "#fff",
+                                bgcolor: currentStep === 1 ? theme.palette.divider : theme.palette.primary.main,
+                                color:
+                                    currentStep === 1
+                                        ? theme.palette.text.disabled
+                                        : theme.palette.primary.contrastText,
                                 "&:hover": {
-                                    bgcolor: currentStep === 1 ? "#e5e7eb" : "#ea580c",
+                                    bgcolor:
+                                        currentStep === 1 ? theme.palette.divider : theme.palette.primary.dark,
                                 },
                             }}
                         >
@@ -490,16 +526,16 @@ export default function OrderTracker() {
 
                         <Button
                             onClick={handleNext}
-                            disabled={currentStep === steps.length}
+                            disabled={currentStep === 6}
                             endIcon={<ChevronRightIcon />}
                             sx={{
                                 px: 4,
-                                py: 1.5,
-                                borderRadius: 3,
+                                py: 1,
+                                borderRadius: 2,
                                 fontWeight: "bold",
-                                bgcolor: "#fb923c",
-                                color: "#fff",
-                                "&:hover": { bgcolor: "#ea580c" },
+                                bgcolor: theme.palette.primary.main,
+                                color: theme.palette.primary.contrastText,
+                                "&:hover": { bgcolor: theme.palette.primary.dark },
                             }}
                         >
                             Next

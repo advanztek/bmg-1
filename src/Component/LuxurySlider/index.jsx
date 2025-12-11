@@ -6,6 +6,7 @@ import {
     ChevronLeft20Filled,
     ChevronRight20Filled
 } from "@fluentui/react-icons";
+import { useNavigate } from "react-router-dom";
 
 const features = [
     "Elite Graphic Designer",
@@ -20,24 +21,25 @@ const slides = [
         title: "Luxury Modern Minimalist Logo",
         price: 3750,
         discount: 25,
-        img: "https://via.placeholder.com/300x300.png?text=Logo",
+        img: "/Images/cat_5.png",
     },
     {
         title: "Premium 3D Logo Package",
         price: 4200,
         discount: 25,
-        img: "https://via.placeholder.com/300x300.png?text=3D+Logo",
+        img: "/Images/cat_1.png",
     },
     {
         title: "Creative Branding Pack",
         price: 3000,
         discount: 25,
-        img: "https://via.placeholder.com/300x300.png?text=Branding",
+        img: "/Images/cat_2.jpg",
     }
 ];
 
 export default function LuxurySlider() {
     const [index, setIndex] = useState(0);
+    const navigate = useNavigate();
 
     const nextSlide = () => setIndex((prev) => (prev + 1) % slides.length);
     const prevSlide = () =>
@@ -52,7 +54,7 @@ export default function LuxurySlider() {
                 mx: "auto",
                 height: 650,
                 overflow: "hidden",
-                mt:8,
+                mt: 8,
             }}
         >
             {slides.map((slide, i) => {
@@ -84,7 +86,6 @@ export default function LuxurySlider() {
                             background: "#fff",
                         }}
                     >
-                        {/* Title */}
                         <Typography
                             variant="h6"
                             sx={{ fontWeight: 700, mb: 2, textAlign: "center" }}
@@ -92,7 +93,6 @@ export default function LuxurySlider() {
                             {slide.title}
                         </Typography>
 
-                        {/* Image with discount labels */}
                         <Box
                             sx={{
                                 position: "relative",
@@ -100,7 +100,6 @@ export default function LuxurySlider() {
                                 overflow: "hidden",
                                 width: "100%",
                                 height: 200,
-                                background: "#12124F",
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "center",
@@ -110,15 +109,13 @@ export default function LuxurySlider() {
                             <img
                                 src={slide.img}
                                 alt="Logo"
-                                style={{ width: "60%", borderRadius: 12 }}
+                                style={{ width: "100%", borderRadius: 12 }}
                             />
 
-                            {/* Discount Tags */}
                             <DiscountTag top="8px" left="8px" discount={slide.discount} />
                             <DiscountTag bottom="8px" right="8px" discount={slide.discount} />
                         </Box>
 
-                        {/* Features */}
                         <Box sx={{ px: 1, mb: 2 }}>
                             {features.map((feat, idx) => (
                                 <Box
@@ -156,6 +153,7 @@ export default function LuxurySlider() {
                             <Button
                                 fullWidth
                                 variant="contained"
+                                onClick={() => navigate("/track-order")}
                                 sx={{
                                     bgcolor: "#FBBF24",
                                     color: "#000",
@@ -171,6 +169,7 @@ export default function LuxurySlider() {
                             <Button
                                 fullWidth
                                 variant="contained"
+                                onClick={() => navigate("/track-order")}
                                 sx={{
                                     bgcolor: "#000",
                                     color: "#fff",
@@ -187,14 +186,12 @@ export default function LuxurySlider() {
                 );
             })}
 
-            {/* Navigation Buttons */}
             <NavButton direction="left" onClick={prevSlide} />
             <NavButton direction="right" onClick={nextSlide} />
         </Box>
     );
 }
 
-/* Discount label component */
 function DiscountTag({ discount, ...pos }) {
     return (
         <Box
@@ -227,14 +224,14 @@ function NavButton({ direction, onClick }) {
                 transform: "translateY(-50%)",
                 minWidth: 40,
                 height: 40,
-                p:1,
+                p: 1,
                 borderRadius: "50%",
                 bgcolor: "white",
                 boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
                 "&:hover": { bgcolor: "#eee" },
             }}
         >
-            {direction === "left" ? <ChevronLeft20Filled/> : <ChevronRight20Filled/>}
+            {direction === "left" ? <ChevronLeft20Filled /> : <ChevronRight20Filled />}
         </Button>
     );
 }

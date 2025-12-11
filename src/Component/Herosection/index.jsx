@@ -15,8 +15,15 @@ import { Close, ArrowForward } from "@mui/icons-material";
 import { Search20Filled } from "@fluentui/react-icons";
 import CircleIcon from "@mui/icons-material/Circle";
 import { useTheme } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
 
 export const HeroSection = () => {
+    const navigate = useNavigate();
+
+    const handleExplore = () => {
+        navigate("/login");
+    };
+
     const theme = useTheme();
     const [searchValue, setSearchValue] = useState("");
     const [slide, setSlide] = useState(0);
@@ -47,7 +54,6 @@ export const HeroSection = () => {
                     minHeight: { md: "600px" }
                 }}
             >
-                {/* LEFT */}
                 <Box sx={{ flex: { md: "0 0 55%" }, width: "100%" }}>
                     <Container
                         maxWidth="lg"
@@ -58,7 +64,6 @@ export const HeroSection = () => {
                     >
                         <Box sx={{ maxWidth: { md: "550px", lg: "600px" } }}>
                             
-                            {/* SLIDER TITLES */}
                             <Fade in key={slide} timeout={700}>
                                 <Box sx={{ mt: 12, mb: 3 }}>
                                     <Typography
@@ -98,6 +103,7 @@ export const HeroSection = () => {
                             </Box>
 
                             <Button
+                                onClick={handleExplore}
                                 variant="outlined"
                                 endIcon={<ArrowForward />}
                                 sx={{

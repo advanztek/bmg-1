@@ -3,6 +3,7 @@ import { Box, Typography, Button, Container } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { FONT_FAMILY } from "../../Config/font";
 import Marquee from "react-fast-marquee";
+import { useNavigate } from "react-router-dom";
 
 const PortfolioSection = () => {
     const theme = useTheme();
@@ -24,6 +25,8 @@ const PortfolioSection = () => {
         "/Images/Img_4.jpg",
     ];
 
+    const navigate = useNavigate();
+    
     return (
         <Box
             sx={{
@@ -130,6 +133,7 @@ const PortfolioSection = () => {
 
                 <Box textAlign="center" mt={5}>
                     <Button
+                       onClick={() => navigate("/portfolio")}
                         variant="contained"
                         sx={{
                             backgroundColor: theme.palette.primary.main,

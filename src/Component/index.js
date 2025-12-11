@@ -23,3 +23,7 @@ export { default as Gallery } from './Gallery';
 export { default as ServiceOutline } from './ServiceOutline';
 export { default as OrderTracker } from './TrackOrder';
 export { default as AuthSlider } from './AuthSlider';
+export { default as BMGPromoSection } from './BmgPromoSection';
+export { default as FeatureSection } from './FeatSection';
+export { default as PricingSection } from './PricingSection';
+export { default as TestimonialSlider } from './TestimonialSlider';
