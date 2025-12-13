@@ -26,7 +26,7 @@ const BreadcrumbBar = ({
     const handleSearch = () => onSearch(searchQuery);
 
     return (
-        <Box sx={{ py: 0, my: 0 }}>
+        <Box sx={{ py: 0, my: 2 }}>
             <Container maxWidth="lg" sx={{ py: 2, my: 0 }}>
                 <Box
                     sx={{
@@ -49,8 +49,8 @@ const BreadcrumbBar = ({
                             py: 0.6,
                             borderRadius: "16px",
                             background: "rgba(255,255,255,0.85)",
-                            backdropFilter: "blur(14px)",
-                            boxShadow: "0px 6px 24px rgba(0,0,0,0.05)",
+                            // backdropFilter: "blur(14px)",
+                            // boxShadow: "0px 6px 24px rgba(0,0,0,0.05)",
                             m: 0,
                         }}
                     >
@@ -92,7 +92,6 @@ const BreadcrumbBar = ({
                         ))}
                     </Paper>
 
-                    {/* ----------------- SEARCH AREA ----------------- */}
                     <Box
                         sx={{
                             display: "flex",
@@ -105,46 +104,37 @@ const BreadcrumbBar = ({
                         }}
                     >
                         <Paper
-                            elevation={isFocused ? 8 : 3}
+                            elevation={0}
                             sx={{
                                 display: "flex",
                                 alignItems: "center",
                                 width: { xs: "100%", lg: "480px" },
                                 px: 2,
-                                py: 0.6,
-                                borderRadius: "18px",
-                                border: isFocused
-                                    ? "2px solid #fb923c"
-                                    : "2px solid transparent",
-                                transition: "all 0.35s",
-                                boxShadow: isFocused
-                                    ? "0 0 0 6px rgba(251,146,60,0.2)"
-                                    : "0px 4px 22px rgba(0,0,0,0.07)",
-                                m: 0,
+                                py: 0.4,
+                                borderRadius:2,
+                                border: "1px solid #e2e8f0",
+                                backgroundColor: "#fff",
+                                boxShadow: "none !important",
+                                transition: "border 0.3s ease",
+                                "&:focus-within": {
+                                    border: "1px solid #fb923c",
+                                },
                             }}
                         >
-                            <Search24Regular
-                                style={{
-                                    fontSize: 22,
-                                    color: isFocused ? "#f97316" : "#94a3b8",
-                                    transition: "0.3s",
-                                }}
-                            />
-
                             <InputBase
                                 placeholder="Search for services..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                onFocus={() => setIsFocused(true)}
-                                onBlur={() => setTimeout(() => setIsFocused(false), 200)}
                                 sx={{
-                                    ml: 2,
                                     flex: 1,
-                                    fontSize: "15.5px",
+                                    fontSize: "15px",
                                     fontWeight: 500,
+                                    ml: 1,
+                                    background: "transparent",
+                                    boxShadow: "none !important",
                                 }}
                             />
-
+                            
                             {searchQuery && (
                                 <Sparkle24Regular
                                     style={{
@@ -154,41 +144,33 @@ const BreadcrumbBar = ({
                                     }}
                                 />
                             )}
+                            <Button
+                                onClick={handleSearch}
+                                sx={{
+                                    p:0.8,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    backgroundColor: "transparent",
+                                    boxShadow: "none !important",
+                                    "&:hover": {
+                                        backgroundColor: "rgba(0,0,0,0.05)",
+                                    },
+                                }}
+                            >
+                                <Search24Regular style={{ fontSize: 22, color: "#64748b" }} />
+                            </Button>
+
+
                         </Paper>
 
-                        <Button
-                            onClick={handleSearch}
-                            variant="contained"
-                            sx={{
-                                background: "linear-gradient(to right, #fb923c, #f97316)",
-                                px: 4,
-                                py: 1.2,
-                                borderRadius: "16px",
-                                fontWeight: 600,
-                                fontSize: "15px",
-                                textTransform: "none",
-                                boxShadow: "0px 8px 24px rgba(249,115,22,0.3)",
-                                display: "flex",
-                                gap: 1,
-                                "&:hover": {
-                                    background: "linear-gradient(to right, #f97316, #ea580c)",
-                                    transform: "scale(1.07)",
-                                    boxShadow: "0px 10px 28px rgba(249,115,22,0.4)",
-                                },
-                                transition: "0.3s",
-                                m: 0,
-                            }}
-                        >
-                            <Search24Regular />
-                            Search
-                        </Button>
                     </Box>
                 </Box>
                 <Fade in={isFocused && suggestions.length > 0} unmountOnExit>
                     <Box
                         sx={{
                             mt: isFocused && suggestions.length > 0 ? 2 : 0,   // ONLY adds margin when open
-                            maxWidth: { lg: "650px" },
+                            maxWidth: { lg: "480px" },
                             ml: { lg: "auto" },
                             pb: isFocused && suggestions.length > 0 ? 1 : 0,   // ONLY adds padding when open
                             transition: "all 0.25s ease-in-out",

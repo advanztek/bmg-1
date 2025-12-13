@@ -18,9 +18,13 @@ import {
     Target24Regular
 } from '@fluentui/react-icons';
 import { FONT_FAMILY } from '../../Config/font';
+import { useNavigate } from 'react-router-dom';
 
 const HeroMarketingSection = () => {
     const theme = useTheme();
+
+    const navigate = useNavigate();
+
 
     return (
         <Box
@@ -79,7 +83,7 @@ const HeroMarketingSection = () => {
                             sx={{
                                 color: theme.palette.secondary.contrastText,
                                 fontSize: '1.1rem',
-                                fontFamily:FONT_FAMILY.tertiary,
+                                fontFamily: FONT_FAMILY.tertiary,
                                 mb: 4,
                                 lineHeight: 1.6
                             }}
@@ -101,7 +105,7 @@ const HeroMarketingSection = () => {
                                     <CheckmarkCircle24Regular
                                         style={{ color: theme.palette.primary.contrastText }}
                                     />
-                                    <Typography sx={{ fontFamily:FONT_FAMILY.primary, color: theme.palette.secondary.contrastText }}>
+                                    <Typography sx={{ fontFamily: FONT_FAMILY.primary, color: theme.palette.secondary.contrastText }}>
                                         {text}
                                     </Typography>
                                 </Box>
@@ -109,6 +113,7 @@ const HeroMarketingSection = () => {
                         </Stack>
 
                         <Button
+                            onClick={() => navigate('/login')}
                             variant="contained"
                             size="large"
                             sx={{
@@ -119,7 +124,7 @@ const HeroMarketingSection = () => {
                                 py: 1.5,
                                 fontSize: '1rem',
                                 fontWeight: 600,
-                                borderRadius:2,
+                                borderRadius: 2,
                                 textTransform: 'none',
                                 '&:hover': {
                                     bgcolor: theme.palette.secondary.contrastText,
@@ -221,7 +226,6 @@ const HeroMarketingSection = () => {
                                     )`
                                 }}
                             >
-                                {/* PLAY BUTTON */}
                                 <Box
                                     sx={{
                                         width: 70,
@@ -242,7 +246,6 @@ const HeroMarketingSection = () => {
                                     />
                                 </Box>
 
-                                {/* FLOATING ICONS */}
                                 <Box
                                     sx={{
                                         position: 'absolute',

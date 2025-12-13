@@ -20,11 +20,18 @@ import {
 } from '@fluentui/react-icons';
 
 import { services } from './data';
+import { useNavigate } from 'react-router-dom';
 
 export default function ServiceSlider() {
     const [currentIndex, setCurrentIndex] = useState(0);
     const theme = useTheme();
 
+    const navigate = useNavigate();
+
+    const handleDiscoverMore = () => {
+        navigate('/service');
+    };
+    
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const isTablet = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -62,6 +69,7 @@ export default function ServiceSlider() {
                     </Typography>
 
                     <Button
+                        onClick={handleDiscoverMore}
                         endIcon={<ArrowRight24Regular />}
                         sx={{
                             color: theme.palette.primary.main,

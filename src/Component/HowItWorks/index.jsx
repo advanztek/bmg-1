@@ -1,8 +1,13 @@
 import React from 'react';
 import { Box, Button, Typography, Container, useTheme } from '@mui/material';
 import { ArrowRight24Filled, PlayFilled } from '@fluentui/react-icons';
+import { useNavigate } from 'react-router-dom';
 
 export default function HowBMGWorks() {
+    const navigate = useNavigate(); 
+    const handleGetStarted = () => {
+        navigate('/register');
+    }
     const theme = useTheme();
     return (
 
@@ -35,6 +40,7 @@ export default function HowBMGWorks() {
                 </Typography>
 
                 <Button
+                    onClick={handleGetStarted}
                     variant="contained"
                     endIcon={<ArrowRight24Filled />}
                     sx={{

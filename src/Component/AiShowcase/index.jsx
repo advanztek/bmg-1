@@ -21,11 +21,17 @@ import {
 } from "@mui/material";
 
 import { lightModeColors, darkModeColors } from "../../Config/color";
+import { useNavigate } from "react-router-dom";
 
 export default function AIServicesShowcase({ mode = "light" }) {
     const colors = mode === "dark" ? darkModeColors : lightModeColors;
 
     const [activeService, setActiveService] = useState(0);
+
+    const navigate = useNavigate();
+    const handleGetStarted = () => {
+        navigate('/register');
+    }
 
     const services = [
         {
@@ -78,7 +84,6 @@ export default function AIServicesShowcase({ mode = "light" }) {
         },
     ];
 
-    // ------- CARD POSITION LOGIC --------
     const getCardStyle = (index) => {
         if (index === activeService) {
             return {
@@ -147,9 +152,9 @@ export default function AIServicesShowcase({ mode = "light" }) {
                             </Typography>
                         </Grid>
 
-                        {/* GET STARTED BUTTON */}
                         <Grid size={{ xs: 12, md: 4 }} mt={{ xs: 3, md: 0 }}>
                             <Button
+                                onClick={handleGetStarted}
                                 variant="outlined"
                                 sx={{
                                     px: 3,

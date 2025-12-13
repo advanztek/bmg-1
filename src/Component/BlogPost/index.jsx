@@ -22,9 +22,11 @@ import {
 } from "@mui/material";
 
 import { lightModeColors, darkModeColors } from "../../Config/color";
+import { useNavigate } from "react-router-dom";
 
 export default function BlogSection({ mode = "light" }) {
     const colors = mode === "dark" ? darkModeColors : lightModeColors;
+    const navigate = useNavigate();
 
     const blogPosts = [
         {
@@ -97,6 +99,7 @@ export default function BlogSection({ mode = "light" }) {
                         </Box>
 
                         <Button
+                            onClick={() => navigate('/blog')}
                             variant="contained"
                             endIcon={<ArrowRight24Regular />}
                             sx={{
@@ -276,7 +279,6 @@ export default function BlogSection({ mode = "light" }) {
                         ))}
                     </Grid>
 
-                    {/* CTA */}
                     <Box mt={10} textAlign="center">
                         <Box
                             sx={{

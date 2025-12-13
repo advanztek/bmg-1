@@ -11,9 +11,16 @@ import {
     useTheme,
 } from "@mui/material";
 import { services } from "./data";
+import { useNavigate } from "react-router-dom";
 
 export default function AIServicesSection() {
     const theme = useTheme();
+
+    const navigate = useNavigate();
+
+    const handleStartFree = () => { 
+        navigate('/register');
+    }
 
     return (
         <Box
@@ -47,6 +54,7 @@ export default function AIServicesSection() {
                     </Box>
                     <Box sx={{ mb: { xs: 4, md: 0 } }}>
                         <Button
+                         onClick={handleStartFree}
                             sx={{
                                 background: theme.palette.warning.light,
                                 color: theme.palette.warning.contrastText,

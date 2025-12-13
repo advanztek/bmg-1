@@ -28,7 +28,7 @@ const CategoryTabs = () => {
         <Box
             sx={{
                 width: "100%",
-                backgroundColor: "#f0f4f8ff",
+                backgroundColor: "#F0F1FE",
                 borderBottom: "1px solid #E5E7EB",
                 py: 2,
                 display: "flex",
@@ -79,7 +79,7 @@ const CategoryTabs = () => {
                             border:
                                 active === cat.label
                                     ? "1px solid #3B82F6"
-                                    : "1px solid rgba(156,163,175,0.3)",
+                                    : "1px solid #3B82F6",
                             transition: "all 0.2s ease-in-out",
                             "&:hover": {
                                 backgroundColor: "#EFF6FF",

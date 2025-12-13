@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import {  CategoryPage, HomePage, ServicePage, ServiceDetailPage, TrackOrderPage, LoginPage, RegisterPage, VerifyEmailPage, OtpVerificationPage, ForgotPasswordPage, ResetPasswordPage, PasswordResetSuccessPage } from "../Pages/Public";
+import {  CategoryPage, AboutUsPage, HomePage, ServicePage, AISuitesPage, ServiceDetailPage, TrackOrderPage, LoginPage, RegisterPage, VerifyEmailPage, OtpVerificationPage, ForgotPasswordPage, ResetPasswordPage, PasswordResetSuccessPage, CheckoutPage, BlogPage, BlogDetailPage, AIWebGeneratorPage, PrivacyPolicyPage, TermsConditionsPage, ContactUsPage, GiftVoucherPage, ResourcesPage, PricingPage, HowItWorksPage, PortfolioPage } from "../Pages/Public";
 import PublicLayout from "../Layout/PublicLayout";
 
 const PublicRoutes = () => {
@@ -18,6 +18,20 @@ const PublicRoutes = () => {
                     <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                     <Route path="/reset-password" element={<ResetPasswordPage />} />
                     <Route path="/reset-success" element={<PasswordResetSuccessPage />} />
+                    <Route path="/checkout" element={<CheckoutPage />} />
+                    <Route path="/blogs" element={<BlogPage />} />
+                    <Route path="/blog-detail" element={<BlogDetailPage />} />
+                    <Route path="/ai-web" element={<AIWebGeneratorPage />} />
+                    <Route path="/ai-suites" element={<AISuitesPage />} />
+                    <Route path="/about-us" element={<AboutUsPage />} />
+                    <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+                    <Route path="/terms-conditions" element={<TermsConditionsPage />} />
+                    <Route path="/contact-us" element={<ContactUsPage />} />
+                    <Route path="/gift-voucher" element={<GiftVoucherPage />} />
+                    <Route path="/resources" element={<ResourcesPage />} />
+                    <Route path="/pricing" element={<PricingPage />} />
+                    <Route path="/how-it-works" element={<HowItWorksPage />} />
+                    <Route path="/portfolio" element={<PortfolioPage />} />
                     {/* <Route path="/sample" element={<Sample />} /> */}
                 </Route>
             </Routes>

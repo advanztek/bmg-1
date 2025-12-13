@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { ArrowRight24Filled } from "@fluentui/react-icons";
 import { FONT_FAMILY } from "../../Config/font";
+import { useNavigate } from "react-router-dom";
 
 const trendingServices = [
     {
@@ -47,6 +48,10 @@ const trendingServices = [
 
 export default function TrendingService() {
     const theme = useTheme();
+    const navigate = useNavigate();
+    const handleViewMore = () => {
+        navigate('/service');
+    }   
 
     return (
         <Box
@@ -86,6 +91,7 @@ export default function TrendingService() {
                     </Box>
 
                     <Button
+                        onClick={handleViewMore}
                         variant="contained"
                         endIcon={<ArrowRight24Filled />}
                         sx={{

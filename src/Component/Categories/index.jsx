@@ -1,11 +1,17 @@
 import React, { useState } from "react";
 import { Stack, Box, Typography, Button, Paper, IconButton, Container, useTheme } from "@mui/material";
 import { ChevronLeft24Regular, ChevronRight24Regular, ArrowRight24Regular } from "@fluentui/react-icons";
+import { useNavigate } from "react-router-dom";
 
 export default function CategoriesSection() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const theme = useTheme();
 
+  const navigate = useNavigate();
+
+  const handleCategories = () => {
+    navigate("/category");
+  }
   const categories = [
     { title: "GRAPHIC DESIGN", subtitle: "Logo Design", image: "/Images/Img_4.jpg" },
     { title: "VIDEO EDITING", subtitle: "Video Content Production", image: "/Images/Img_5.jpg" },
@@ -40,6 +46,7 @@ export default function CategoriesSection() {
               </Typography>
             </Box>
             <Button
+              onClick={handleCategories}
               variant="outlined"
               sx={{
                 color: "common.white",
