@@ -59,8 +59,9 @@ import {
   UserSubscriptionsPage
 } from "../../Pages/Users";
 
-import DashboardLayout from "../../Layout/dashboard";
+// import DashboardLayout from "../../Layout/dashboard";
 import UserSupportPage from "../../Pages/Users/Support";
+import DashboardLayout from "../../Layout/dashboard";
 
 const DashboardRoutes = () => {
   return (
