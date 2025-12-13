@@ -27,3 +27,29 @@ export { default as BMGPromoSection } from './BmgPromoSection';
 export { default as FeatureSection } from './FeatSection';
 export { default as PricingSection } from './PricingSection';
 export { default as TestimonialSlider } from './TestimonialSlider';
+
+
+//---DASHBOARD COMPONENT PATHS----//
+export { default as InfoCard } from "./Dashboard/InfoCard";
+export { default as InsightPieCard } from "./Dashboard/Charts/InsightPieCard";
+export { default as RevenueCard } from "./Dashboard/Charts/RevenueCard";
+export { default as TransactionsCard } from "./Dashboard/Charts/TransactionsCard";
+export { default as TopRankingExpertsCard } from "./Dashboard/Charts/TopRankingExpertsCard";
+export { default as TopSellingServicesCard } from "./Dashboard/Charts/TopSellingServicesCard";
+export { default as TrafficByLocationCard } from "./Dashboard/Charts/TrafficByLocationCard";
+export { default as AnalyticsOverview } from "./Dashboard/Charts/AnalyticsOverview";
+export { default as CustomTable } from "./Dashboard/CustomTable";
+export { default as StatusChip } from "./Dashboard/StatusChip";
+export { default as HeaderBreadCrumb } from "./Dashboard/HeaderBreadCumb";
+export { default as ProfileStatusCard } from "./Dashboard/Charts/ProfileStatusCard";
+export { default as PagesHeader } from "./Dashboard/PagesHeader";
+export { default as InputLabel } from "./Dashboard/InputLabel";
+export { default as CustomButton } from "./Dashboard/CustomButton";
+export { default as UploadMedia } from "./Dashboard/UploadMedia";
+export { default as CategoryOverviewCard } from "./Dashboard/Charts/CategoryOverview";
+export { default as StatusCard } from "./Dashboard/StatusCard";
+export { default as CustomModal } from "./Dashboard/CustomModal";
+export { default as NotificationItem } from "./Dashboard/NotificationItem";
+export { default as RecipientsTable } from "./Dashboard/mails/RecipientsTable";
+export { default as UserSearch } from "./Dashboard/mails/Search";
+export { default as Sidebar } from "./Dashboard/mails/SideBar";
