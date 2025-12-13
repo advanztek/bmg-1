@@ -18,6 +18,8 @@ import {
     IconButton,
     Grid,
     Container,
+    useMediaQuery,
+    useTheme,
 } from "@mui/material";
 
 import { lightModeColors, darkModeColors } from "../../Config/color";
@@ -25,10 +27,13 @@ import { useNavigate } from "react-router-dom";
 
 export default function AIServicesShowcase({ mode = "light" }) {
     const colors = mode === "dark" ? darkModeColors : lightModeColors;
-
     const [activeService, setActiveService] = useState(0);
-
     const navigate = useNavigate();
+    const theme = useTheme();
+
+    // Properly detect mobile screens using MUI's useMediaQuery
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
     const handleGetStarted = () => {
         navigate('/register');
     }
@@ -38,53 +43,48 @@ export default function AIServicesShowcase({ mode = "light" }) {
             id: 0,
             name: "AI Video Generator",
             icon: <Video24Regular />,
-            image:
-                "https://images.unsplash.com/photo-1492619375914-88005aa9e8fb?w=800&h=600&fit=crop",
+            image: "https://images.unsplash.com/photo-1492619375914-88005aa9e8fb?w=800&h=600&fit=crop",
             gradient: `linear-gradient(to bottom right, ${colors.secondary.main}, ${colors.primary.main})`,
         },
         {
             id: 1,
             name: "AI Image Generator",
             icon: <Image24Regular />,
-            image:
-                "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=600&fit=crop",
+            image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=600&fit=crop",
             gradient: `linear-gradient(to bottom right, ${colors.info.light}, ${colors.primary.main})`,
         },
         {
             id: 2,
             name: "AI Video Editor",
             icon: <VideoClip24Regular />,
-            image:
-                "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=800&h=600&fit=crop",
+            image: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=800&h=600&fit=crop",
             gradient: `linear-gradient(to bottom right, ${colors.warning.main}, ${colors.error.main})`,
         },
         {
             id: 3,
             name: "AI Biz Strategy",
             icon: <ChartMultiple24Regular />,
-            image:
-                "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop",
+            image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop",
             gradient: `linear-gradient(to bottom right, ${colors.success.main}, ${colors.info.dark})`,
         },
         {
             id: 4,
             name: "AI Voice Generator",
             icon: <MicSparkle24Regular />,
-            image:
-                "https://images.unsplash.com/photo-1589903308904-1010c2294adc?w=800&h=600&fit=crop",
+            image: "https://images.unsplash.com/photo-1589903308904-1010c2294adc?w=800&h=600&fit=crop",
             gradient: `linear-gradient(to bottom right, ${colors.secondary.light}, ${colors.error.dark})`,
         },
         {
             id: 5,
             name: "AI Web Generator",
             icon: <Globe24Regular />,
-            image:
-                "https://images.unsplash.com/photo-1547658719-da2b51169166?w=800&h=600&fit=crop",
+            image: "https://images.unsplash.com/photo-1547658719-da2b51169166?w=800&h=600&fit=crop",
             gradient: `linear-gradient(to bottom right, ${colors.primary.light}, ${colors.secondary.dark})`,
         },
     ];
 
     const getCardStyle = (index) => {
+        // Active card always centered
         if (index === activeService) {
             return {
                 zIndex: 50,
@@ -97,6 +97,14 @@ export default function AIServicesShowcase({ mode = "light" }) {
             };
         }
 
+        // On mobile, hide all inactive cards
+        if (isMobile) {
+            return {
+                display: "none",
+            };
+        }
+
+        // Desktop: show stacked cards behind active one
         const positions = [
             { x: "-120px", y: "-80px", scale: 0.7, rotate: -8, zIndex: 30 },
             { x: "100px", y: "-100px", scale: 0.65, rotate: 5, zIndex: 25 },
@@ -105,9 +113,7 @@ export default function AIServicesShowcase({ mode = "light" }) {
             { x: "-80px", y: "120px", scale: 0.5, rotate: -3, zIndex: 10 },
         ];
 
-        const relativeIndex =
-            (index - activeService + services.length) % services.length;
-
+        const relativeIndex = (index - activeService + services.length) % services.length;
         if (relativeIndex === 0) return { display: "none" };
 
         const posIndex = Math.min(relativeIndex - 1, positions.length - 1);
@@ -123,31 +129,36 @@ export default function AIServicesShowcase({ mode = "light" }) {
     return (
         <Box
             sx={{
-                py: 8,
-                backgroundImage:
-                    "url('/Images/Wave.png')",
+                py: { xs: 6, md: 8 },
+                backgroundImage: "url('/Images/Wave.png')",
                 backgroundSize: "cover",
                 backgroundPosition: "center",
                 backgroundRepeat: "no-repeat",
-                // backgroundAttachment: "fixed",
-                // boxShadow: `inset 0 0 0 1000px rgba(0, 0, 0, 0.9)`,
             }}
         >
             <Container maxWidth="lg">
-                <Box sx={{ maxWidth: "1400px", mx: "auto", px: 3 }}>
-
+                <Box sx={{ maxWidth: "1400px", mx: "auto", px: { xs: 2, sm: 3 } }}>
                     {/* HEADER */}
-                    <Grid container alignItems="center" justifyContent="space-between" mb={6}>
+                    <Grid container alignItems="center" justifyContent="space-between" mb={{ xs: 4, md: 6 }}>
                         <Grid size={{ xs: 12, md: 8 }}>
                             <Typography
                                 variant="h3"
                                 fontWeight={700}
                                 mb={1}
                                 color={colors.text.primary}
+                                sx={{
+                                    fontSize: { xs: '1.75rem', sm: '2.25rem', md: '3rem' }
+                                }}
                             >
                                 Unlock Infinite Possibilities with AI Precision
                             </Typography>
-                            <Typography variant="body1" color={colors.text.primary}>
+                            <Typography
+                                variant="body1"
+                                color={colors.text.primary}
+                                sx={{
+                                    fontSize: { xs: '0.95rem', md: '1rem' }
+                                }}
+                            >
                                 Have the world at your fingertips with BMG AI Service
                             </Typography>
                         </Grid>
@@ -156,6 +167,7 @@ export default function AIServicesShowcase({ mode = "light" }) {
                             <Button
                                 onClick={handleGetStarted}
                                 variant="outlined"
+                                fullWidth
                                 sx={{
                                     px: 3,
                                     py: 1.2,
@@ -167,6 +179,7 @@ export default function AIServicesShowcase({ mode = "light" }) {
                                     "&:hover": {
                                         backgroundColor: colors.primary.main,
                                         color: colors.primary.contrastText,
+                                        borderWidth: 2,
                                     },
                                 }}
                             >
@@ -175,12 +188,25 @@ export default function AIServicesShowcase({ mode = "light" }) {
                         </Grid>
                     </Grid>
 
-                    {/* BODY CONTENT */}
-                    <Grid container spacing={6}>
-
-                        {/* LEFT CATEGORY BUTTONS */}
+                    <Grid container spacing={{ xs: 3, md: 6 }}>
+                        {/* LEFT SIDEBAR - SERVICE BUTTONS */}
                         <Grid size={{ xs: 12, md: 3 }}>
-                            <Stack spacing={2}>
+                            <Stack
+                                spacing={2}
+                                sx={{
+                                    flexDirection: { xs: 'row', md: 'column' },
+                                    overflowX: { xs: 'auto', md: 'visible' },
+                                    overflowY: 'hidden',
+                                    pb: { xs: 2, md: 0 },
+                                    '&::-webkit-scrollbar': {
+                                        height: '6px',
+                                    },
+                                    '&::-webkit-scrollbar-thumb': {
+                                        backgroundColor: colors.primary.main,
+                                        borderRadius: '3px',
+                                    },
+                                }}
+                            >
                                 {services.map((service, index) => (
                                     <Button
                                         key={service.id}
@@ -189,20 +215,27 @@ export default function AIServicesShowcase({ mode = "light" }) {
                                         onClick={() => setActiveService(index)}
                                         sx={{
                                             textTransform: "none",
-                                            px: 3,
+                                            px: { xs: 2, md: 3 },
                                             py: 2,
                                             borderRadius: 3,
                                             fontWeight: 600,
                                             boxShadow: 2,
-                                            bgcolor:
-                                                activeService === index
-                                                    ? colors.primary.main
-                                                    : colors.background.paper,
-                                            color:
-                                                activeService === index
-                                                    ? colors.primary.contrastText
-                                                    : colors.primary.main,
-                                            "&:hover": { boxShadow: 4 },
+                                            minWidth: { xs: '200px', md: 'auto' },
+                                            flexShrink: { xs: 0, md: 1 },
+                                            whiteSpace: 'nowrap',
+                                            bgcolor: activeService === index
+                                                ? colors.primary.main
+                                                : colors.background.paper,
+                                            color: activeService === index
+                                                ? colors.primary.contrastText
+                                                : colors.primary.main,
+                                            "&:hover": {
+                                                boxShadow: 4,
+                                                bgcolor: activeService === index
+                                                    ? colors.primary.dark
+                                                    : colors.primary.lightBg,
+                                            },
+                                            transition: 'all 0.3s ease',
                                         }}
                                     >
                                         {service.name}
@@ -211,12 +244,12 @@ export default function AIServicesShowcase({ mode = "light" }) {
                             </Stack>
                         </Grid>
 
-                        {/* RIGHT CARD STACK */}
+                        {/* RIGHT SIDE - CARD SHOWCASE */}
                         <Grid size={{ xs: 12, md: 9 }}>
                             <Box
                                 sx={{
                                     position: "relative",
-                                    height: { xs: "450px", md: "600px" },
+                                    height: { xs: "400px", sm: "500px", md: "600px" },
                                     display: "flex",
                                     justifyContent: "center",
                                     alignItems: "center",
@@ -233,66 +266,71 @@ export default function AIServicesShowcase({ mode = "light" }) {
                                             sx={{
                                                 position: "absolute",
                                                 cursor: "pointer",
-                                                transition: "0.7s ease",
+                                                transition: "all 0.7s ease",
                                                 width: {
-                                                    xs: "85%",
-                                                    md:
-                                                        index === activeService
-                                                            ? "600px"
-                                                            : "520px",
+                                                    xs: "90%",
+                                                    sm: "85%",
+                                                    md: index === activeService ? "600px" : "520px",
                                                 },
                                                 height: {
-                                                    xs: "65%",
-                                                    md:
-                                                        index === activeService
-                                                            ? "400px"
-                                                            : "320px",
+                                                    xs: "85%",
+                                                    sm: "75%",
+                                                    md: index === activeService ? "400px" : "320px",
                                                 },
+                                                maxWidth: { xs: '400px', sm: '500px', md: 'none' },
                                                 overflow: "hidden",
                                                 borderRadius: 4,
                                                 backgroundColor: colors.background.paper,
+                                                boxShadow: index === activeService ? 8 : 4,
                                                 ...style,
                                             }}
                                         >
                                             {/* TOP BAR (WINDOW DOTS) */}
-                                            <Box sx={{ p: 2, display: "flex", gap: 1 }}>
+                                            <Box
+                                                sx={{
+                                                    p: { xs: 1.5, md: 2 },
+                                                    display: "flex",
+                                                    gap: 1
+                                                }}
+                                            >
                                                 <Box
                                                     sx={{
-                                                        width: 14,
-                                                        height: 14,
+                                                        width: { xs: 10, md: 14 },
+                                                        height: { xs: 10, md: 14 },
                                                         borderRadius: "50%",
                                                         bgcolor: colors.error.main,
                                                     }}
                                                 />
                                                 <Box
                                                     sx={{
-                                                        width: 14,
-                                                        height: 14,
+                                                        width: { xs: 10, md: 14 },
+                                                        height: { xs: 10, md: 14 },
                                                         borderRadius: "50%",
                                                         bgcolor: colors.warning.main,
                                                     }}
                                                 />
                                                 <Box
                                                     sx={{
-                                                        width: 14,
-                                                        height: 14,
+                                                        width: { xs: 10, md: 14 },
+                                                        height: { xs: 10, md: 14 },
                                                         borderRadius: "50%",
                                                         bgcolor: colors.success.main,
                                                     }}
                                                 />
                                             </Box>
 
-                                            {/* IMAGE */}
+                                            {/* IMAGE CONTAINER */}
                                             <Box
                                                 sx={{
                                                     position: "relative",
                                                     width: "100%",
                                                     height: "100%",
-                                                    mt: -3,
+                                                    mt: { xs: -2, md: -3 },
                                                 }}
                                             >
                                                 <img
                                                     src={service.image}
+                                                    alt={service.name}
                                                     style={{
                                                         width: "100%",
                                                         height: "100%",
@@ -319,37 +357,49 @@ export default function AIServicesShowcase({ mode = "light" }) {
                                                             bottom: 0,
                                                             left: 0,
                                                             right: 0,
-                                                            p: 3,
-                                                            background:
-                                                                "linear-gradient(to top, rgba(0,0,0,.8), transparent)",
+                                                            p: { xs: 2, sm: 2.5, md: 3 },
+                                                            background: "linear-gradient(to top, rgba(0,0,0,.85), transparent)",
                                                         }}
                                                     >
                                                         <Stack
                                                             direction="row"
-                                                            spacing={2}
+                                                            spacing={{ xs: 1.5, md: 2 }}
                                                             alignItems="center"
                                                         >
                                                             <Box
                                                                 sx={{
-                                                                    width: 60,
-                                                                    height: 60,
-                                                                    bgcolor:
-                                                                        "rgba(255,255,255,0.25)",
+                                                                    width: { xs: 50, md: 60 },
+                                                                    height: { xs: 50, md: 60 },
+                                                                    bgcolor: "rgba(255,255,255,0.25)",
                                                                     backdropFilter: "blur(6px)",
                                                                     borderRadius: 3,
                                                                     display: "flex",
                                                                     alignItems: "center",
                                                                     justifyContent: "center",
+                                                                    fontSize: { xs: '20px', md: '24px' },
+                                                                    color: '#fff',
                                                                 }}
                                                             >
                                                                 {service.icon}
                                                             </Box>
 
                                                             <Box>
-                                                                <Typography variant="h6" color="white">
+                                                                <Typography
+                                                                    variant="h6"
+                                                                    color="white"
+                                                                    sx={{
+                                                                        fontSize: { xs: '1rem', sm: '1.15rem', md: '1.25rem' }
+                                                                    }}
+                                                                >
                                                                     {service.name}
                                                                 </Typography>
-                                                                <Typography variant="body2" color="white">
+                                                                <Typography
+                                                                    variant="body2"
+                                                                    color="white"
+                                                                    sx={{
+                                                                        fontSize: { xs: '0.8rem', md: '0.875rem' }
+                                                                    }}
+                                                                >
                                                                     Transform your ideas into reality
                                                                 </Typography>
                                                             </Box>
@@ -358,27 +408,30 @@ export default function AIServicesShowcase({ mode = "light" }) {
                                                 )}
 
                                                 {/* PLAY BUTTON (ONLY FOR VIDEO ITEMS) */}
-                                                {(index === 0 || index === 2) &&
-                                                    index === activeService && (
-                                                        <IconButton
-                                                            sx={{
-                                                                position: "absolute",
-                                                                top: "50%",
-                                                                left: "50%",
-                                                                transform:
-                                                                    "translate(-50%, -50%)",
-                                                                width: 80,
-                                                                height: 80,
-                                                                bgcolor:
-                                                                    colors.background.paper,
-                                                                color: colors.text.primary,
-                                                                borderRadius: "50%",
-                                                                boxShadow: 6,
-                                                            }}
-                                                        >
-                                                            <Play24Filled />
-                                                        </IconButton>
-                                                    )}
+                                                {(index === 0 || index === 2) && index === activeService && (
+                                                    <IconButton
+                                                        sx={{
+                                                            position: "absolute",
+                                                            top: "50%",
+                                                            left: "50%",
+                                                            transform: "translate(-50%, -50%)",
+                                                            width: { xs: 60, sm: 70, md: 80 },
+                                                            height: { xs: 60, sm: 70, md: 80 },
+                                                            bgcolor: colors.background.paper,
+                                                            color: colors.text.primary,
+                                                            borderRadius: "50%",
+                                                            boxShadow: 6,
+                                                            '&:hover': {
+                                                                bgcolor: colors.primary.main,
+                                                                color: colors.primary.contrastText,
+                                                                transform: "translate(-50%, -50%) scale(1.1)",
+                                                            },
+                                                            transition: 'all 0.3s ease',
+                                                        }}
+                                                    >
+                                                        <Play24Filled style={{ fontSize: { xs: 24, md: 28 } }} />
+                                                    </IconButton>
+                                                )}
                                             </Box>
                                         </Paper>
                                     );
