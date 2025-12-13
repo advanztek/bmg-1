@@ -156,7 +156,6 @@ export default function CategoriesSection() {
               ))}
             </Stack>
 
-            {/* LEFT ARROW (INSIDE) */}
             <IconButton
               onClick={prevSlide}
               aria-label="Previous"
@@ -175,7 +174,6 @@ export default function CategoriesSection() {
               />
             </IconButton>
 
-            {/* RIGHT ARROW (INSIDE) */}
             <IconButton
               onClick={nextSlide}
               aria-label="Next"
