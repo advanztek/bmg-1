@@ -56,8 +56,8 @@ const Footer = () => {
     "Get Started": [
       { name: "Account Login", path: "/login" },
       { name: "Register", path: "/register" },
-      { name: "Track Order", path: "/track-order" },
-      { name: "Checkout", path: "/checkout" },
+      // { name: "Track Order", path: "/track-order" },
+      // { name: "Checkout", path: "/checkout" },
       { name: "Resources", path: "/resources" }
     ],
     Resources: [
