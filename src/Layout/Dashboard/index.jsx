@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Box } from "@mui/material";
-import Sidenav from "./components/SideNav";
-import MobileSidenav from "./components/MobileSidenav";
+import Sidenav from "./Components/SideNav";
+import MobileSidenav from "./Components/MobileSidenav";
 import { lightModeColors } from "../../Config/color";
-import NavBar from "./components/Navbar";
+import NavBar from "./Components/Navbar";
 import { useAuth } from "../../Contexts/AuthContext";
 
 const SIDE_NAV_WIDTH = 200;
