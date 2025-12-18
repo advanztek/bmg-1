@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {
     Box,
     Grid,
-    Paper,
     Typography,
     TextField,
     MenuItem,
@@ -17,7 +16,6 @@ import {
     Person24Regular,
     Mail24Regular,
     Call24Regular,
-    Briefcase24Regular,
     ChevronDown24Regular,
 } from "@fluentui/react-icons";
 import { FONT_FAMILY } from "../../Config/font";
@@ -46,261 +44,314 @@ export default function ConsultantForm() {
     const handleChange = (field) => (e) =>
         setFormData({ ...formData, [field]: e.target.value });
 
-    /** Shared styles for TextFields and Select */
-    const inputBaseStyle = {
-        "& .MuiOutlinedInput-root": {
-            pl: 5,
-            background: theme.palette.primary.lightBg,
-            borderRadius: 2,
-            transition: "0.25s",
-            "&:hover": {
-                background: theme.palette.primary.light + "22",
-            },
-            "&.Mui-focused": {
-                background: theme.palette.background.paper,
-                boxShadow: `0 0 12px ${theme.palette.primary.main}55`,
-                borderColor: theme.palette.primary.main,
-            },
-        },
+    const handleSubmit = () => {
+        alert("Thank you! Your consultation request has been submitted.");
     };
-
-    /** Icon Color */
-    const iconColor = theme.palette.primary.main;
 
     return (
         <Box
             sx={{
                 minHeight: "100vh",
-                p:{ xs:2, md:6},
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                background: theme.palette.primary.main,
+                background: theme.palette.background.default,
                 position: "relative",
                 overflow: "hidden",
+                py: { xs: 6, md: 0 },
             }}
         >
-            <Container maxWidth="lg">
-
-                <Box
-                    sx={{
-                        position: "absolute",
-                        top: 100,
-                        left: 100,
-                        width: 300,
-                        height: 300,
-                        background: theme.palette.background.paper + "20",
-                        borderRadius: "50%",
-                        filter: "blur(90px)",
-                    }}
-                />
-
+            <Container data-aos='fade-up' maxWidth="lg">
                 <Grid container spacing={8} alignItems="center">
-                    <Grid size={{ xs: 12, md: 6 }} sx={{ color: theme.palette.secondary.contrastText }}>
-                        <Typography sx={{ fontFamily: FONT_FAMILY.tertiary, fontSize: "1.2rem", opacity: 0.9, mb: 2 }}>
-                            Didn't find what you want?
-                        </Typography>
-
-                        <Typography
+                    {/* Left Side - Form */}
+                    <Grid size={{ xs:12, md: 6 }}>
+                        <Box
                             sx={{
-                                fontSize: { xs: "2.3rem", md: "2.5rem" },
-                                fontWeight: 900,
-                                lineHeight: 1.1,
-                                mb: 4,
-                                background: `linear-gradient(to right, 
-                                ${theme.palette.warning.main}, 
-                                ${theme.palette.warning.light}
-                            )`,
-                                WebkitBackgroundClip: "text",
-                                color: "transparent",
+                                maxWidth: 550,
+                                mx: { xs: "auto", md: 0 },
                             }}
                         >
-                            BOOK A FREE
-                            <br />
-                            CONSULTATION
-                        </Typography>
+                            {/* Heading */}
+                            <Typography
+                                sx={{
+                                    fontSize: { xs: "2.5rem", md: "4.5rem" },
+                                    fontWeight: 900,
+                                    lineHeight: 1.1,
+                                    mb: 5,
+                                    color: theme.palette.text.heading,
+                                    letterSpacing: "-0.02em",
+                                }}
+                            >
+                                BOOK A FREE
+                                <br />
+                                CONSULTATION
+                            </Typography>
 
-                        <Typography
-                            sx={{
-                                fontSize: "1.1rem",
-                                opacity: 0.9,
-                                maxWidth: 400,
-                                fontFamily: FONT_FAMILY.tertiary,
-                            }}
-                        >
-                            Talk to our team of experts for professional advice on how to solve
-                            your business needs.
-                        </Typography>
-                    </Grid>
-
-                    <Grid size={{ xs: 12, md: 6 }}>
-                        <Paper
-                            elevation={0}
-                            sx={{
-                                mb: { xs: 2, md: 0 },
-                                p: {xs: 3, md: 5},
-                                borderRadius: 3,
-                                background: theme.palette.background.paper,
-                                color: theme.palette.text.primary,
-                            }}
-                        >
-                            <Grid container spacing={3}>
-                                <Grid container spacing={3}>
-                                    <Grid size={{ xs: 12, md: 6 }}>
-                                        <Typography fontWeight={600} mb={1}>
-                                            Full Name
-                                        </Typography>
-
-                                        <Box sx={{ position: "relative" }}>
-                                            <Person24Regular
-                                                style={{
-                                                    position: "absolute",
-                                                    left: 12,
-                                                    top: "50%",
-                                                    transform: "translateY(-50%)",
-                                                    color: iconColor,
-                                                    zIndex: 2,
-                                                }}
-                                            />
-
-                                            <TextField
-                                                fullWidth
-                                                placeholder="Enter your full name"
-                                                value={formData.fullName}
-                                                onChange={handleChange("fullName")}
-                                                sx={inputBaseStyle}
-                                            />
-                                        </Box>
-                                    </Grid>
-
-                                    <Grid size={{ xs: 12, md: 6 }}>
-                                        <Typography fontWeight={600} mb={1}>
-                                            Select Service
-                                        </Typography>
-
-                                        <FormControl fullWidth>
-                                            <Box sx={{ position: "relative", borderRadius: 2 }}>
-
-                                                <Select
-                                                    fullWidth
-                                                    value={formData.service}
-                                                    onChange={handleChange("service")}
-                                                    displayEmpty
-                                                    IconComponent={() => (
-                                                        <ChevronDown24Regular
-                                                            style={{
-                                                                color: iconColor,
-                                                                position: "absolute",
-                                                                right: 12,
-                                                                top: "50%",
-                                                                transform: "translateY(-50%)",
-                                                            }}
-                                                        />
-                                                    )}
-                                                    sx={{
-                                                        ...inputBaseStyle,
-                                                        "& .MuiOutlinedInput-root": {
-                                                            ...inputBaseStyle["& .MuiOutlinedInput-root"],
-                                                        },
-                                                    }}
-                                                >
-                                                    <MenuItem value="">Choose a service</MenuItem>
-                                                    {services.map((s) => (
-                                                        <MenuItem key={s} value={s}>
-                                                            {s}
-                                                        </MenuItem>
-                                                    ))}
-                                                </Select>
-                                            </Box>
-                                        </FormControl>
-                                    </Grid>
-
+                            {/* Form Fields */}
+                            <Grid container spacing={2.5}>
+                                {/* Full Name */}
+                                <Grid size={{ xs:12, md: 6 }}>
+                                    <TextField
+                                        fullWidth
+                                        placeholder="Full Name"
+                                        value={formData.fullName}
+                                        onChange={handleChange("fullName")}
+                                        sx={{
+                                            "& .MuiOutlinedInput-root": {
+                                                // background: theme.palette.background.paper,
+                                                // borderRadius: "50px",
+                                                fontSize: "0.95rem",
+                                                color: theme.palette.text.primary,
+                                                "& fieldset": {
+                                                    border: "none",
+                                                },
+                                                // "&:hover": {
+                                                //     background: theme.palette.primary.lightBg,
+                                                // },
+                                                "&.Mui-focused": {
+                                                    background: theme.palette.background.paper,
+                                                    boxShadow: `0 0 0 2px ${theme.palette.primary.main}33`,
+                                                },
+                                            },
+                                            "& .MuiOutlinedInput-input": {
+                                                py: 1.5,
+                                                px: 2.5,
+                                                "&::placeholder": {
+                                                    color: theme.palette.text.secondary,
+                                                    opacity: 0.7,
+                                                },
+                                            },
+                                        }}
+                                    />
                                 </Grid>
 
-                                <Grid size={{ xs: 12 }}>
-                                    <Typography fontWeight={600} mb={1}>
-                                        Email
-                                    </Typography>
-
-                                    <Box sx={{ position: "relative" }}>
-                                        <Mail24Regular
-                                            style={{
-                                                position: "absolute",
-                                                left: 12,
-                                                top: "50%",
-                                                transform: "translateY(-50%)",
-                                                color: iconColor,
-                                                zIndex: 2,
-                                            }}
-                                        />
-
-                                        <TextField
-                                            fullWidth
-                                            placeholder="your@email.com"
-                                            value={formData.email}
-                                            onChange={handleChange("email")}
-                                            sx={inputBaseStyle}
-                                        />
-                                    </Box>
+                                {/* Email */}
+                                <Grid size={{ xs:12, md: 6 }}>
+                                    <TextField
+                                        fullWidth
+                                        placeholder="Email"
+                                        value={formData.email}
+                                        onChange={handleChange("email")}
+                                        sx={{
+                                            "& .MuiOutlinedInput-root": {
+                                                // background: theme.palette.background.paper,
+                                                // borderRadius: "50px",
+                                                fontSize: "0.95rem",
+                                                color: theme.palette.text.primary,
+                                                "& fieldset": {
+                                                    border: "none",
+                                                },
+                                                "&:hover": {
+                                                    background: theme.palette.primary.lightBg,
+                                                },
+                                                "&.Mui-focused": {
+                                                    background: theme.palette.background.paper,
+                                                    boxShadow: `0 0 0 2px ${theme.palette.primary.main}33`,
+                                                },
+                                            },
+                                            "& .MuiOutlinedInput-input": {
+                                                py: 1.5,
+                                                px: 2.5,
+                                                "&::placeholder": {
+                                                    color: theme.palette.text.secondary,
+                                                    opacity: 0.7,
+                                                },
+                                            },
+                                        }}
+                                    />
                                 </Grid>
 
-                                {/* Phone */}
-                                <Grid size={{ xs: 12 }}>
-                                    <Typography fontWeight={600} mb={1}>
-                                        Phone
-                                    </Typography>
-
-                                    <Box sx={{ position: "relative" }}>
-                                        <Call24Regular
-                                            style={{
-                                                position: "absolute",
-                                                left: 12,
-                                                top: "50%",
-                                                transform: "translateY(-50%)",
-                                                color: iconColor,
-                                                zIndex: 2,
+                                {/* Phone with Country Code */}
+                                <Grid size={{ xs:12, md: 6 }}>
+                                    <Box sx={{ display: "flex", gap: 1 }}>
+                                        <TextField
+                                            value="+234"
+                                            disabled
+                                            sx={{
+                                                width: "90px",
+                                                "& .MuiOutlinedInput-root": {
+                                                    // background: theme.palette.background.paper,
+                                                    // borderRadius: "50px",
+                                                    fontSize: "0.95rem",
+                                                    color: theme.palette.text.primary,
+                                                    "& fieldset": {
+                                                        border: "none",
+                                                    },
+                                                },
+                                                "& .MuiOutlinedInput-input": {
+                                                    py: 1.5,
+                                                    px: 2,
+                                                    textAlign: "center",
+                                                },
                                             }}
                                         />
-
                                         <TextField
                                             fullWidth
-                                            placeholder="+1 (555) 000-0000"
+                                            placeholder="802 123 4567"
                                             value={formData.phone}
                                             onChange={handleChange("phone")}
-                                            sx={inputBaseStyle}
+                                            sx={{
+                                                flex: 1,
+                                                "& .MuiOutlinedInput-root": {
+                                                    // background: theme.palette.background.paper,
+                                                    // borderRadius: "50px",
+                                                    fontSize: "0.95rem",
+                                                    color: theme.palette.text.primary,
+                                                    "& fieldset": {
+                                                        border: "none",
+                                                    },
+                                                    "&:hover": {
+                                                        background: theme.palette.primary.lightBg,
+                                                    },
+                                                    "&.Mui-focused": {
+                                                        background: theme.palette.background.paper,
+                                                        boxShadow: `0 0 0 2px ${theme.palette.primary.main}33`,
+                                                    },
+                                                },
+                                                "& .MuiOutlinedInput-input": {
+                                                    py: 1.5,
+                                                    px: 2.5,
+                                                    "&::placeholder": {
+                                                        color: theme.palette.text.secondary,
+                                                        opacity: 0.7,
+                                                    },
+                                                },
+                                            }}
                                         />
                                     </Box>
+                                </Grid>
+
+                                {/* Service Select */}
+                                <Grid size={{ xs:12, md: 6 }}>
+                                    <FormControl fullWidth>
+                                        <Select
+                                            value={formData.service}
+                                            onChange={handleChange("service")}
+                                            displayEmpty
+                                            IconComponent={ChevronDown24Regular}
+                                            sx={{
+                                                // background: theme.palette.background.paper,
+                                                // borderRadius: "50px",
+                                                fontSize: "0.95rem",
+                                                color: theme.palette.text.primary,
+                                                "& fieldset": {
+                                                    border: "none",
+                                                },
+                                                "&:hover": {
+                                                    background: theme.palette.primary.lightBg,
+                                                },
+                                                "&.Mui-focused": {
+                                                    background: theme.palette.background.paper,
+                                                    boxShadow: `0 0 0 2px ${theme.palette.primary.main}33`,
+                                                },
+                                                "& .MuiSelect-select": {
+                                                    py: 1.5,
+                                                    px: 2.5,
+                                                },
+                                                "& .MuiSvgIcon-root": {
+                                                    color: theme.palette.text.primary,
+                                                    right: 12,
+                                                },
+                                            }}
+                                        >
+                                            <MenuItem value="" sx={{ color: theme.palette.text.secondary }}>
+                                                Service
+                                            </MenuItem>
+                                            {services.map((s) => (
+                                                <MenuItem key={s} value={s}>
+                                                    {s}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
                                 </Grid>
 
                                 {/* Submit Button */}
-                                <Grid size={{ xs: 12 }}>
+                                <Grid size={{ xs:12 }}>
                                     <Button
                                         fullWidth
-                                        onClick={() =>
-                                            alert("Thank you! Your consultation request has been submitted.")
-                                        }
+                                        onClick={handleSubmit}
                                         sx={{
                                             mt: 2,
-                                            py: 1.2,
-                                            borderRadius: 2,
+                                            py: 1.8,
+                                            borderRadius: "50px",
                                             fontSize: "1.1rem",
-                                            textTransform: "none",
-                                            fontWeight: 600,
+                                            textTransform: "uppercase",
+                                            fontWeight: 700,
+                                            letterSpacing: "0.5px",
                                             background: theme.palette.primary.main,
-                                            color: theme.palette.primary.contrastText,
-                                            boxShadow: `0 8px 20px ${theme.palette.primary.main}55`,
+                                            color: theme.palette.success.contrastText,
+                                            boxShadow: `0 8px 24px ${theme.palette.primary.main}55`,
                                             "&:hover": {
-                                                boxShadow: `0 10px 25px ${theme.palette.primary.main}88`,
+                                                background: theme.palette.primary.bg,
+                                                boxShadow: `0 12px 32px ${theme.palette.primary.main}88`,
                                                 transform: "translateY(-2px)",
                                             },
-                                            transition: "0.25s",
+                                            transition: "all 0.3s ease",
                                         }}
                                     >
-                                        Book Now
+                                        Submit
                                     </Button>
                                 </Grid>
                             </Grid>
-                        </Paper>
+                        </Box>
+                    </Grid>
+
+                    {/* Right Side - Illustration/Image Placeholder */}
+                    <Grid size={{ xs:12, md: 6 }}>
+                        <Box
+                            sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                borderRadius: 4,
+                                position: "relative",
+                                overflow: "hidden",
+                            }}
+                        >
+                            {/* Placeholder for illustration */}
+                            <Box
+                                sx={{
+                                    textAlign: "center",
+                                    p: 4,
+                                }}
+                            >
+                                <img
+                                    src="/Marq/m_8.png"
+                                    alt="Consultation Illustration"
+                                    style={{
+                                        maxWidth: "100%",
+                                        height: "auto",
+                                    }}
+                                />
+                            </Box>
+
+                            {/* Decorative circles */}
+                            <Box
+                                sx={{
+                                    position: "absolute",
+                                    top: 20,
+                                    right: 20,
+                                    width: 100,
+                                    height: 100,
+                                    borderRadius: "50%",
+                                    background: theme.palette.success.main,
+                                    // opacity: 0.1,
+                                }}
+                            />
+                            <Box
+                                sx={{
+                                    position: "absolute",
+                                    bottom: 40,
+                                    left: 40,
+                                    width: 150,
+                                    height: 150,
+                                    borderRadius: "50%",
+                                    background: theme.palette.warning.main,
+                                    // opacity: 0.1,
+                                }}
+                            />
+                        </Box>
                     </Grid>
                 </Grid>
             </Container>

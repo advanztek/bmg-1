@@ -8,6 +8,7 @@ import {
     IconButton,
     Button,
     Container,
+    useTheme,
 } from "@mui/material";
 
 import {
@@ -72,6 +73,8 @@ export default function TestimonialsSection() {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [autoPlay, setAutoPlay] = useState(true);
 
+    const theme = useTheme();
+    
     useEffect(() => {
         if (!autoPlay) return;
         const interval = setInterval(() => {
@@ -102,10 +105,10 @@ export default function TestimonialsSection() {
             sx={{
                 py: 10,
                 px: 2,
-                background: "linear-gradient(to bottom right, #f8fafc, #ffffff)",
+                background: theme.palette.background.default,
             }}
         >
-           <Container maxWidth="lg">
+           <Container data-aos='fade-down' maxWidth="lg">
              <Box textAlign="center" mb={8}>
                 <Typography
                     sx={{

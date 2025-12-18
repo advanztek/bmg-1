@@ -1,5 +1,5 @@
 import React from 'react'
-import { AIServicesSection, AIServicesShowcase, BlogSection, CategoriesSection, ConsultantForm, FAQSection, HeroMarketingSection, HowBMGWorks, PortfolioMarquee, ServiceSlider, TestimonialsSection, TrendingService } from '../../../Component'
+import { AIServicesSection, LetsWorkTogether, AIServicesShowcase, BlogSection, CategoriesSection, ConsultantForm, FAQSection, HeroMarketingSection, HowBMGWorks, PortfolioMarquee, ServiceSlider, TestimonialsSection, TrendingService } from '../../../Component'
 
 const HomePage = () => {
   return (
@@ -13,9 +13,10 @@ const HomePage = () => {
       <TrendingService />
       <ConsultantForm />
       <PortfolioMarquee />
-      <BlogSection />
+      {/* <BlogSection /> */}
       <TestimonialsSection />
       <FAQSection />
+      <LetsWorkTogether />
     </>
   )
 }

@@ -13,12 +13,87 @@ import {
 import { services } from "./data";
 import { useNavigate } from "react-router-dom";
 
+// Define unique color schemes for each card
+const cardColorSchemes = [
+    {
+        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+        iconBg: "rgba(255, 255, 255, 0.2)",
+        iconColor: "#ffffff",
+        textColor: "#ffffff",
+        textSecondary: "rgba(255, 255, 255, 0.9)",
+        borderColor: "rgba(255, 255, 255, 0.3)",
+    },
+    {
+        background: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
+        iconBg: "rgba(255, 255, 255, 0.2)",
+        iconColor: "#ffffff",
+        textColor: "#ffffff",
+        textSecondary: "rgba(255, 255, 255, 0.9)",
+        borderColor: "rgba(255, 255, 255, 0.3)",
+    },
+    {
+        background: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+        iconBg: "rgba(255, 255, 255, 0.2)",
+        iconColor: "#ffffff",
+        textColor: "#ffffff",
+        textSecondary: "rgba(255, 255, 255, 0.9)",
+        borderColor: "rgba(255, 255, 255, 0.3)",
+    },
+    {
+        background: "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)",
+        iconBg: "rgba(255, 255, 255, 0.2)",
+        iconColor: "#ffffff",
+        textColor: "#ffffff",
+        textSecondary: "rgba(255, 255, 255, 0.9)",
+        borderColor: "rgba(255, 255, 255, 0.3)",
+    },
+    {
+        background: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
+        iconBg: "rgba(255, 255, 255, 0.2)",
+        iconColor: "#ffffff",
+        textColor: "#ffffff",
+        textSecondary: "rgba(255, 255, 255, 0.9)",
+        borderColor: "rgba(255, 255, 255, 0.3)",
+    },
+    {
+        background: "linear-gradient(135deg, #30cfd0 0%, #330867 100%)",
+        iconBg: "rgba(255, 255, 255, 0.2)",
+        iconColor: "#ffffff",
+        textColor: "#ffffff",
+        textSecondary: "rgba(255, 255, 255, 0.9)",
+        borderColor: "rgba(255, 255, 255, 0.3)",
+    },
+    {
+        background: "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)",
+        iconBg: "rgba(255, 255, 255, 0.3)",
+        iconColor: "#667eea",
+        textColor: "#2d3748",
+        textSecondary: "#4a5568",
+        borderColor: "rgba(102, 126, 234, 0.3)",
+    },
+    {
+        background: "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)",
+        iconBg: "rgba(255, 255, 255, 0.3)",
+        iconColor: "#f5576c",
+        textColor: "#2d3748",
+        textSecondary: "#4a5568",
+        borderColor: "rgba(245, 87, 108, 0.3)",
+    },
+    {
+        background: "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)",
+        iconBg: "rgba(255, 255, 255, 0.3)",
+        iconColor: "#ed8936",
+        textColor: "#2d3748",
+        textSecondary: "#4a5568",
+        borderColor: "rgba(237, 137, 54, 0.3)",
+    },
+];
+
 export default function AIServicesSection() {
     const theme = useTheme();
-
     const navigate = useNavigate();
 
-    const handleStartFree = () => { 
+    const handleStartFree = () => {
         navigate('/register');
     }
 
@@ -26,18 +101,19 @@ export default function AIServicesSection() {
         <Box
             sx={{
                 minHeight: "100vh",
-                py: 10,
+                py: 2,
                 background: theme.palette.background.default,
             }}
         >
             <Container maxWidth="lg">
-                <Box mb={1} sx={{ display: { xs: 'block', md:'flex' }, justifyContent: 'space-between' }}>
+                <Box data-aos='zoom-out' sx={{ display: { xs: 'block', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center' }}>
                     <Box>
                         <Typography
                             variant="h3"
-                            fontWeight="bold"
+                            fontWeight="900"
+                            sx={{ fontSize: { xs: '2.5rem', md: '3.5rem' } }}
                             color={theme.palette.text.heading}
-                            mb={2}
+                        // mb={1}
                         >
                             AI Services
                         </Typography>
@@ -54,7 +130,7 @@ export default function AIServicesSection() {
                     </Box>
                     <Box sx={{ mb: { xs: 4, md: 0 } }}>
                         <Button
-                         onClick={handleStartFree}
+                            onClick={handleStartFree}
                             sx={{
                                 background: theme.palette.warning.light,
                                 color: theme.palette.warning.contrastText,
@@ -63,9 +139,13 @@ export default function AIServicesSection() {
                                 borderRadius: 2,
                                 textTransform: "none",
                                 fontWeight: 600,
+                                boxShadow: "0 4px 14px 0 rgba(255, 167, 38, 0.39)",
                                 "&:hover": {
                                     background: theme.palette.warning.dark,
+                                    boxShadow: "0 6px 20px 0 rgba(255, 167, 38, 0.5)",
+                                    transform: "translateY(-2px)",
                                 },
+                                transition: "all 0.3s ease",
                             }}
                         >
                             Start for Free
@@ -73,9 +153,10 @@ export default function AIServicesSection() {
                     </Box>
                 </Box>
 
-                <Grid container spacing={2}>
-                    {services.map((service) => {
+                <Grid container spacing={3} data-aos='zoom-out'>
+                    {services.map((service, index) => {
                         const Icon = service.icon;
+                        const colorScheme = cardColorSchemes[index % cardColorSchemes.length];
 
                         return (
                             <Grid key={service.id} size={{ xs: 12, sm: 6, md: 4 }}>
@@ -83,14 +164,25 @@ export default function AIServicesSection() {
                                     sx={{
                                         p: 4,
                                         borderRadius: 4,
-                                        background: theme.palette.primary.lightBg,
-                                        boxShadow: 3,
+                                        background: colorScheme.background,
+                                        boxShadow: "0 10px 40px rgba(0, 0, 0, 0.1)",
                                         position: "relative",
-                                        transition: ".3s",
+                                        transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                                        overflow: "hidden",
                                         "&:hover": {
-                                            transform: "translateY(-8px)",
-                                            boxShadow: 6,
+                                            transform: "translateY(-12px)",
+                                            boxShadow: "0 20px 60px rgba(0, 0, 0, 0.2)",
                                         },
+                                        "&::before": {
+                                            content: '""',
+                                            position: "absolute",
+                                            top: 0,
+                                            left: 0,
+                                            right: 0,
+                                            bottom: 0,
+                                            background: "linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%)",
+                                            pointerEvents: "none",
+                                        }
                                     }}
                                 >
                                     <Chip
@@ -98,71 +190,85 @@ export default function AIServicesSection() {
                                         size="small"
                                         sx={{
                                             position: "absolute",
-                                            top: 16,
-                                            left: 16,
-                                            bgcolor:
-                                                service.badgeColor === "orange"
-                                                    ? theme.palette.warning.light
-                                                    : theme.palette.info.light,
-                                            color:
-                                                service.badgeColor === "orange"
-                                                    ? theme.palette.warning.dark
-                                                    : theme.palette.info.dark,
+                                            top: 20,
+                                            right: 20,
+                                            bgcolor: "rgba(255, 255, 255, 0.95)",
+                                            color: colorScheme.textColor === "#ffffff" ? "#667eea" : colorScheme.iconColor,
                                             fontWeight: 600,
+                                            fontSize: "0.75rem",
+                                            backdropFilter: "blur(10px)",
+                                            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
                                         }}
                                     />
 
                                     {/* Icon */}
-                                    <Box display="flex" justifyContent="center" my={3}>
+                                    <Box display="flex" justifyContent="center" my={3} mt={5}>
                                         <Box
                                             sx={{
                                                 p: 3,
                                                 borderRadius: 3,
-                                                background: theme.palette.accent.lightBlue,
-                                                transition: ".3s",
-                                                "&:hover": { transform: "scale(1.1)" },
+                                                background: colorScheme.iconBg,
+                                                backdropFilter: "blur(10px)",
+                                                transition: "all 0.3s ease",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                "&:hover": {
+                                                    transform: "scale(1.1) rotate(5deg)",
+                                                },
                                             }}
                                         >
                                             <Icon
                                                 style={{
                                                     width: 48,
                                                     height: 48,
-                                                    color: theme.palette.primary.main,
+                                                    color: colorScheme.iconColor,
                                                 }}
                                             />
                                         </Box>
                                     </Box>
 
                                     {/* Text */}
-                                    <CardContent sx={{ textAlign: "center" }}>
+                                    <CardContent sx={{ textAlign: "center", pb: 2 }}>
                                         <Typography
                                             variant="h6"
                                             fontWeight="bold"
-                                            color={theme.palette.text.primary}
-                                            mb={1}
+                                            color={colorScheme.textColor}
+                                            mb={1.5}
+                                            sx={{
+                                                textShadow: colorScheme.textColor === "#ffffff"
+                                                    ? "0 2px 4px rgba(0, 0, 0, 0.1)"
+                                                    : "none"
+                                            }}
                                         >
                                             {service.title}
                                         </Typography>
 
                                         <Typography
                                             variant="body2"
-                                            color={theme.palette.text.secondary}
+                                            color={colorScheme.textSecondary}
+                                            sx={{
+                                                lineHeight: 1.7,
+                                                textShadow: colorScheme.textColor === "#ffffff"
+                                                    ? "0 1px 2px rgba(0, 0, 0, 0.1)"
+                                                    : "none"
+                                            }}
                                         >
                                             {service.description}
                                         </Typography>
                                     </CardContent>
 
-                                    {/* Hover Border */}
+                                    {/* Hover Border Glow */}
                                     <Box
                                         sx={{
                                             position: "absolute",
                                             inset: 0,
                                             borderRadius: 4,
-                                            border: `2px solid ${theme.palette.accent.blue}`,
+                                            border: `2px solid ${colorScheme.borderColor}`,
                                             opacity: 0,
-                                            transition: ".3s",
+                                            transition: "opacity 0.3s ease",
                                             pointerEvents: "none",
-                                            "&:hover": { opacity: 1 },
+                                            ".MuiCard-root:hover &": { opacity: 1 },
                                         }}
                                     />
                                 </Card>

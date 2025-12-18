@@ -70,7 +70,7 @@ export const HeroSection = () => {
                                         variant="h1"
                                         sx={{
                                             fontSize: { xs: "2.5rem", md: "3rem", lg: "4rem" },
-                                            fontWeight: 800,
+                                            fontWeight: 900,
                                             color: theme.palette.primary.dark, 
                                             lineHeight: 1.2
                                         }}

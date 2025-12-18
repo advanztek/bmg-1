@@ -35,6 +35,9 @@ import {
 
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { HeroSection } from '../Herosection';
+import ThemeToggleButton from '../ThemeToggleBtn';
+import PatnersLogo from '../PatnersLogo';
+import { FONT_FAMILY } from '../../Config/font';
 
 const MegaDropdown = ({ items, isOpen, onClose }) => {
     const theme = useTheme();
@@ -428,8 +431,8 @@ const Header = () => {
         { label: 'Gigs', path: '/category', hasDropdown: true, dropdownData: gigsData },
         { label: 'Services', path: '/service', hasDropdown: true, dropdownData: servicesData },
         { label: 'Portfolio', path: '/portfolio' },
-        { label: 'Resources', path: '/resources' },
-        { label: 'Blogs', path: '/blogs' },
+        // { label: 'Resources', path: '/resources' },
+        // { label: 'Blogs', path: '/blogs' },
         { label: 'Gift Voucher', path: '/gift-voucher' },
         { label: 'Others', path: '#', hasDropdown: true, dropdownData: othersData }
     ];
@@ -466,7 +469,6 @@ const Header = () => {
                             />
                         </Box>
 
-                        {/* DESKTOP MENU */}
                         <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 4, ml: 4 }}>
                             {menuItems.map((item) => (
                                 <Box
@@ -481,8 +483,9 @@ const Header = () => {
                                         sx={{
                                             textDecoration: "none",
                                             color: theme.palette.text.primary,
-                                            fontWeight: 500,
-                                            fontSize: '0.95rem',
+                                            fontWeight: 900,
+                                            fontFamily:FONT_FAMILY.unique,
+                                            fontSize: '1rem',
                                             cursor: 'pointer',
                                             transition: "0.2s",
                                             display: 'flex',
@@ -515,7 +518,7 @@ const Header = () => {
                                 </Box>
                             ))}
                         </Box>
-
+                       
                         {/* CONTACT + CTA BUTTON (Desktop Only) */}
                         <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 2 }}>
                             <Button
@@ -528,7 +531,7 @@ const Header = () => {
                             >
                                 +2349008709
                             </Button>
-
+                            <ThemeToggleButton />
                             <Button
                                 onClick={handleGetStarted}
                                 variant="contained"
@@ -599,7 +602,8 @@ const Header = () => {
                                     primaryTypographyProps={{
                                         fontSize: "1rem",
                                         fontWeight: 500,
-                                        color: theme.palette.text.primary
+                                        color: theme.palette.text.primary,
+                                        fontFamily:FONT_FAMILY.primary
                                     }}
                                 />
                             </ListItemButton>
@@ -640,6 +644,7 @@ const Header = () => {
             </Drawer>
 
             {isHomePage && <HeroSection />}
+            <PatnersLogo />
         </Box>
     );
 };

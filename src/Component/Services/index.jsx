@@ -31,7 +31,7 @@ export default function ServiceSlider() {
     const handleDiscoverMore = () => {
         navigate('/service');
     };
-    
+
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const isTablet = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -45,23 +45,25 @@ export default function ServiceSlider() {
         <Box
             sx={{
                 minHeight: '100vh',
-                py: 8,
+                py: 2,
                 background: `linear-gradient(135deg, ${theme.palette.background.default}, ${theme.palette.accent.lightBlue})`,
             }}
         >
             <Container maxWidth="lg">
                 <Box
+                    data-aos='fade-down'
                     sx={{
                         display: 'flex',
                         justifyContent: 'space-between',
                         alignItems: 'center',
-                        mb: 3,
+                        // mb: 3,
                     }}
                 >
                     <Typography
-                        variant="h3"
+                        variant="h1"
                         sx={{
-                            fontWeight: 700,
+                            fontSize: { xs: '2.5rem', md: '4rem' },
+                            fontWeight: 800,
                             color: theme.palette.text.heading,
                         }}
                     >
@@ -74,8 +76,8 @@ export default function ServiceSlider() {
                         sx={{
                             color: theme.palette.primary.main,
                             textTransform: 'none',
-                            fontSize: '16px',
-                            fontWeight: 600,
+                            fontSize: '26px',
+                            fontWeight: 800,
                             transition: '0.3s',
                             '&:hover': {
                                 transform: 'translateX(5px)',
@@ -99,7 +101,7 @@ export default function ServiceSlider() {
                     Ac urna elementum purus vulputate tincidunt. Quam maecenas feugiat congue orci, eget tellus pellentesque aliquet.
                 </Typography>
 
-                <Box sx={{ position: 'relative' }}>
+                <Box data-aos='fade-down' sx={{ position: 'relative' }}>
 
                     <IconButton
                         onClick={handlePrev}
@@ -163,6 +165,7 @@ export default function ServiceSlider() {
                             sx={{
                                 display: 'flex',
                                 gap: 2,
+                                py: 2,
                                 transform: `translateX(-${currentIndex * (100 / cardsToShow + 3)}%)`,
                                 transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
                             }}
@@ -198,7 +201,7 @@ export default function ServiceSlider() {
                                                 position: 'absolute',
                                                 top: 12,
                                                 left: 12,
-                                                borderRadius:1,
+                                                borderRadius: 1,
                                                 bgcolor: theme.palette.primary.main,
                                                 color: theme.palette.primary.contrastText,
                                                 fontWeight: 600,
@@ -261,7 +264,7 @@ export default function ServiceSlider() {
                                                 bgcolor: theme.palette.primary.main,
                                                 color: theme.palette.primary.contrastText,
                                                 py: 1,
-                                                borderRadius:2,
+                                                borderRadius: 2,
                                                 textTransform: 'none',
                                                 fontSize: '15px',
                                                 fontWeight: 600,

@@ -11,16 +11,17 @@ export default function HowBMGWorks() {
     const theme = useTheme();
     return (
 
-     <Box sx={{bgcolor:theme.palette.primary.lightBg, mt:3 }}>
-        <Container maxWidth="md" sx={{ py: 8 }}>
+     <Box data-aos='fade-up' sx={{ bgcolor:theme.palette.primary.lightBg }}>
+        <Container maxWidth="lg" sx={{ pb:2 }}>
             <Box sx={{ textAlign: 'center', mb: 4 }}>
                 <Typography
                     variant="h2"
                     component="h1"
                     sx={{
-                        fontWeight: 700,
-                        fontSize: { xs: '2rem', md: '2.5rem' },
-                        mb: 2
+                        py:1,
+                        fontWeight: 800,
+                        fontSize: { xs: '2rem', md: '4.5rem' },
+                        pt:1
                     }}
                 >
                     How BMG Works!
@@ -31,7 +32,7 @@ export default function HowBMGWorks() {
                     sx={{
                         color: 'text.secondary',
                         fontStyle: 'italic',
-                        mb: 3,
+                        mb: 1,
                         px: 2
                     }}
                 >
@@ -59,14 +60,14 @@ export default function HowBMGWorks() {
                 </Button>
             </Box>
 
-            <Box sx={{ position: 'relative', mt: 4 }}>
+            <Box sx={{ position: 'relative', mt: 0 }}>
                 <Box
                     sx={{
                         position: 'absolute',
                         top: -30,
                         left: -30,
-                        width: 80,
-                        height: 80,
+                        width: 180,
+                        height:180,
                         bgcolor: theme.palette.primary.main,
                         borderRadius: '50%',
                         zIndex: 0
@@ -78,8 +79,8 @@ export default function HowBMGWorks() {
                         position: 'absolute',
                         top: -20,
                         right: -20,
-                        width: 100,
-                        height: 100,
+                        width: 180,
+                        height: 180,
                         bgcolor: theme.palette.warning.light,
                         borderRadius: '50%',
                         zIndex: 0

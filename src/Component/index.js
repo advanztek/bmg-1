@@ -27,6 +27,7 @@ export { default as BMGPromoSection } from './BmgPromoSection';
 export { default as FeatureSection } from './FeatSection';
 export { default as PricingSection } from './PricingSection';
 export { default as TestimonialSlider } from './TestimonialSlider';
+export { default as LetsWorkTogether } from './LetsWork';
 
 
 //---DASHBOARD COMPONENT PATHS----//

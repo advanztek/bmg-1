@@ -46,6 +46,7 @@ const HeroMarketingSection = () => {
         >
             <Container maxWidth="lg">
                 <Box
+                data-aos='fade-up'
                     sx={{
                         display: 'flex',
                         alignItems: 'center',
@@ -62,7 +63,7 @@ const HeroMarketingSection = () => {
                             sx={{
                                 color: theme.palette.text.contrastText || '#fff',
                                 fontWeight: 800,
-                                fontSize: { xs: '2rem', sm: '2.5rem', md: '2.5rem' },
+                                fontSize: { xs: '2rem', sm: '2.5rem', md: '3.5rem' },
                                 lineHeight: 1.2,
                                 mb: 3,
                                 textShadow: '2px 2px 4px rgba(0,0,0,0.2)'

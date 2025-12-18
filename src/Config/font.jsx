@@ -2,6 +2,7 @@ export const FONT_FAMILY = {
     primary: 'Urbanist',
     secondary: 'Urbanist',
     tertiary: 'Syne',
+    unique: 'Montserrat',
 }
 
 export const typographySettings = {

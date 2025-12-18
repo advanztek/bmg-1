@@ -17,6 +17,7 @@ import {
     Collapse,
     Stack,
     Container,
+    useTheme,
 } from "@mui/material";
 
 
@@ -29,6 +30,8 @@ const iconSizes = {
 const FAQSection = () => {
     const [openIndex, setOpenIndex] = useState(0);
     const [activeCategory, setActiveCategory] = useState("General");
+
+    const theme = useTheme();
 
     const faqs = {
         General: [
@@ -135,12 +138,12 @@ const FAQSection = () => {
         <Box
             sx={{
                 minHeight: "100vh",
-                background: "linear-gradient(to bottom right, #F9FAFB, #EFF6FF, #EEF2FF)",
+                background: theme.palette.background.default,
                 py: 10,
                 px: 3,
             }}
         >
-            <Container maxWidth="lg">
+            <Container data-aos='fade-up' maxWidth="lg">
                 <Box maxWidth="1200px" mx="auto">
                     <Box textAlign="center" mb={8}>
                         <Box
@@ -190,7 +193,7 @@ const FAQSection = () => {
                                                 px: 3,
                                                 py: 3,
                                                 textTransform: "none",
-                                                color: "#111827",
+                                                color: theme.palette.text.primary,
                                                 fontWeight: "bold",
                                             }}
                                             endIcon={
@@ -212,7 +215,7 @@ const FAQSection = () => {
                                                 px={3}
                                                 pb={3}
                                                 pt={1}
-                                                color="#4B5563"
+                                                sx={{color: theme.palette.text.primary,}}
                                                 borderTop="1px solid #E5E7EB"
                                             >
                                                 {faq.answer}

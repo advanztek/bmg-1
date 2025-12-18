@@ -22,11 +22,9 @@ import {
     useTheme,
 } from "@mui/material";
 
-import { lightModeColors, darkModeColors } from "../../Config/color";
 import { useNavigate } from "react-router-dom";
 
 export default function AIServicesShowcase({ mode = "light" }) {
-    const colors = mode === "dark" ? darkModeColors : lightModeColors;
     const [activeService, setActiveService] = useState(0);
     const navigate = useNavigate();
     const theme = useTheme();
@@ -44,42 +42,42 @@ export default function AIServicesShowcase({ mode = "light" }) {
             name: "AI Video Generator",
             icon: <Video24Regular />,
             image: "https://images.unsplash.com/photo-1492619375914-88005aa9e8fb?w=800&h=600&fit=crop",
-            gradient: `linear-gradient(to bottom right, ${colors.secondary.main}, ${colors.primary.main})`,
+            gradient: `linear-gradient(to bottom right, ${theme.palette.secondary.main}, ${theme.palette.primary.main})`,
         },
         {
             id: 1,
             name: "AI Image Generator",
             icon: <Image24Regular />,
             image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=600&fit=crop",
-            gradient: `linear-gradient(to bottom right, ${colors.info.light}, ${colors.primary.main})`,
+            gradient: `linear-gradient(to bottom right, ${theme.palette.info.light}, ${theme.palette.primary.main})`,
         },
         {
             id: 2,
             name: "AI Video Editor",
             icon: <VideoClip24Regular />,
             image: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=800&h=600&fit=crop",
-            gradient: `linear-gradient(to bottom right, ${colors.warning.main}, ${colors.error.main})`,
+            gradient: `linear-gradient(to bottom right, ${theme.palette.warning.main}, ${theme.palette.error.main})`,
         },
         {
             id: 3,
             name: "AI Biz Strategy",
             icon: <ChartMultiple24Regular />,
             image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop",
-            gradient: `linear-gradient(to bottom right, ${colors.success.main}, ${colors.info.dark})`,
+            gradient: `linear-gradient(to bottom right, ${theme.palette.success.main}, ${theme.palette.info.dark})`,
         },
         {
             id: 4,
             name: "AI Voice Generator",
             icon: <MicSparkle24Regular />,
             image: "https://images.unsplash.com/photo-1589903308904-1010c2294adc?w=800&h=600&fit=crop",
-            gradient: `linear-gradient(to bottom right, ${colors.secondary.light}, ${colors.error.dark})`,
+            gradient: `linear-gradient(to bottom right, ${theme.palette.secondary.light}, ${theme.palette.error.dark})`,
         },
         {
             id: 5,
             name: "AI Web Generator",
             icon: <Globe24Regular />,
             image: "https://images.unsplash.com/photo-1547658719-da2b51169166?w=800&h=600&fit=crop",
-            gradient: `linear-gradient(to bottom right, ${colors.primary.light}, ${colors.secondary.dark})`,
+            gradient: `linear-gradient(to bottom right, ${theme.palette.primary.light}, ${theme.palette.secondary.dark})`,
         },
     ];
 
@@ -136,27 +134,27 @@ export default function AIServicesShowcase({ mode = "light" }) {
                 backgroundRepeat: "no-repeat",
             }}
         >
-            <Container maxWidth="lg">
+            <Container  maxWidth="lg">
                 <Box sx={{ maxWidth: "1400px", mx: "auto", px: { xs: 2, sm: 3 } }}>
                     {/* HEADER */}
-                    <Grid container alignItems="center" justifyContent="space-between" mb={{ xs: 4, md: 6 }}>
+                    <Grid data-aos='fade-down' container alignItems="center" justifyContent="space-between" mb={{ xs: 4, md: 6 }}>
                         <Grid size={{ xs: 12, md: 8 }}>
                             <Typography
-                                variant="h3"
-                                fontWeight={700}
+                                variant="h1"
+                                fontWeight={900}
                                 mb={1}
-                                color={colors.text.primary}
+                                color={theme.palette.text.primary}
                                 sx={{
-                                    fontSize: { xs: '1.75rem', sm: '2.25rem', md: '3rem' }
+                                    fontSize: { xs: '1.75rem', sm: '2.25rem', md: '3.9rem' }
                                 }}
                             >
                                 Unlock Infinite Possibilities with AI Precision
                             </Typography>
                             <Typography
                                 variant="body1"
-                                color={colors.text.primary}
+                                color={theme.palette.text.primary}
                                 sx={{
-                                    fontSize: { xs: '0.95rem', md: '1rem' }
+                                    fontSize: { xs: '0.95rem', md: '2rem' }
                                 }}
                             >
                                 Have the world at your fingertips with BMG AI Service
@@ -170,15 +168,15 @@ export default function AIServicesShowcase({ mode = "light" }) {
                                 fullWidth
                                 sx={{
                                     px: 3,
-                                    py: 1.2,
+                                    py: 2.2,
                                     fontWeight: 600,
                                     borderWidth: 2,
                                     borderRadius: 2,
-                                    borderColor: colors.primary.main,
-                                    color: colors.primary.main,
+                                    borderColor: theme.palette.primary.main,
+                                    color: theme.palette.primary.main,
                                     "&:hover": {
-                                        backgroundColor: colors.primary.main,
-                                        color: colors.primary.contrastText,
+                                        backgroundColor: theme.palette.primary.main,
+                                        color: theme.palette.primary.contrastText,
                                         borderWidth: 2,
                                     },
                                 }}
@@ -188,7 +186,7 @@ export default function AIServicesShowcase({ mode = "light" }) {
                         </Grid>
                     </Grid>
 
-                    <Grid container spacing={{ xs: 3, md: 6 }}>
+                    <Grid data-aos='flip-down' container spacing={{ xs: 3, md: 6 }}>
                         {/* LEFT SIDEBAR - SERVICE BUTTONS */}
                         <Grid size={{ xs: 12, md: 3 }}>
                             <Stack
@@ -202,7 +200,7 @@ export default function AIServicesShowcase({ mode = "light" }) {
                                         height: '6px',
                                     },
                                     '&::-webkit-scrollbar-thumb': {
-                                        backgroundColor: colors.primary.main,
+                                        backgroundColor: theme.palette.primary.main,
                                         borderRadius: '3px',
                                     },
                                 }}
@@ -224,16 +222,16 @@ export default function AIServicesShowcase({ mode = "light" }) {
                                             flexShrink: { xs: 0, md: 1 },
                                             whiteSpace: 'nowrap',
                                             bgcolor: activeService === index
-                                                ? colors.primary.main
-                                                : colors.background.paper,
+                                                ? theme.palette.primary.main
+                                                : theme.palette.background.paper,
                                             color: activeService === index
-                                                ? colors.primary.contrastText
-                                                : colors.primary.main,
+                                                ? theme.palette.primary.contrastText
+                                                : theme.palette.primary.main,
                                             "&:hover": {
                                                 boxShadow: 4,
                                                 bgcolor: activeService === index
-                                                    ? colors.primary.dark
-                                                    : colors.primary.lightBg,
+                                                    ? theme.palette.primary.dark
+                                                    : theme.palette.primary.lightBg,
                                             },
                                             transition: 'all 0.3s ease',
                                         }}
@@ -280,7 +278,7 @@ export default function AIServicesShowcase({ mode = "light" }) {
                                                 maxWidth: { xs: '400px', sm: '500px', md: 'none' },
                                                 overflow: "hidden",
                                                 borderRadius: 4,
-                                                backgroundColor: colors.background.paper,
+                                                backgroundColor: theme.palette.background.paper,
                                                 boxShadow: index === activeService ? 8 : 4,
                                                 ...style,
                                             }}
@@ -298,7 +296,7 @@ export default function AIServicesShowcase({ mode = "light" }) {
                                                         width: { xs: 10, md: 14 },
                                                         height: { xs: 10, md: 14 },
                                                         borderRadius: "50%",
-                                                        bgcolor: colors.error.main,
+                                                        bgcolor: theme.palette.error.main,
                                                     }}
                                                 />
                                                 <Box
@@ -306,7 +304,7 @@ export default function AIServicesShowcase({ mode = "light" }) {
                                                         width: { xs: 10, md: 14 },
                                                         height: { xs: 10, md: 14 },
                                                         borderRadius: "50%",
-                                                        bgcolor: colors.warning.main,
+                                                        bgcolor: theme.palette.warning.main,
                                                     }}
                                                 />
                                                 <Box
@@ -314,7 +312,7 @@ export default function AIServicesShowcase({ mode = "light" }) {
                                                         width: { xs: 10, md: 14 },
                                                         height: { xs: 10, md: 14 },
                                                         borderRadius: "50%",
-                                                        bgcolor: colors.success.main,
+                                                        bgcolor: theme.palette.success.main,
                                                     }}
                                                 />
                                             </Box>
@@ -417,13 +415,13 @@ export default function AIServicesShowcase({ mode = "light" }) {
                                                             transform: "translate(-50%, -50%)",
                                                             width: { xs: 60, sm: 70, md: 80 },
                                                             height: { xs: 60, sm: 70, md: 80 },
-                                                            bgcolor: colors.background.paper,
-                                                            color: colors.text.primary,
+                                                            bgcolor: theme.palette.background.paper,
+                                                            color: theme.palette.text.primary,
                                                             borderRadius: "50%",
                                                             boxShadow: 6,
                                                             '&:hover': {
-                                                                bgcolor: colors.primary.main,
-                                                                color: colors.primary.contrastText,
+                                                                bgcolor: theme.palette.primary.main,
+                                                                color: theme.palette.primary.contrastText,
                                                                 transform: "translate(-50%, -50%) scale(1.1)",
                                                             },
                                                             transition: 'all 0.3s ease',
