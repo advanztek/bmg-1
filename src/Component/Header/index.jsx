@@ -85,7 +85,7 @@ const MegaDropdown = ({ items, isOpen, onClose }) => {
         >
             <Grid container sx={{ minHeight: 450 }}>
                 <Grid
-                    size={{ xs:3 }}
+                    size={{ xs: 3 }}
                     sx={{
                         backgroundColor: theme.palette.mode === 'dark'
                             ? theme.palette.primary.lightBg
@@ -162,7 +162,7 @@ const MegaDropdown = ({ items, isOpen, onClose }) => {
                     ))}
                 </Grid>
 
-                <Grid size={{ xs:9 }} sx={{ p: 4 }}>
+                <Grid size={{ xs: 9 }} sx={{ p: 4 }}>
                     {currentCategory && (
                         <>
                             <Box sx={{ mb: 4 }}>
@@ -189,7 +189,7 @@ const MegaDropdown = ({ items, isOpen, onClose }) => {
 
                             <Grid container spacing={2.5}>
                                 {currentCategory.items.map((subItem, idx) => (
-                                    <Grid size={{ xs:6 }} key={idx}>
+                                    <Grid size={{ xs: 6 }} key={idx}>
                                         <Box
                                             onClick={(e) => handleItemClick(e, subItem.path)}
                                             sx={{
@@ -663,6 +663,7 @@ const Header = () => {
                 sx={{
                     backgroundColor: theme.palette.background.paper,
                     backdropFilter: 'blur(20px)',
+                    borderRadius: 0,
                     boxShadow: `0 2px 12px ${theme.palette.mode === 'dark' ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0.08)'}`,
                     borderBottom: `1px solid ${theme.palette.divider}`
                 }}
@@ -674,7 +675,7 @@ const Header = () => {
                             <Box
                                 component="img"
                                 alt="Logo"
-                                src="/Logo/Logo.png"
+                                src={theme.palette.mode === 'dark' ? '/Logo/LogoLight.png' : '/Logo/Logo.png'}
                                 sx={{
                                     width: '80px',
                                     height: '100%',
@@ -793,7 +794,7 @@ const Header = () => {
                                     }
                                 }}
                             >
-                                Get Started
+                                Get Started 🚀
                             </Button>
                         </Box>
 

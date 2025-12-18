@@ -26,7 +26,7 @@ const PortfolioSection = () => {
     ];
 
     const navigate = useNavigate();
-    
+
     return (
         <Box
             sx={{
@@ -44,11 +44,10 @@ const PortfolioSection = () => {
                         variant="h3"
                         fontWeight="900"
                         color="text.primary"
-                        sx={{ mb: 1, fontSize:{ xs: 24, sm: 28, md: 92 } }}
+                        sx={{ mb: 1, fontSize: { xs: 24, sm: 28, md: 92 } }}
                     >
-                        Portfolio
+                        🎨 Portfolio ✨
                     </Typography>
-
                     <Typography
                         variant="body1"
                         color="text.secondary"
@@ -133,7 +132,7 @@ const PortfolioSection = () => {
 
                 <Box textAlign="center" mt={5}>
                     <Button
-                       onClick={() => navigate("/portfolio")}
+                        onClick={() => navigate("/portfolio")}
                         variant="contained"
                         sx={{
                             backgroundColor: theme.palette.primary.main,
@@ -147,7 +146,7 @@ const PortfolioSection = () => {
                             },
                         }}
                     >
-                        View Portfolio
+                        View Portfolio🚀 
                     </Button>
                 </Box>
             </Container>

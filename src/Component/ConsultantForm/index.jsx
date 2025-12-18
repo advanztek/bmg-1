@@ -64,7 +64,7 @@ export default function ConsultantForm() {
             <Container data-aos='fade-up' maxWidth="lg">
                 <Grid container spacing={8} alignItems="center">
                     {/* Left Side - Form */}
-                    <Grid size={{ xs:12, md: 6 }}>
+                    <Grid size={{ xs: 12, md: 6 }}>
                         <Box
                             sx={{
                                 maxWidth: 550,
@@ -82,15 +82,16 @@ export default function ConsultantForm() {
                                     letterSpacing: "-0.02em",
                                 }}
                             >
-                                BOOK A FREE
+                                BOOK A FREE 💬
                                 <br />
                                 CONSULTATION
                             </Typography>
 
+
                             {/* Form Fields */}
                             <Grid container spacing={2.5}>
                                 {/* Full Name */}
-                                <Grid size={{ xs:12, md: 6 }}>
+                                <Grid size={{ xs: 12, md: 6 }}>
                                     <TextField
                                         fullWidth
                                         placeholder="Full Name"
@@ -126,7 +127,7 @@ export default function ConsultantForm() {
                                 </Grid>
 
                                 {/* Email */}
-                                <Grid size={{ xs:12, md: 6 }}>
+                                <Grid size={{ xs: 12, md: 6 }}>
                                     <TextField
                                         fullWidth
                                         placeholder="Email"
@@ -162,7 +163,7 @@ export default function ConsultantForm() {
                                 </Grid>
 
                                 {/* Phone with Country Code */}
-                                <Grid size={{ xs:12, md: 6 }}>
+                                <Grid size={{ xs: 12, md: 6 }}>
                                     <Box sx={{ display: "flex", gap: 1 }}>
                                         <TextField
                                             value="+234"
@@ -222,7 +223,7 @@ export default function ConsultantForm() {
                                 </Grid>
 
                                 {/* Service Select */}
-                                <Grid size={{ xs:12, md: 6 }}>
+                                <Grid size={{ xs: 12, md: 6 }}>
                                     <FormControl fullWidth>
                                         <Select
                                             value={formData.service}
@@ -267,7 +268,7 @@ export default function ConsultantForm() {
                                 </Grid>
 
                                 {/* Submit Button */}
-                                <Grid size={{ xs:12 }}>
+                                <Grid size={{ xs: 12 }}>
                                     <Button
                                         fullWidth
                                         onClick={handleSubmit}
@@ -298,7 +299,7 @@ export default function ConsultantForm() {
                     </Grid>
 
                     {/* Right Side - Illustration/Image Placeholder */}
-                    <Grid size={{ xs:12, md: 6 }}>
+                    <Grid size={{ xs: 12, md: 6 }}>
                         <Box
                             sx={{
                                 display: "flex",

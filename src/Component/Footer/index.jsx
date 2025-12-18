@@ -105,7 +105,7 @@ const Footer = () => {
             >
               <Box
                 component="img"
-                src="/Logo/Logo.png"
+                src={theme.palette.mode === 'dark' ? '/Logo/LogoLight.png' : '/Logo/LogoLight.png'}
                 sx={{ width: 90, height: "auto" }}
               />
             </Box>

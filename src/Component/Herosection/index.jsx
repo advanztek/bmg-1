@@ -59,7 +59,7 @@ export const HeroSection = () => {
                     inset: 0,
                     backgroundColor: theme.palette.mode === 'dark'
                         ? 'rgba(0, 0, 0, 0.8)'
-                        : 'rgba(255, 255, 255, 0.9)',
+                        : 'rgba(0, 0, 0, 0.8)',
                     backdropFilter: 'blur(2px)',
                     zIndex: 0
                 }
@@ -92,7 +92,7 @@ export const HeroSection = () => {
                                         sx={{
                                             fontSize: { xs: "2.5rem", md: "3rem", lg: "4rem" },
                                             fontWeight: 900,
-                                            color: theme.palette.primary.dark,
+                                            color:'#fff',
                                             lineHeight: 1.2
                                         }}
                                     >

@@ -77,14 +77,14 @@ export default function CategoriesSection() {
 
   const navigate = useNavigate();
 
-  
+
   return (
     <Box sx={{
-      bgcolor:theme.palette.primary.lightBg,
+      bgcolor: theme.palette.primary.lightBg,
       // py: 10,
       position: 'relative',
       overflow: 'hidden',
-      
+
     }}>
       <Container data-aos='fade-down' maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
         {/* Header */}
@@ -104,11 +104,13 @@ export default function CategoriesSection() {
                 mt: 3,
                 letterSpacing: '-1px',
                 textTransform: 'uppercase',
-                color: theme.palette.primary.light,
+                color: theme.palette.text.primary,
               }}
             >
-              Categories
+              Categories 🔖
             </Typography>
+
+
             {/* <Typography
               variant="body1"
               sx={{
@@ -133,11 +135,11 @@ export default function CategoriesSection() {
           }}
         >
           <Box
-           data-aos='fade-down'
+            // data-aos='fade-down'
             sx={{
               display: 'flex',
               gap: 1,
-              py:2,
+              py: 2,
               transform: {
                 xs: `translateX(-${currentIndex * 100}%)`,
                 sm: `translateX(-${currentIndex * 50}%)`,

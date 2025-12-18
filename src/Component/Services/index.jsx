@@ -53,7 +53,7 @@ export default function ServiceSlider() {
                 <Box
                     data-aos='fade-down'
                     sx={{
-                        display: { xs: 'block', md:'flex' },
+                        display: { xs: 'block', md: 'flex' },
                         justifyContent: 'space-between',
                         alignItems: 'center',
                         // mb: 3,
@@ -67,8 +67,9 @@ export default function ServiceSlider() {
                             color: theme.palette.text.heading,
                         }}
                     >
-                        Services
+                        Services 🧩
                     </Typography>
+
 
                     <Button
                         onClick={handleDiscoverMore}

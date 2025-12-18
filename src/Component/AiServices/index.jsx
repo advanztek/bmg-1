@@ -113,10 +113,10 @@ export default function AIServicesSection() {
                             fontWeight="900"
                             sx={{ fontSize: { xs: '2.5rem', md: '3.5rem' } }}
                             color={theme.palette.text.heading}
-                        // mb={1}
                         >
-                            AI Services
+                            AI Services 🤖
                         </Typography>
+
 
                         <Typography
                             variant="body1"
@@ -148,8 +148,9 @@ export default function AIServicesSection() {
                                 transition: "all 0.3s ease",
                             }}
                         >
-                            Start for Free
+                            Start for Free 🚀
                         </Button>
+
                     </Box>
                 </Box>
 
