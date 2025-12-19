@@ -105,7 +105,7 @@ const Footer = () => {
             >
               <Box
                 component="img"
-                src="/Logo/Logo.png"
+                src={theme.palette.mode === 'dark' ? '/Logo/LogoLight.png' : '/Logo/LogoLight.png'}
                 sx={{ width: 90, height: "auto" }}
               />
             </Box>
@@ -171,7 +171,7 @@ const Footer = () => {
                       color: theme.palette.primary.contrastText
                     },
                     textDecoration: "none",
-                    color: theme.palette.text.primary,
+                    color: theme.palette.text.unique,
                     cursor: "pointer"
                   }}
                 >

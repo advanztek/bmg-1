@@ -76,7 +76,8 @@ export const lightModeColors = {
     primary: "rgba(0, 0, 0, 0.87)",
     secondary: "rgba(0, 0, 0, 0.6)",
     disabled: "rgba(0, 0, 0, 0.38)",
-    heading: "#1a1a1a"
+    heading: "#1a1a1a",
+    unique: '#000',
   },
   divider: "rgba(0, 0, 0, 0.12)",
   accent: {
@@ -93,17 +94,17 @@ export const lightModeColors = {
 export const darkModeColors = {
   primary: {
     main: "#90caf9",
-    light: "#e3f2fd",
+    light: "#000",
     dark: "#2f317c",
-    contrastText: "rgba(0, 0, 0, 0.87)",
-    lightBg: "#1e293b",
+    contrastText: "#fff",
+    lightBg: "#000",
     bg: "rgba(15, 20, 25, 0.95)"
   },
   secondary: {
     main: "#ce93d8",
     light: "#f3e5f5",
     dark: "#ab47bc",
-    contrastText: "rgba(0, 0, 0, 0.87)"
+    contrastText: "#fff"
   },
   error: {
     main: "#f44336",
@@ -112,8 +113,8 @@ export const darkModeColors = {
     contrastText: "#ffffff"
   },
   warning: {
-    main: "#ffa726",
-    light: "#ffb74d",
+    main: "#f57c00",
+    light: "#f57c00",
     dark: "#f57c00",
     contrastText: "rgba(0, 0, 0, 0.87)"
   },
@@ -135,16 +136,17 @@ export const darkModeColors = {
     glass: "rgba(15, 20, 25, 0.95)"
   },
   text: {
-    primary: "#ffffff",
+    primary: "#fff",
     secondary: "rgba(255, 255, 255, 0.7)",
     disabled: "rgba(255, 255, 255, 0.5)",
-    heading: "#ffffff"
+    heading: "#ffffffe3",
+    unique: '#000',
   },
   divider: "rgba(255, 255, 255, 0.12)",
   accent: {
     yellow: "#ffd54f",
     blue: "#64b5f6",
-    lightBlue: "#90caf9",
+    lightBlue: "#000",
     red: "#ef5350",
     gray: "#424242",
     lightGray: "#616161",

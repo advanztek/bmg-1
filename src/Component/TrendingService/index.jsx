@@ -51,23 +51,33 @@ export default function TrendingService() {
     const navigate = useNavigate();
     const handleViewMore = () => {
         navigate('/service');
-    }   
+    }
 
     return (
         <Box
             sx={{
                 minHeight: "100vh",
-                bgcolor:theme.palette.primary.lightBg,
-                py: 6,
+                bgcolor: theme.palette.primary.lightBg,
+                py: 3,
                 px: 2,
             }}
         >
-            <Container maxWidth="lg" mx="auto">
-                <Box display={{ xs:"block", md:"flex" }} justifyContent="space-between" alignItems="flex-start" mb={4}>
+            <Container data-aos='fade-up' maxWidth="lg" mx="auto">
+                <Box display={{ xs: "block", md: "flex" }} justifyContent="space-between" alignItems="flex-start" mb={4}>
                     <Box sx={{ mb: { xs: 3, md: 0 } }}>
-                        <Typography sx={{fontFamily:FONT_FAMILY.tertiary}} variant="h2" fontWeight="bold" color="text.primary" mb={2}>
-                            TRENDING
+                        <Typography
+                            sx={{
+                                fontFamily: FONT_FAMILY.primary,
+                                fontSize: { xs: '2.5rem', md: '3.5rem' },
+                            }}
+                            variant="h2"
+                            fontWeight="900"
+                            color="text.primary"
+                            mb={2}
+                        >
+                            TRENDING🔥
                         </Typography>
+
 
                         <Box
                             mb={2}
@@ -85,7 +95,7 @@ export default function TrendingService() {
                             </Typography>
                         </Box>
 
-                        <Typography sx={{fontFamily:FONT_FAMILY.tertiary}} variant="body1" color="text.secondary" maxWidth="600px">
+                        <Typography sx={{ fontFamily: FONT_FAMILY.tertiary }} variant="body1" color="text.secondary" maxWidth="600px">
                             Bite-sized digital marketing services to help you grow your business.
                         </Typography>
                     </Box>
@@ -153,7 +163,7 @@ export default function TrendingService() {
                                 <Box
                                     sx={{
                                         position: "absolute",
-                                        inset: 0,                                      
+                                        inset: 0,
                                     }}
                                 />
 
@@ -215,7 +225,7 @@ export default function TrendingService() {
                 </Grid>
 
                 <Box textAlign="center" mt={6}>
-                    <Typography color="text.secondary" sx={{fontFamily:FONT_FAMILY.tertiary}} mb={2}>
+                    <Typography color="text.secondary" sx={{ fontFamily: FONT_FAMILY.tertiary }} mb={2}>
                         Explore more trending services and boost your business today
                     </Typography>
 

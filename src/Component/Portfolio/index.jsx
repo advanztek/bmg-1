@@ -11,22 +11,22 @@ const PortfolioSection = () => {
     const items = [
         "/Images/Img_4.jpg",
         "/Images/Img_5.jpg",
-        "/Images/Img_4.jpg",
-        "/Images/Img_5.jpg",
+        "/Marq/m_1.png",
+        "/Marq/m_2.png",
+        "/Marq/m_3.png",
+        "/Marq/m_4.png",
+        "/Marq/m_5.png",
+        "/Marq/m_6.png",
+        "/Marq/m_9.png",
+        "/Marq/m_10.png",
+        "/Marq/m_11.png",
+        "/Marq/m_12.png",
         "/Images/Img_1.jpg",
-        "/Images/Img_5.jpg",
-        "/Images/Img_5.jpg",
-        "/Images/Img_4.jpg",
-        "/Images/Img_5.jpg",
-        "/Images/Img_4.jpg",
-        "/Images/Img_5.jpg",
-        "/Images/Img_4.jpg",
-        "/Images/Img_1.jpg",
-        "/Images/Img_4.jpg",
+        "/Marq/m_13.png",
     ];
 
     const navigate = useNavigate();
-    
+
     return (
         <Box
             sx={{
@@ -36,19 +36,18 @@ const PortfolioSection = () => {
                 borderRadius: 4,
             }}
         >
-            <Container maxWidth="lg">
+            <Container data-aos='fade-down' maxWidth="lg">
 
                 {/* Header */}
                 <Box textAlign="center" mb={4}>
                     <Typography
                         variant="h3"
-                        fontWeight="700"
+                        fontWeight="900"
                         color="text.primary"
-                        sx={{ mb: 1 }}
+                        sx={{ mb: 1, fontSize: { xs: 24, sm: 28, md: 92 } }}
                     >
-                        Portfolio
+                        🎨 Portfolio ✨
                     </Typography>
-
                     <Typography
                         variant="body1"
                         color="text.secondary"
@@ -61,18 +60,18 @@ const PortfolioSection = () => {
                     </Typography>
                 </Box>
 
-                <Marquee pauseOnHover speed={40} gradient={false} style={{ padding: "5px 0" }}>
+                <Marquee pauseOnHover speed={40} gradient={false} style={{ padding: "1px 0" }}>
                     {items.map((img, index) => (
                         <Box
                             key={`row1-${index}`}
                             sx={{
-                                width: 150,
-                                height: 100,
+                                width: 90,
+                                height: 90,
                                 borderRadius: 2,
                                 overflow: "hidden",
                                 boxShadow: 2,
                                 cursor: "pointer",
-                                mx: 1.5,
+                                mx: 0.5,
                                 transition: "0.3s",
                                 "&:hover": {
                                     transform: "translateY(-5px)",
@@ -104,13 +103,13 @@ const PortfolioSection = () => {
                         <Box
                             key={`row2-${index}`}
                             sx={{
-                                width: 150,
-                                height: 100,
+                                width: 90,
+                                height: 90,
                                 borderRadius: 2,
                                 overflow: "hidden",
                                 boxShadow: 2,
                                 cursor: "pointer",
-                                mx: 1.5,
+                                mx: 0.5,
                                 transition: "0.3s",
                                 "&:hover": {
                                     transform: "translateY(-5px)",
@@ -133,7 +132,7 @@ const PortfolioSection = () => {
 
                 <Box textAlign="center" mt={5}>
                     <Button
-                       onClick={() => navigate("/portfolio")}
+                        onClick={() => navigate("/portfolio")}
                         variant="contained"
                         sx={{
                             backgroundColor: theme.palette.primary.main,
@@ -147,7 +146,7 @@ const PortfolioSection = () => {
                             },
                         }}
                     >
-                        View Portfolio
+                        View Portfolio🚀 
                     </Button>
                 </Box>
             </Container>
