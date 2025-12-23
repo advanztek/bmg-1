@@ -106,7 +106,7 @@ export default function AIServicesSection() {
             }}
         >
             <Container maxWidth="lg">
-                <Box data-aos='zoom-out' sx={{ display: { xs: 'block', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center' }}>
+                <Box data-aos='fade-up' sx={{ display: { xs: 'block', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center' }}>
                     <Box>
                         <Typography
                             variant="h3"
@@ -154,7 +154,7 @@ export default function AIServicesSection() {
                     </Box>
                 </Box>
 
-                <Grid container spacing={3} data-aos='zoom-out'>
+                <Grid container spacing={3} data-aos='fade-up'>
                     {services.map((service, index) => {
                         const Icon = service.icon;
                         const colorScheme = cardColorSchemes[index % cardColorSchemes.length];

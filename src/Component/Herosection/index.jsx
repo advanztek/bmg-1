@@ -123,29 +123,6 @@ export const HeroSection = () => {
                                 ))}
                             </Box>
 
-                            <Button
-                                onClick={handleExplore}
-                                variant="outlined"
-                                endIcon={<ArrowForward />}
-                                sx={{
-                                    borderColor: theme.palette.warning.light,
-                                    color: theme.palette.warning.light,
-                                    fontSize: "1rem",
-                                    px: 3,
-                                    py: 1.5,
-                                    borderRadius: 2,
-                                    mb: 4,
-                                    textTransform: "none",
-                                    fontWeight: 600,
-                                    "&:hover": {
-                                        borderColor: theme.palette.warning.main,
-                                        backgroundColor: theme.palette.warning.light + "33"
-                                    }
-                                }}
-                            >
-                                Explore BMG
-                            </Button>
-
                             {/* REVIEW CARD */}
                             <Box
                                 sx={{
@@ -281,7 +258,7 @@ export const HeroSection = () => {
                                 <Typography
                                     sx={{
                                         fontWeight: 600,
-                                        color: theme.palette.text.primary,
+                                        color: theme.palette.text.small,
                                         fontSize: "0.9rem"
                                     }}
                                 >
@@ -290,7 +267,7 @@ export const HeroSection = () => {
 
                                 <Typography
                                     sx={{
-                                        color: theme.palette.text.secondary,
+                                        color: theme.palette.text.small,
                                         fontSize: "0.85rem"
                                     }}
                                 >

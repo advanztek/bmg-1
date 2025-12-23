@@ -81,7 +81,7 @@ export default function CategoriesSection() {
   return (
     <Box sx={{
       bgcolor: theme.palette.primary.lightBg,
-      // py: 10,
+      py: 10,
       position: 'relative',
       overflow: 'hidden',
 
@@ -302,7 +302,7 @@ export default function CategoriesSection() {
                     </Box> */}
 
                     {/* GET Button */}
-                    <Button
+                    {/* <Button
                       className="get-button"
                       fullWidth
                       variant="contained"
@@ -328,7 +328,7 @@ export default function CategoriesSection() {
                       }}
                     >
                       GET
-                    </Button>
+                    </Button> */}
                   </Box>
                 </CardContent>
               </Card>

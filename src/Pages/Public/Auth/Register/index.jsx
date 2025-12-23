@@ -256,7 +256,7 @@ const LoginPage = () => {
                 }
               }}
             >
-              SIGN IN
+              SIGN UP
             </Button>
 
             <Typography

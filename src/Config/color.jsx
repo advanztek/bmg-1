@@ -29,9 +29,10 @@ export const defaultColors = [
 
 export const lightModeColors = {
   primary: {
-    main: "#2f317c",
-    light: "#2f317c",
-    dark: "#2f317c",
+    main: "#080c96ff",
+    light: "#080c96ff",
+    // dark: "#2f317c",
+    dark: "#080c96ff",
     contrastText: "#ffffff",
     lightBg: "#e3f2fd",
     bg: "#0f1419"
@@ -78,6 +79,7 @@ export const lightModeColors = {
     disabled: "rgba(0, 0, 0, 0.38)",
     heading: "#1a1a1a",
     unique: '#000',
+    small: '#fff',
   },
   divider: "rgba(0, 0, 0, 0.12)",
   accent: {
@@ -95,7 +97,7 @@ export const darkModeColors = {
   primary: {
     main: "#90caf9",
     light: "#000",
-    dark: "#2f317c",
+    dark: "#080c96ff",
     contrastText: "#fff",
     lightBg: "#000",
     bg: "rgba(15, 20, 25, 0.95)"
@@ -141,6 +143,7 @@ export const darkModeColors = {
     disabled: "rgba(255, 255, 255, 0.5)",
     heading: "#ffffffe3",
     unique: '#000',
+    small: '#fff',
   },
   divider: "rgba(255, 255, 255, 0.12)",
   accent: {

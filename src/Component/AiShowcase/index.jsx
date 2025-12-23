@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
     Video24Regular,
     Image24Regular,
@@ -20,16 +20,21 @@ import {
     Container,
     useMediaQuery,
     useTheme,
+    TextField,
+    InputAdornment,
 } from "@mui/material";
 
 import { useNavigate } from "react-router-dom";
 
 export default function AIServicesShowcase({ mode = "light" }) {
     const [activeService, setActiveService] = useState(0);
+    const [userInput, setUserInput] = useState("");
+    const [displayText, setDisplayText] = useState("");
+    const [isTyping, setIsTyping] = useState(true);
     const navigate = useNavigate();
     const theme = useTheme();
+    const typingTimeoutRef = useRef(null);
 
-    // Properly detect mobile screens using MUI's useMediaQuery
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     const handleGetStarted = () => {
@@ -43,6 +48,8 @@ export default function AIServicesShowcase({ mode = "light" }) {
             icon: <Video24Regular />,
             image: "https://images.unsplash.com/photo-1492619375914-88005aa9e8fb?w=800&h=600&fit=crop",
             gradient: `linear-gradient(to bottom right, ${theme.palette.secondary.main}, ${theme.palette.primary.main})`,
+            placeholder: "Generate a cinematic product showcase...",
+            route: "/video-generator"
         },
         {
             id: 1,
@@ -50,6 +57,8 @@ export default function AIServicesShowcase({ mode = "light" }) {
             icon: <Image24Regular />,
             image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=600&fit=crop",
             gradient: `linear-gradient(to bottom right, ${theme.palette.info.light}, ${theme.palette.primary.main})`,
+            placeholder: "Create a futuristic city landscape...",
+            route: "/image-generator"
         },
         {
             id: 2,
@@ -57,6 +66,8 @@ export default function AIServicesShowcase({ mode = "light" }) {
             icon: <VideoClip24Regular />,
             image: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=800&h=600&fit=crop",
             gradient: `linear-gradient(to bottom right, ${theme.palette.warning.main}, ${theme.palette.error.main})`,
+            placeholder: "Edit my video with smooth transitions...",
+            route: "/video-editor"
         },
         {
             id: 3,
@@ -64,6 +75,8 @@ export default function AIServicesShowcase({ mode = "light" }) {
             icon: <ChartMultiple24Regular />,
             image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop",
             gradient: `linear-gradient(to bottom right, ${theme.palette.success.main}, ${theme.palette.info.dark})`,
+            placeholder: "Generate a business strategy for my startup...",
+            route: "/biz-strategy"
         },
         {
             id: 4,
@@ -71,6 +84,8 @@ export default function AIServicesShowcase({ mode = "light" }) {
             icon: <MicSparkle24Regular />,
             image: "https://images.unsplash.com/photo-1589903308904-1010c2294adc?w=800&h=600&fit=crop",
             gradient: `linear-gradient(to bottom right, ${theme.palette.secondary.light}, ${theme.palette.error.dark})`,
+            placeholder: "Create a professional voiceover narration...",
+            route: "/voice-generator"
         },
         {
             id: 5,
@@ -78,11 +93,65 @@ export default function AIServicesShowcase({ mode = "light" }) {
             icon: <Globe24Regular />,
             image: "https://images.unsplash.com/photo-1547658719-da2b51169166?w=800&h=600&fit=crop",
             gradient: `linear-gradient(to bottom right, ${theme.palette.primary.light}, ${theme.palette.secondary.dark})`,
+            placeholder: "Build a modern landing page for my agency...",
+            route: "/web-generator"
         },
     ];
 
+    // Typing animation effect
+    useEffect(() => {
+        if (userInput) {
+            setIsTyping(false);
+            setDisplayText(userInput);
+            return;
+        }
+
+        setIsTyping(true);
+        const currentPlaceholder = services[activeService].placeholder;
+        let currentIndex = 0;
+
+        const typeNextChar = () => {
+            if (currentIndex < currentPlaceholder.length) {
+                setDisplayText(currentPlaceholder.slice(0, currentIndex + 1));
+                currentIndex++;
+                typingTimeoutRef.current = setTimeout(typeNextChar, 80);
+            } else {
+                // Pause at the end, then restart
+                typingTimeoutRef.current = setTimeout(() => {
+                    currentIndex = 0;
+                    setDisplayText("");
+                    typingTimeoutRef.current = setTimeout(typeNextChar, 500);
+                }, 2000);
+            }
+        };
+
+        typeNextChar();
+
+        return () => {
+            if (typingTimeoutRef.current) {
+                clearTimeout(typingTimeoutRef.current);
+            }
+        };
+    }, [activeService, userInput]);
+
+    const handleServiceChange = (index) => {
+        setActiveService(index);
+        setUserInput("");
+        setDisplayText("");
+    };
+
+    // Navigate to the service page when clicking on active card
+    const handleCardClick = (index) => {
+        if (index === activeService) {
+            // If clicking on active card, navigate to that service's page
+            navigate(services[index].route);
+        } else {
+            // If clicking on inactive card, just make it active
+            handleServiceChange(index);
+        }
+    };
+
     const getCardStyle = (index) => {
-        // Active card always centered
         if (index === activeService) {
             return {
                 zIndex: 50,
@@ -95,14 +164,12 @@ export default function AIServicesShowcase({ mode = "light" }) {
             };
         }
 
-        // On mobile, hide all inactive cards
         if (isMobile) {
             return {
                 display: "none",
             };
         }
 
-        // Desktop: show stacked cards behind active one
         const positions = [
             { x: "-120px", y: "-80px", scale: 0.7, rotate: -8, zIndex: 30 },
             { x: "100px", y: "-100px", scale: 0.65, rotate: 5, zIndex: 25 },
@@ -134,7 +201,7 @@ export default function AIServicesShowcase({ mode = "light" }) {
                 backgroundRepeat: "no-repeat",
             }}
         >
-            <Container  maxWidth="lg">
+            <Container maxWidth="lg">
                 <Box sx={{ maxWidth: "1400px", mx: "auto", px: { xs: 2, sm: 3 } }}>
                     {/* HEADER */}
                     <Grid data-aos='fade-down' container alignItems="center" justifyContent="space-between" mb={{ xs: 4, md: 6 }}>
@@ -181,7 +248,7 @@ export default function AIServicesShowcase({ mode = "light" }) {
                                     },
                                 }}
                             >
-                                Get Started Now
+                                Start for Free
                             </Button>
                         </Grid>
                     </Grid>
@@ -210,7 +277,7 @@ export default function AIServicesShowcase({ mode = "light" }) {
                                         key={service.id}
                                         fullWidth
                                         startIcon={service.icon}
-                                        onClick={() => setActiveService(index)}
+                                        onClick={() => handleServiceChange(index)}
                                         sx={{
                                             textTransform: "none",
                                             px: { xs: 2, md: 3 },
@@ -244,6 +311,69 @@ export default function AIServicesShowcase({ mode = "light" }) {
 
                         {/* RIGHT SIDE - CARD SHOWCASE */}
                         <Grid size={{ xs: 12, md: 9 }}>
+                            {/* Animated Input Field */}
+                            <Box sx={{ mb: 1 }}>
+                                <TextField
+                                    fullWidth
+                                    value={userInput}
+                                    onChange={(e) => setUserInput(e.target.value)}
+                                    placeholder={isTyping ? "" : services[activeService].placeholder}
+                                    variant="outlined"
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                {services[activeService].icon}
+                                            </InputAdornment>
+                                        ),
+                                        sx: {
+                                            bgcolor: theme.palette.background.paper,
+                                            borderRadius: 3,
+                                            fontSize: { xs: '0.9rem', md: '1rem' },
+                                            boxShadow: 2,
+                                            '&:hover': {
+                                                boxShadow: 4,
+                                            },
+                                            '& fieldset': {
+                                                borderColor: theme.palette.primary.main,
+                                                borderWidth: 2,
+                                            },
+                                        },
+                                    }}
+                                    sx={{
+                                        '& .MuiOutlinedInput-root': {
+                                            '&.Mui-focused fieldset': {
+                                                borderColor: theme.palette.primary.main,
+                                                borderWidth: 2,
+                                            },
+                                        },
+                                    }}
+                                />
+                                {/* Typing animation display */}
+                                {isTyping && !userInput && (
+                                    <Typography
+                                        sx={{
+                                            position: 'absolute',
+                                            mt: -4.5,
+                                            ml: 6,
+                                            color: theme.palette.text.secondary,
+                                            fontSize: { xs: '0.9rem', md: '1rem' },
+                                            pointerEvents: 'none',
+                                            '&::after': {
+                                                content: '"|"',
+                                                animation: 'blink 1s infinite',
+                                                ml: 0.5,
+                                            },
+                                            '@keyframes blink': {
+                                                '0%, 100%': { opacity: 1 },
+                                                '50%': { opacity: 0 },
+                                            },
+                                        }}
+                                    >
+                                        {displayText}
+                                    </Typography>
+                                )}
+                            </Box>
+
                             <Box
                                 sx={{
                                     position: "relative",
@@ -260,7 +390,7 @@ export default function AIServicesShowcase({ mode = "light" }) {
                                     return (
                                         <Paper
                                             key={service.id}
-                                            onClick={() => setActiveService(index)}
+                                            onClick={() => handleCardClick(index)}
                                             sx={{
                                                 position: "absolute",
                                                 cursor: "pointer",
@@ -280,6 +410,12 @@ export default function AIServicesShowcase({ mode = "light" }) {
                                                 borderRadius: 4,
                                                 backgroundColor: theme.palette.background.paper,
                                                 boxShadow: index === activeService ? 8 : 4,
+                                                '&:hover': {
+                                                    boxShadow: index === activeService ? 12 : 6,
+                                                    transform: index === activeService 
+                                                        ? 'scale(1.02)' 
+                                                        : style.transform,
+                                                },
                                                 ...style,
                                             }}
                                         >
@@ -381,7 +517,7 @@ export default function AIServicesShowcase({ mode = "light" }) {
                                                                 {service.icon}
                                                             </Box>
 
-                                                            <Box>
+                                                            <Box sx={{ flex: 1 }}>
                                                                 <Typography
                                                                     variant="h6"
                                                                     color="white"
@@ -398,7 +534,7 @@ export default function AIServicesShowcase({ mode = "light" }) {
                                                                         fontSize: { xs: '0.8rem', md: '0.875rem' }
                                                                     }}
                                                                 >
-                                                                    Transform your ideas into reality
+                                                                    Click to explore • Transform your ideas into reality
                                                                 </Typography>
                                                             </Box>
                                                         </Stack>
@@ -408,6 +544,10 @@ export default function AIServicesShowcase({ mode = "light" }) {
                                                 {/* PLAY BUTTON (ONLY FOR VIDEO ITEMS) */}
                                                 {(index === 0 || index === 2) && index === activeService && (
                                                     <IconButton
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            navigate(service.route);
+                                                        }}
                                                         sx={{
                                                             position: "absolute",
                                                             top: "50%",
