@@ -31,9 +31,21 @@ export const HeroSection = () => {
     const services = ["Web Design", "Logo Design", "Video Editing", "Marketing"];
 
     const sliderContent = [
-        { title1: "Perfect Service", title2: "for your Business." },
-        { title1: "Grow Your Brand", title2: "with Confidence." },
-        { title1: "Smart Solutions", title2: "Modern Teams." }
+        {
+            title1: "Perfect Service",
+            title2: "for your Business.",
+            image: "/hero/img_1.png"
+        },
+        {
+            title1: "Grow Your Brand",
+            title2: "with Confidence.",
+            image: "/hero/img_2.png"
+        },
+        {
+            title1: "Smart Solutions",
+            title2: "Modern Teams.",
+            image: "/hero/img_3.png"
+        }
     ];
 
     useEffect(() => {
@@ -92,7 +104,7 @@ export const HeroSection = () => {
                                         sx={{
                                             fontSize: { xs: "2.5rem", md: "3rem", lg: "4rem" },
                                             fontWeight: 900,
-                                            color:'#fff',
+                                            color: '#fff',
                                             lineHeight: 1.2
                                         }}
                                     >
@@ -189,7 +201,9 @@ export const HeroSection = () => {
                                             <Search20Filled
                                                 style={{
                                                     marginLeft: 18,
-                                                    color: theme.palette.text.secondary
+                                                    color: theme.palette.mode === "dark"
+                                                        ? theme.palette.grey[600]
+                                                        : theme.palette.text.secondary,
                                                 }}
                                             />
                                         </InputAdornment>
@@ -218,12 +232,33 @@ export const HeroSection = () => {
                                 }}
                                 sx={{
                                     mb: 2,
+
                                     "& .MuiOutlinedInput-root": {
                                         p: 0,
+                                        backgroundColor: theme.palette.common.white,
                                         boxShadow: "0 2px 12px rgba(0,0,0,0.08)",
-                                        "& fieldset": { border: "none" }
-                                    }
+                                        "& fieldset": {
+                                            border: "none",
+                                        },
+                                    },
+
+                                    /* ✅ INPUT TEXT */
+                                    "& .MuiInputBase-input": {
+                                        color: theme.palette.mode === "dark"
+                                            ? theme.palette.grey[900]
+                                            : theme.palette.text.primary,
+                                        padding: "14px 12px",
+                                    },
+
+                                    /* ✅ PLACEHOLDER — THIS IS THE MAIN FIX */
+                                    "& .MuiInputBase-input::placeholder": {
+                                        color: theme.palette.mode === "dark"
+                                            ? theme.palette.grey[600]
+                                            : theme.palette.text.secondary,
+                                        opacity: 1, // REQUIRED
+                                    },
                                 }}
+
                             />
 
                             {/* TAGS */}
@@ -278,7 +313,7 @@ export const HeroSection = () => {
                     </Container>
                 </Box>
 
-                {/* RIGHT IMAGE */}
+                {/* RIGHT IMAGE WITH FADE TRANSITION */}
                 <Box
                     sx={{
                         flex: { md: "0 0 60%" },
@@ -288,17 +323,19 @@ export const HeroSection = () => {
                     }}
                 >
                     <Container maxWidth="xl">
-                        <img
-                            src="/Images/Img_1.jpg"
-                            alt="Business Services"
-                            style={{
-                                width: "100%",
-                                height: "750px",
-                                borderRadius: "50%",
-                                objectFit: "cover",
-                                objectPosition: "center"
-                            }}
-                        />
+                        <Fade in key={slide} timeout={700}>
+                            <img
+                                src={sliderContent[slide].image}
+                                alt="Business Services"
+                                style={{
+                                    width: "100%",
+                                    height: "750px",
+                                    borderRadius: "50%",
+                                    objectFit: "cover",
+                                    objectPosition: "center"
+                                }}
+                            />
+                        </Fade>
                     </Container>
 
                     <Box

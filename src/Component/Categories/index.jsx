@@ -111,17 +111,17 @@ export default function CategoriesSection() {
             </Typography>
 
 
-            {/* <Typography
+            <Typography
               variant="body1"
               sx={{
                 color: theme.palette.primary.bg,
                 maxWidth: '400px',
-                fontSize: '1.1rem',
+                fontSize: '0.8rem',
                 lineHeight: 1.6,
               }}
             >
-              Explore our premium collection of design services and print solutions tailored for your business success
-            </Typography> */}
+              Explore our premium collection  
+            </Typography>
           </Box>
 
         </Stack>

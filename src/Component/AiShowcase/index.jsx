@@ -22,6 +22,8 @@ import {
     useTheme,
     TextField,
     InputAdornment,
+    Chip,
+    Menu, MenuItem,
 } from "@mui/material";
 
 import { useNavigate } from "react-router-dom";
@@ -98,6 +100,18 @@ export default function AIServicesShowcase({ mode = "light" }) {
         },
     ];
 
+    // Quick tabs for suggestions
+    const quickTabs = [
+        "Modern SaaS Landing Page",
+        "Corporate Business Website",
+        "Creative Portfolio Website",
+        "Restaurant Website",
+        "Healthcare Clinic Website",
+        "Digital Marketing Agency",
+        "Real Estate Website",
+        "Fitness & Wellness Website"
+    ];
+
     // Typing animation effect
     useEffect(() => {
         if (userInput) {
@@ -143,12 +157,14 @@ export default function AIServicesShowcase({ mode = "light" }) {
     // Navigate to the service page when clicking on active card
     const handleCardClick = (index) => {
         if (index === activeService) {
-            // If clicking on active card, navigate to that service's page
             navigate(services[index].route);
         } else {
-            // If clicking on inactive card, just make it active
             handleServiceChange(index);
         }
+    };
+
+    const handleQuickTabClick = (tab) => {
+        setUserInput(tab);
     };
 
     const getCardStyle = (index) => {
@@ -190,6 +206,204 @@ export default function AIServicesShowcase({ mode = "light" }) {
             opacity: 0.85,
         };
     };
+
+    const [anchorEl, setAnchorEl] = useState(null);
+    const fileInputRef = useRef(null);
+    const open = Boolean(anchorEl);
+
+    // Add these handler functions before the return statement
+    const handlePlusClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleAddFiles = () => {
+        fileInputRef.current?.click();
+        handleMenuClose();
+    };
+
+    const handleFileChange = (event) => {
+        const files = event.target.files;
+        if (files && files.length > 0) {
+            console.log('Files selected:', files);
+            // Add your file upload logic here
+            Array.from(files).forEach(file => {
+                console.log('File name:', file.name);
+                console.log('File size:', file.size);
+                console.log('File type:', file.type);
+            });
+        }
+    };
+
+    const handleTakeScreenshot = async () => {
+        handleMenuClose();
+        try {
+            const stream = await navigator.mediaDevices.getDisplayMedia({
+                video: { mediaSource: 'screen' }
+            });
+
+            const video = document.createElement('video');
+            video.srcObject = stream;
+            video.play();
+
+            video.onloadedmetadata = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(video, 0, 0);
+
+                canvas.toBlob((blob) => {
+                    console.log('Screenshot captured:', blob);
+                    // You can upload the blob or convert to file
+                    const file = new File([blob], 'screenshot.png', { type: 'image/png' });
+                    console.log('Screenshot file:', file);
+                });
+
+                stream.getTracks().forEach(track => track.stop());
+            };
+        } catch (error) {
+            if (error.name === 'NotAllowedError') {
+                console.log('User cancelled screen capture');
+            } else {
+                console.error('Error taking screenshot:', error);
+                alert('Unable to capture screen. Please check permissions.');
+            }
+        }
+    };
+
+    const handleTakePhoto = async () => {
+        handleMenuClose();
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: 'user' }
+            });
+
+            // Create overlay
+            const overlay = document.createElement('div');
+            overlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        `;
+
+            // Create video element
+            const video = document.createElement('video');
+            video.srcObject = stream;
+            video.autoplay = true;
+            video.style.cssText = `
+            max-width: 90%;
+            max-height: 70vh;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        `;
+
+            // Create buttons container
+            const buttonsDiv = document.createElement('div');
+            buttonsDiv.style.cssText = `
+            display: flex;
+            gap: 16px;
+            margin-top: 24px;
+        `;
+
+            // Create capture button
+            const captureBtn = document.createElement('button');
+            captureBtn.textContent = '📷 Capture Photo';
+            captureBtn.style.cssText = `
+            padding: 12px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            border: none;
+            background-color: #1976d2;
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: all 0.2s ease;
+        `;
+
+            captureBtn.onmouseover = () => {
+                captureBtn.style.backgroundColor = '#1565c0';
+                captureBtn.style.transform = 'translateY(-2px)';
+            };
+            captureBtn.onmouseout = () => {
+                captureBtn.style.backgroundColor = '#1976d2';
+                captureBtn.style.transform = 'translateY(0)';
+            };
+
+            // Create cancel button
+            const cancelBtn = document.createElement('button');
+            cancelBtn.textContent = '✕ Cancel';
+            cancelBtn.style.cssText = `
+            padding: 12px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            border: 2px solid white;
+            background-color: transparent;
+            color: white;
+            transition: all 0.2s ease;
+        `;
+
+            cancelBtn.onmouseover = () => {
+                cancelBtn.style.backgroundColor = 'rgba(255,255,255,0.1)';
+            };
+            cancelBtn.onmouseout = () => {
+                cancelBtn.style.backgroundColor = 'transparent';
+            };
+
+            const cleanup = () => {
+                stream.getTracks().forEach(track => track.stop());
+                document.body.removeChild(overlay);
+            };
+
+            captureBtn.onclick = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(video, 0, 0);
+
+                canvas.toBlob((blob) => {
+                    console.log('Photo captured:', blob);
+                    const file = new File([blob], 'photo.jpg', { type: 'image/jpeg' });
+                    console.log('Photo file:', file);
+                    // Add your upload logic here
+                });
+
+                cleanup();
+            };
+
+            cancelBtn.onclick = cleanup;
+
+            buttonsDiv.appendChild(captureBtn);
+            buttonsDiv.appendChild(cancelBtn);
+            overlay.appendChild(video);
+            overlay.appendChild(buttonsDiv);
+            document.body.appendChild(overlay);
+
+        } catch (error) {
+            if (error.name === 'NotAllowedError') {
+                alert('Camera access denied. Please allow camera permissions in your browser settings.');
+            } else {
+                console.error('Error accessing camera:', error);
+                alert('Unable to access camera. Please check your device has a camera and permissions are granted.');
+            }
+        }
+    };
+
 
     return (
         <Box
@@ -311,69 +525,330 @@ export default function AIServicesShowcase({ mode = "light" }) {
 
                         {/* RIGHT SIDE - CARD SHOWCASE */}
                         <Grid size={{ xs: 12, md: 9 }}>
-                            {/* Animated Input Field */}
-                            <Box sx={{ mb: 1 }}>
-                                <TextField
-                                    fullWidth
-                                    value={userInput}
-                                    onChange={(e) => setUserInput(e.target.value)}
-                                    placeholder={isTyping ? "" : services[activeService].placeholder}
-                                    variant="outlined"
-                                    InputProps={{
-                                        startAdornment: (
-                                            <InputAdornment position="start">
-                                                {services[activeService].icon}
-                                            </InputAdornment>
-                                        ),
-                                        sx: {
-                                            bgcolor: theme.palette.background.paper,
-                                            borderRadius: 3,
-                                            fontSize: { xs: '0.9rem', md: '1rem' },
-                                            boxShadow: 2,
-                                            '&:hover': {
-                                                boxShadow: 4,
-                                            },
-                                            '& fieldset': {
-                                                borderColor: theme.palette.primary.main,
-                                                borderWidth: 2,
-                                            },
-                                        },
-                                    }}
-                                    sx={{
-                                        '& .MuiOutlinedInput-root': {
-                                            '&.Mui-focused fieldset': {
-                                                borderColor: theme.palette.primary.main,
-                                                borderWidth: 2,
-                                            },
-                                        },
-                                    }}
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    mb: 3,
+                                }}
+                            >
+                                {/* Hidden file input */}
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    style={{ display: 'none' }}
+                                    multiple
+                                    accept="image/*,video/*,.pdf,.doc,.docx,.txt"
+                                    onChange={handleFileChange}
                                 />
-                                {/* Typing animation display */}
-                                {isTyping && !userInput && (
-                                    <Typography
-                                        sx={{
-                                            position: 'absolute',
-                                            mt: -4.5,
-                                            ml: 6,
-                                            color: theme.palette.text.secondary,
-                                            fontSize: { xs: '0.9rem', md: '1rem' },
-                                            pointerEvents: 'none',
-                                            '&::after': {
-                                                content: '"|"',
-                                                animation: 'blink 1s infinite',
-                                                ml: 0.5,
-                                            },
-                                            '@keyframes blink': {
-                                                '0%, 100%': { opacity: 1 },
-                                                '50%': { opacity: 0 },
+
+                                {/* Text Field Container */}
+                                <Box sx={{ width: '100%', maxWidth: '700px', mb: 2, position: 'relative' }}>
+                                    <TextField
+                                        fullWidth
+                                        value={userInput}
+                                        onChange={(e) => setUserInput(e.target.value)}
+                                        placeholder={isTyping ? "" : services[activeService].placeholder}
+                                        variant="outlined"
+                                        InputProps={{
+                                            startAdornment: (
+                                                <InputAdornment position="start">
+                                                    <IconButton
+                                                        edge="start"
+                                                        size="small"
+                                                        onClick={handlePlusClick}
+                                                        aria-controls={open ? 'attachment-menu' : undefined}
+                                                        aria-haspopup="true"
+                                                        aria-expanded={open ? 'true' : undefined}
+                                                        sx={{
+                                                            bgcolor: theme.palette.primary.main,
+                                                            color: theme.palette.primary.contrastText,
+                                                            width: 32,
+                                                            height: 32,
+                                                            '&:hover': {
+                                                                bgcolor: theme.palette.primary.dark,
+                                                            },
+                                                        }}
+                                                    >
+                                                        <Box sx={{ fontSize: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>+</Box>
+                                                    </IconButton>
+                                                </InputAdornment>
+                                            ),
+                                            endAdornment: (
+                                                <InputAdornment position="end">
+                                                    <IconButton
+                                                        edge="end"
+                                                        size="small"
+                                                        sx={{
+                                                            bgcolor: theme.palette.primary.main,
+                                                            color: theme.palette.primary.contrastText,
+                                                            width: 32,
+                                                            height: 32,
+                                                            '&:hover': {
+                                                                bgcolor: theme.palette.primary.dark,
+                                                            },
+                                                        }}
+                                                    >
+                                                        <Box sx={{ fontSize: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>↑</Box>
+                                                    </IconButton>
+                                                </InputAdornment>
+                                            ),
+                                            sx: {
+                                                bgcolor: mode === 'light'
+                                                    ? theme.palette.background.paper
+                                                    : 'rgba(255, 255, 255, 0.05)',
+                                                backdropFilter: mode === 'dark' ? 'blur(10px)' : 'none',
+                                                fontSize: { xs: '0.9rem', md: '1rem' },
+                                                px: 2,
+                                                py: 1.5,
+                                                '& fieldset': {
+                                                    borderColor: mode === 'light'
+                                                        ? theme.palette.divider
+                                                        : 'rgba(255, 255, 255, 0.1)',
+                                                    borderWidth: 1,
+                                                },
+                                                '&:hover fieldset': {
+                                                    borderColor: mode === 'light'
+                                                        ? theme.palette.primary.main
+                                                        : 'rgba(255, 255, 255, 0.2)',
+                                                },
                                             },
                                         }}
-                                    >
-                                        {displayText}
-                                    </Typography>
-                                )}
-                            </Box>
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                '&.Mui-focused fieldset': {
+                                                    borderColor: theme.palette.primary.main,
+                                                    borderWidth: 2,
+                                                },
+                                            },
+                                        }}
+                                    />
 
+                                    {/* Dropdown Menu */}
+                                    <Menu
+                                        id="attachment-menu"
+                                        anchorEl={anchorEl}
+                                        open={open}
+                                        onClose={handleMenuClose}
+                                        anchorOrigin={{
+                                            vertical: 'bottom',
+                                            horizontal: 'left',
+                                        }}
+                                        transformOrigin={{
+                                            vertical: 'top',
+                                            horizontal: 'left',
+                                        }}
+                                        PaperProps={{
+                                            elevation: 8,
+                                            sx: {
+                                                mt: 1,
+                                                minWidth: 240,
+                                                borderRadius: 2,
+                                                bgcolor: mode === 'light'
+                                                    ? theme.palette.background.paper
+                                                    : 'rgba(30, 30, 30, 0.98)',
+                                                backdropFilter: 'blur(20px)',
+                                                border: mode === 'light'
+                                                    ? `1px solid ${theme.palette.divider}`
+                                                    : '1px solid rgba(255, 255, 255, 0.12)',
+                                                boxShadow: theme.shadows[10],
+                                            }
+                                        }}
+                                    >
+                                        <MenuItem
+                                            onClick={handleAddFiles}
+                                            sx={{
+                                                py: 1.5,
+                                                px: 2.5,
+                                                gap: 2,
+                                                '&:hover': {
+                                                    bgcolor: mode === 'light'
+                                                        ? theme.palette.action.hover
+                                                        : 'rgba(255, 255, 255, 0.08)',
+                                                }
+                                            }}
+                                        >
+                                            <Box
+                                                sx={{
+                                                    width: 40,
+                                                    height: 40,
+                                                    borderRadius: 2,
+                                                    bgcolor: mode === 'light'
+                                                        ? 'rgba(25, 118, 210, 0.1)'
+                                                        : 'rgba(144, 202, 249, 0.16)',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    flexShrink: 0,
+                                                }}
+                                            >
+                                                <Typography sx={{ fontSize: '20px' }}>📁</Typography>
+                                            </Box>
+                                            <Box sx={{ flex: 1 }}>
+                                                <Typography variant="body2" fontWeight={600} color="text.primary">
+                                                    Add Files
+                                                </Typography>
+                                                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.25 }}>
+                                                    Upload images, videos, or docs
+                                                </Typography>
+                                            </Box>
+                                        </MenuItem>
+
+                                        <MenuItem
+                                            onClick={handleTakeScreenshot}
+                                            sx={{
+                                                py: 1.5,
+                                                px: 2.5,
+                                                gap: 2,
+                                                '&:hover': {
+                                                    bgcolor: mode === 'light'
+                                                        ? theme.palette.action.hover
+                                                        : 'rgba(255, 255, 255, 0.08)',
+                                                }
+                                            }}
+                                        >
+                                            <Box
+                                                sx={{
+                                                    width: 40,
+                                                    height: 40,
+                                                    borderRadius: 2,
+                                                    bgcolor: mode === 'light'
+                                                        ? 'rgba(156, 39, 176, 0.1)'
+                                                        : 'rgba(206, 147, 216, 0.16)',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    flexShrink: 0,
+                                                }}
+                                            >
+                                                <Typography sx={{ fontSize: '20px' }}>📸</Typography>
+                                            </Box>
+                                            <Box sx={{ flex: 1 }}>
+                                                <Typography variant="body2" fontWeight={600} color="text.primary">
+                                                    Take Screenshot
+                                                </Typography>
+                                                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.25 }}>
+                                                    Capture your screen
+                                                </Typography>
+                                            </Box>
+                                        </MenuItem>
+
+                                        <MenuItem
+                                            onClick={handleTakePhoto}
+                                            sx={{
+                                                py: 1.5,
+                                                px: 2.5,
+                                                gap: 2,
+                                                '&:hover': {
+                                                    bgcolor: mode === 'light'
+                                                        ? theme.palette.action.hover
+                                                        : 'rgba(255, 255, 255, 0.08)',
+                                                }
+                                            }}
+                                        >
+                                            <Box
+                                                sx={{
+                                                    width: 40,
+                                                    height: 40,
+                                                    borderRadius: 2,
+                                                    bgcolor: mode === 'light'
+                                                        ? 'rgba(76, 175, 80, 0.1)'
+                                                        : 'rgba(102, 187, 106, 0.16)',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    flexShrink: 0,
+                                                }}
+                                            >
+                                                <Typography sx={{ fontSize: '20px' }}>📷</Typography>
+                                            </Box>
+                                            <Box sx={{ flex: 1 }}>
+                                                <Typography variant="body2" fontWeight={600} color="text.primary">
+                                                    Take Photo
+                                                </Typography>
+                                                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.25 }}>
+                                                    Use your camera
+                                                </Typography>
+                                            </Box>
+                                        </MenuItem>
+                                    </Menu>
+
+                                    {/* Typing animation display */}
+                                    {isTyping && !userInput && (
+                                        <Typography
+                                            sx={{
+                                                position: 'absolute',
+                                                mt: -4.5,
+                                                ml: 7,
+                                                color: theme.palette.text.secondary,
+                                                fontSize: { xs: '0.9rem', md: '1rem' },
+                                                pointerEvents: 'none',
+                                                '&::after': {
+                                                    content: '"|"',
+                                                    animation: 'blink 1s infinite',
+                                                    ml: 0.5,
+                                                },
+                                                '@keyframes blink': {
+                                                    '0%, 100%': { opacity: 1 },
+                                                    '50%': { opacity: 0 },
+                                                },
+                                            }}
+                                        >
+                                            {displayText}
+                                        </Typography>
+                                    )}
+                                </Box>
+
+                                {/* Quick Tabs */}
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        flexWrap: 'wrap',
+                                        gap: 1,
+                                        justifyContent: 'center',
+                                        maxWidth: '800px',
+                                        px: 2,
+                                    }}
+                                >
+                                    {quickTabs.map((tab, index) => (
+                                        <Chip
+                                            key={index}
+                                            label={tab}
+                                            onClick={() => handleQuickTabClick(tab)}
+                                            sx={{
+                                                bgcolor: mode === 'light'
+                                                    ? theme.palette.background.paper
+                                                    : 'rgba(255, 255, 255, 0.08)',
+                                                backdropFilter: mode === 'dark' ? 'blur(10px)' : 'none',
+                                                color: theme.palette.text.primary,
+                                                border: mode === 'light'
+                                                    ? `1px solid ${theme.palette.divider}`
+                                                    : '1px solid rgba(255, 255, 255, 0.1)',
+                                                borderRadius: 3,
+                                                px: 1,
+                                                py: 2.5,
+                                                fontSize: { xs: '0.75rem', md: '0.85rem' },
+                                                fontWeight: 500,
+                                                cursor: 'pointer',
+                                                transition: 'all 0.2s ease',
+                                                '&:hover': {
+                                                    bgcolor: mode === 'light'
+                                                        ? theme.palette.action.hover
+                                                        : 'rgba(255, 255, 255, 0.12)',
+                                                    borderColor: mode === 'light'
+                                                        ? theme.palette.primary.main
+                                                        : 'rgba(255, 255, 255, 0.2)',
+                                                    transform: 'translateY(-2px)',
+                                                    boxShadow: mode === 'light' ? 2 : 'none',
+                                                },
+                                            }}
+                                        />
+                                    ))}
+                                </Box>
+                            </Box>
+                            {/* CARD SHOWCASE */}
                             <Box
                                 sx={{
                                     position: "relative",
@@ -381,6 +856,7 @@ export default function AIServicesShowcase({ mode = "light" }) {
                                     display: "flex",
                                     justifyContent: "center",
                                     alignItems: "center",
+                                    mt: 4,
                                 }}
                             >
                                 {services.map((service, index) => {
@@ -412,8 +888,8 @@ export default function AIServicesShowcase({ mode = "light" }) {
                                                 boxShadow: index === activeService ? 8 : 4,
                                                 '&:hover': {
                                                     boxShadow: index === activeService ? 12 : 6,
-                                                    transform: index === activeService 
-                                                        ? 'scale(1.02)' 
+                                                    transform: index === activeService
+                                                        ? 'scale(1.02)'
                                                         : style.transform,
                                                 },
                                                 ...style,
