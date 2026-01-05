@@ -1,19 +1,20 @@
 import React from 'react'
-import { AIServicesSection, LetsWorkTogether, AIServicesShowcase, BlogSection, CategoriesSection, ConsultantForm, FAQSection, HeroMarketingSection, HowBMGWorks, PortfolioMarquee, ServiceSlider, TestimonialsSection, TrendingService } from '../../../Component'
+import { AIServicesSection, LetsWorkTogether, AIServicesShowcase, BlogSection, ConsultantForm, FAQSection, HeroMarketingSection, HowBMGWorks, PortfolioMarquee, TestimonialsSection, TrendingService } from '../../../Component'
+import AIVideoGeneratorHome from '../../../Component/AIVideoGen'
+import AIVideoEditorHome from '../../../Component/AIVideoEditor'
+import AIBusinessStrategyHome from '../../../Component/AIBuzStrategy'
+// import AIWebGeneratorHome from '../../../Component/AIWebGen'
 
 const HomePage = () => {
   return (
     <>
-      <HowBMGWorks />
-      <CategoriesSection />
       <AIServicesShowcase />
-      <ServiceSlider />
+      <HowBMGWorks />
       <AIServicesSection />
       <HeroMarketingSection />
       <TrendingService />
       <ConsultantForm />
       <PortfolioMarquee />
-      {/* <BlogSection /> */}
       <TestimonialsSection />
       <FAQSection />
       <LetsWorkTogether />

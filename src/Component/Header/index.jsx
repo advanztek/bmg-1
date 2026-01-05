@@ -17,7 +17,6 @@ import {
     Grid,
     Collapse,
     Divider,
-    Chip,
 } from '@mui/material';
 
 import {
@@ -42,7 +41,7 @@ import ThemeToggleButton from '../ThemeToggleBtn';
 import PatnersLogo from '../PatnersLogo';
 import { FONT_FAMILY } from '../../Config/font';
 
-const MegaDropdown = ({ items, isOpen, onClose }) => {
+const MegaDropdown = ({ items, isOpen, onMouseEnter, onMouseLeave }) => {
     const theme = useTheme();
     const navigate = useNavigate();
     const [hoveredCategory, setHoveredCategory] = useState(items[0]?.category || '');
@@ -55,7 +54,7 @@ const MegaDropdown = ({ items, isOpen, onClose }) => {
         e.preventDefault();
         e.stopPropagation();
         if (path) {
-            onClose();
+            onMouseLeave();
             navigate(path);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -64,8 +63,8 @@ const MegaDropdown = ({ items, isOpen, onClose }) => {
     return (
         <Paper
             elevation={8}
-            onMouseEnter={(e) => e.stopPropagation()}
-            onMouseLeave={onClose}
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
             sx={{
                 position: 'fixed',
                 top: '70px',
@@ -655,6 +654,16 @@ const Header = () => {
         navigate('/register');
     };
 
+    // Handle dropdown enter - keep it open
+    const handleDropdownMouseEnter = (label) => {
+        setActiveDropdown(label);
+    };
+
+    // Handle dropdown leave - close it
+    const handleDropdownMouseLeave = () => {
+        setActiveDropdown(null);
+    };
+
     return (
         <Box>
             <AppBar
@@ -694,8 +703,8 @@ const Header = () => {
                             {menuItems.map((item) => (
                                 <Box
                                     key={item.path}
-                                    onMouseEnter={() => item.hasDropdown && setActiveDropdown(item.label)}
-                                    onMouseLeave={() => item.hasDropdown && setActiveDropdown(null)}
+                                    onMouseEnter={() => item.hasDropdown && handleDropdownMouseEnter(item.label)}
+                                    onMouseLeave={() => item.hasDropdown && handleDropdownMouseLeave()}
                                     sx={{ position: 'relative' }}
                                 >
                                     <Box
@@ -744,7 +753,8 @@ const Header = () => {
                                         <MegaDropdown
                                             items={item.dropdownData}
                                             isOpen={activeDropdown === item.label}
-                                            onClose={() => setActiveDropdown(null)}
+                                            onMouseEnter={() => handleDropdownMouseEnter(item.label)}
+                                            onMouseLeave={handleDropdownMouseLeave}
                                         />
                                     )}
                                 </Box>

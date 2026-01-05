@@ -1,6 +1,9 @@
 import { Routes, Route } from "react-router-dom";
-import {  CategoryPage, AboutUsPage, HomePage, ServicePage, AISuitesPage, ServiceDetailPage, TrackOrderPage, LoginPage, RegisterPage, VerifyEmailPage, OtpVerificationPage, ForgotPasswordPage, ResetPasswordPage, PasswordResetSuccessPage, CheckoutPage, BlogPage, BlogDetailPage, AIWebGeneratorPage, PrivacyPolicyPage, TermsConditionsPage, ContactUsPage, GiftVoucherPage, ResourcesPage, PricingPage, HowItWorksPage, PortfolioPage } from "../Pages/Public";
+import { CategoryPage, AboutUsPage, HomePage, ServicePage, AISuitesPage, ServiceDetailPage, TrackOrderPage, LoginPage, RegisterPage, VerifyEmailPage, OtpVerificationPage, ForgotPasswordPage, ResetPasswordPage, PasswordResetSuccessPage, CheckoutPage, BlogPage, BlogDetailPage, AIWebGeneratorPage, PrivacyPolicyPage, TermsConditionsPage, ContactUsPage, GiftVoucherPage, ResourcesPage, PricingPage, HowItWorksPage, PortfolioPage } from "../Pages/Public";
 import PublicLayout from "../Layout/PublicLayout";
+import AIVideoGeneratorPage from "../Pages/Public/AIVideoGenerator";
+import AIVideoEditor from "../Pages/Public/AIVideoEditor";
+import AIBizStrategy from "../Pages/Public/AIBizStrategy";
 
 const PublicRoutes = () => {
     return (
@@ -21,7 +24,7 @@ const PublicRoutes = () => {
                     <Route path="/checkout" element={<CheckoutPage />} />
                     <Route path="/blogs" element={<BlogPage />} />
                     <Route path="/blog-detail" element={<BlogDetailPage />} />
-                    <Route path="/ai-web" element={<AIWebGeneratorPage />} />
+                    <Route path="/web-generator" element={<AIWebGeneratorPage />} />
                     <Route path="/ai-suites" element={<AISuitesPage />} />
                     <Route path="/about-us" element={<AboutUsPage />} />
                     <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
@@ -32,6 +35,9 @@ const PublicRoutes = () => {
                     <Route path="/pricing" element={<PricingPage />} />
                     <Route path="/how-it-works" element={<HowItWorksPage />} />
                     <Route path="/portfolio" element={<PortfolioPage />} />
+                    <Route path="/video-generator" element={<AIVideoGeneratorPage />} />
+                    <Route path="/video-editor" element={<AIVideoEditor />} />
+                    <Route path="/biz-strategy" element={<AIBizStrategy />} />
                     {/* <Route path="/sample" element={<Sample />} /> */}
                 </Route>
             </Routes>

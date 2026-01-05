@@ -81,7 +81,7 @@ export default function CategoriesSection() {
   return (
     <Box sx={{
       bgcolor: theme.palette.primary.lightBg,
-      // py: 10,
+      py: 10,
       position: 'relative',
       overflow: 'hidden',
 
@@ -111,17 +111,17 @@ export default function CategoriesSection() {
             </Typography>
 
 
-            {/* <Typography
+            <Typography
               variant="body1"
               sx={{
                 color: theme.palette.primary.bg,
                 maxWidth: '400px',
-                fontSize: '1.1rem',
+                fontSize: '0.8rem',
                 lineHeight: 1.6,
               }}
             >
-              Explore our premium collection of design services and print solutions tailored for your business success
-            </Typography> */}
+              Explore our premium collection  
+            </Typography>
           </Box>
 
         </Stack>
@@ -302,7 +302,7 @@ export default function CategoriesSection() {
                     </Box> */}
 
                     {/* GET Button */}
-                    <Button
+                    {/* <Button
                       className="get-button"
                       fullWidth
                       variant="contained"
@@ -328,7 +328,7 @@ export default function CategoriesSection() {
                       }}
                     >
                       GET
-                    </Button>
+                    </Button> */}
                   </Box>
                 </CardContent>
               </Card>

@@ -29,17 +29,13 @@ const AuthSlider = () => {
         <>
 
             <Box sx={{maxWidth: 500, width: '100%', textAlign: 'center' }}>
-                <Typography
-                    variant="h3"
+                <Box
+                component='img'
+                src='/Logo/LogoLight.png'
                     sx={{
-                        color: 'white',
-                        fontWeight: 700,
-                        mb: 2,
-                        fontSize: { xs: '1.75rem', md: '2.5rem' },
+                        width: { xs: '100px', md: '100px' },
                     }}
-                >
-                    BMG
-                </Typography>
+               />
                 <Typography
                     variant="h6"
                     sx={{
