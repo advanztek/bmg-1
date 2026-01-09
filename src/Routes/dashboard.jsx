@@ -42,7 +42,12 @@ import {
   ColorsPage,
   SubscriptionsPage,
   AddColors,
-  AdminPermissions
+  AdminPermissions,
+  PaymentsMethodsPage,
+  AddPaymentMethods,
+  ServiceTypesPage,
+  AddServiceTypePage,
+  AddSubscriptionPage,
 } from "../Pages/Dashboard";
 
 import { ExpertOverview, ExpertOrders } from "../Pages/Experts";
@@ -58,7 +63,13 @@ import {
   UserNotificationsPage,
   UserSettingsPage,
   UserSubscriptionsPage,
-  UserSupportPage
+  UserSupportPage,
+  UserGenerateImages,
+  UserGenerateVideos,
+  UserGenerateWebsites,
+  UserGenerateSpeeches,
+  UserGenerateStrategy,
+  UserEditVideos,
 } from "../Pages/Users";
 
 import DashboardLayout from "../Layout/Dashboard";
@@ -128,6 +139,20 @@ const DashboardRoutes = () => {
         <Route path="admin/subscriptions" element={<SubscriptionsPage />} />
         <Route path="admin/add/colors" element={<AddColors />} />
         <Route path="manage/admin-permissions" element={<AdminPermissions />} />
+        <Route
+          path="manage/payment-methods"
+          element={<PaymentsMethodsPage />}
+        />
+        <Route
+          path="admin/add/payment-method"
+          element={<AddPaymentMethods />}
+        />
+        <Route path="admin/service-types" element={<ServiceTypesPage />} />
+        <Route path="admin/add/service-type" element={<AddServiceTypePage />} />
+        <Route
+          path="admin/add/subscription"
+          element={<AddSubscriptionPage />}
+        />
 
         {/* ----- EXPERT ROUTES ----- */}
         <Route path="expert/overview" element={<ExpertOverview />} />
@@ -145,6 +170,22 @@ const DashboardRoutes = () => {
         <Route path="user/settings" element={<UserSettingsPage />} />
         <Route path="user/subscriptions" element={<UserSubscriptionsPage />} />
         <Route path="user/support" element={<UserSupportPage />} />
+
+        <Route path="user/generate-images" element={<UserGenerateImages />} />
+        <Route path="user/generate-videos" element={<UserGenerateVideos />} />
+        <Route
+          path="user/generate-website"
+          element={<UserGenerateWebsites />}
+        />
+        <Route
+          path="user/generate-speechs"
+          element={<UserGenerateSpeeches />}
+        />
+        <Route
+          path="user/generate-strategy"
+          element={<UserGenerateStrategy />}
+        />
+        <Route path="user/edit-videos" element={<UserEditVideos />} />
       </Routes>
     </DashboardLayout>
   );

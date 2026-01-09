@@ -21,8 +21,8 @@ import {
 } from "@mui/icons-material";
 import { InputLabel, CustomButton, PagesHeader } from "../../../Component";
 import { styles } from "../../../styles/dashboard";
-import { useAddCategories } from "../../../Hooks/categories";
 import { useNavigate } from "react-router-dom";
+import { useAddIndustries } from "../../../Hooks/Dashboard/industries";
 
 const AddIndustries = () => {
   const [category, setCategory] = useState("");
@@ -30,7 +30,7 @@ const AddIndustries = () => {
   const [categoryStatus, setCategoryStatus] = useState(true);
 
   const [loading, setLoading] = useState(false);
-  const addCategory = useAddCategories();
+  const addIndustry = useAddIndustries();
   const navigate = useNavigate();
 
   const formData = {
@@ -46,7 +46,7 @@ const AddIndustries = () => {
 
     setLoading(true);
     try {
-      const response = await addCategory(formData);
+      const response = await addIndustry(formData);
 
       if (response) {
         toast.success("Category added successfully!");

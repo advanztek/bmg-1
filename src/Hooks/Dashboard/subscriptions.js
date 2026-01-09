@@ -1,31 +1,28 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import axios from "axios";
-import { BASE_SERVER_URL } from "../Config/paths";
-import { useUserContext } from "../Contexts";
-import { showToast } from "../utils/toast";
-import { useState, useEffect } from "react";
+import { BASE_SERVER_URL } from "../../Config/paths";
+import { useUserContext } from "../../Contexts";
+import { useEffect, useState } from "react";
+import { showToast } from "../../utils/toast";
 
-function useAddExpert() {
+function useCreateSubPlan() {
   const { config } = useUserContext();
   return async (data) => {
     try {
       const response = await axios.post(
-        `${BASE_SERVER_URL}/admin/create/expert`,
+        `${BASE_SERVER_URL}/admin/create/subscription-plans`,
         data,
         config
       );
       const result = response.data;
       console.log(result);
-      if (result?.error === 0) {
+
+      if (result?.code === 0) {
         showToast.success(result.message);
         return true;
       }
-      if (result?.error === 2) {
+      if (result?.code !== 0) {
         showToast.success(result.message);
-        return false;
-      }
-      if (result?.error) {
-        showToast.error(result?.message);
         return false;
       }
     } catch (error) {
@@ -33,32 +30,31 @@ function useAddExpert() {
       if (error.response.data?.error) {
         showToast.error(error.response.data.message);
       } else {
-        showToast.error("An error occurred while adding Admin.");
+        showToast.error("An error occurred while creating Subscription plan.");
       }
       return false;
     }
   };
 }
 
-const useFetchExperts = () => {
+const useFetchSubPlans = () => {
   const { config } = useUserContext();
   const [loading, setLoading] = useState(false);
-  const [experts, setExperts] = useState([]);
+  const [plans, setPlans] = useState([]);
 
   const fetchData = async () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `${BASE_SERVER_URL}/admin/get-experts`,
+        `${BASE_SERVER_URL}/admin/subscription-plans`,
         config
       );
 
       const result = response.data;
+      console.log("plans:", result);
 
-      console.log(" Response:", result);
-
-      if (result.success && result.error === 0) {
-        setExperts(result.result);
+      if (result.code === 0) {
+        setPlans(result.result);
       }
       setLoading(false);
     } catch (error) {
@@ -71,7 +67,7 @@ const useFetchExperts = () => {
     fetchData();
   }, []);
 
-  return { experts, refetch: fetchData, loading };
+  return { plans, refetch: fetchData, loading };
 };
 
-export { useAddExpert, useFetchExperts };
+export { useCreateSubPlan, useFetchSubPlans };

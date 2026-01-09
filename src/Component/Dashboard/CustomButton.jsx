@@ -4,25 +4,29 @@ import { styled } from "@mui/material";
 const COLORS = {
   primary: {
     filled: { bg: "#7DBBFF", border: "#28C3FF", color: "#fff" },
-    outlined: { bg: "#28C3FF29", border: "#28C3FF", color: "#28C3FF" }
+    outlined: { bg: "#28C3FF29", border: "#28C3FF", color: "#28C3FF" },
+  },
+  accent: {
+    filled: { bg: "#2C3891", border: "#2C3891", color: "#fff" },
+    outlined: { bg: "#2C3891", border: "#2C3891", color: "#fff" },
   },
   success: {
     filled: { bg: "#2FC269", border: "#2FC269", color: "#FFFFFF" },
-    outlined: { bg: "#CDFFD3", border: "#2FC269", color: "#2FC269" }
+    outlined: { bg: "#CDFFD3", border: "#2FC269", color: "#2FC269" },
   },
   danger: {
     filled: { bg: "#E43F51", border: "#E43F51", color: "#fff" },
-    outlined: { bg: "#FFC0C0", border: "#E43F51", color: "#E43F51" }
+    outlined: { bg: "#FFC0C0", border: "#E43F51", color: "#E43F51" },
   },
   warning: {
-    filled: { bg: "#FFD18B", border: "#FFD18B", color: "#000" }
+    filled: { bg: "#FFD18B", border: "#FFD18B", color: "#000" },
   },
   sky: {
-    outlined: { bg: "#B3E8FF", border: "#28C3FF", color: "#28C3FF" }
+    outlined: { bg: "#B3E8FF", border: "#28C3FF", color: "#28C3FF" },
   },
   pure: {
-    filled: { bg: "#F1F4F9", border: "#F1F4F9", color: "#000" }
-  }
+    filled: { bg: "#F1F4F9", border: "#F1F4F9", color: "#000" },
+  },
 };
 
 const StyledButton = styled("button")(
@@ -52,8 +56,8 @@ const StyledButton = styled("button")(
         ? {}
         : {
             opacity: 0.85,
-            transform: "scale(0.98)"
-          }
+            transform: "scale(0.98)",
+          },
     };
   }
 );

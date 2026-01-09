@@ -15,12 +15,12 @@ import {
 } from "../../../Component";
 import { AddOutlined, VisibilityOutlined, DeleteOutlined } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { useGetAdminTypes } from "../../../Hooks/admin_types";
+import { useGetAdminTypes } from "../../../Hooks/Dashboard/admin_types";
 import { headers } from "./data";
 import { formatDate } from "../../../utils/functions";
 import { showToast } from "../../../utils/toast";
 import { useLoader } from "../../../Contexts/LoaderContext";
-import { useDisableAdminType } from "../../../Hooks/admin_types";
+import { useDisableAdminType } from "../../../Hooks/Dashboard/admin_types";
 
 const AdminRoles = () => {
   const [search, setSearch] = useState();

@@ -1,10 +1,9 @@
 export const headers = [
   { key: "select", label: "", width: "40px" },
   { key: "id", label: "ID" },
-  { key: "subject", label: "Subject" },
   { key: "description", label: "Description" },
-  { key: "dueDate", label: "Due Date" },
-  { key: "amount", label: "Amount" },
+  { key: "created_at", label: "Date Created" },
+  { key: "updated_at", label: "Last Update" },
   { key: "status", label: "Status" },
   { key: "actions", label: "", width: "40px" }
 ];
@@ -100,7 +99,7 @@ export const subcategories = [
   }
 ];
 
-export const categoryData = [
+export const categoryInfo = [
   { name: "Merching", value: 30, color: "#3B82F6" },
   { name: "Branding", value: 25, color: "#10B981" },
   { name: "Logo", value: 20, color: "#F59E0B" },
@@ -108,9 +107,3 @@ export const categoryData = [
   { name: "Sports", value: 10, color: "#8B5CF6" }
 ];
 
-export const categories = [
-  { id: 1, category: "Logo Design" },
-  { id: 2, category: "Graphic Design" },
-  { id: 3, category: "Data Analytics" },
-  { id: 4, category: "Strategy Generator" }
-];

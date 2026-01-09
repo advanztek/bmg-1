@@ -1,23 +1,16 @@
 import React, { useState } from "react";
-import {
-  Grid,
-  Box,
-  Input,
-  Stack,
-  Switch,
-  Typography,
-} from "@mui/material";
+import { Grid, Box, Input, Stack, Switch, Typography } from "@mui/material";
 import { toast } from "react-toastify";
 import {
   AddOutlined,
   DeleteOutlined,
   VisibilityOutlined,
-  ArrowBackOutlined
+  ArrowBackOutlined,
 } from "@mui/icons-material";
 import { InputLabel, CustomButton, PagesHeader } from "../../../Component";
 import { styles } from "../../../styles/dashboard";
-import { useAddCategories } from "../../../Hooks/categories";
 import { useNavigate } from "react-router-dom";
+import { useAddColors } from "../../../Hooks/Dashboard/colors";
 
 const AddColors = () => {
   const [category, setCategory] = useState("");
@@ -25,12 +18,12 @@ const AddColors = () => {
   const [categoryStatus, setCategoryStatus] = useState(true);
 
   const [loading, setLoading] = useState(false);
-  const addCategory = useAddCategories();
+  const addColor = useAddColors();
   const navigate = useNavigate();
 
   const formData = {
     title,
-    category
+    category,
   };
 
   const handleSubmitAdmin = async () => {
@@ -41,7 +34,7 @@ const AddColors = () => {
 
     setLoading(true);
     try {
-      const response = await addCategory(formData);
+      const response = await addColor(formData);
 
       if (response) {
         toast.success("Category added successfully!");
@@ -67,18 +60,18 @@ const AddColors = () => {
           {
             label: "View Colors",
             icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/admin/colors")
+            onClick: () => navigate("/dashboard/admin/colors"),
           },
           {
             label: "View Services",
             icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/admin/services")
+            onClick: () => navigate("/dashboard/admin/services"),
           },
           {
             label: "Add Resource",
             icon: <AddOutlined />,
-            onClick: () => navigate("/dashboard/admin/add/resources")
-          }
+            onClick: () => navigate("/dashboard/admin/add/resources"),
+          },
         ]}
       />
 
@@ -88,7 +81,7 @@ const AddColors = () => {
             border: "1px solid #e0e0e0",
             borderRadius: 2,
             p: 3,
-            bgcolor: "white"
+            bgcolor: "white",
           }}
         >
           <Box component="form" mt={3}>
@@ -112,7 +105,7 @@ const AddColors = () => {
                         borderRadius: 1,
                         px: 2,
                         py: 1.5,
-                        fontSize: "14px"
+                        fontSize: "14px",
                       }}
                     />
                   </Grid>
@@ -128,7 +121,7 @@ const AddColors = () => {
                         borderRadius: 2,
                         p: 3,
                         bgcolor: "white",
-                        mt: 3
+                        mt: 3,
                       }}
                     >
                       <Typography variant="subtitle1" fontWeight={600} mb={2}>

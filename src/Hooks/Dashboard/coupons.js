@@ -1,16 +1,16 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import axios from "axios";
-import { BASE_SERVER_URL } from "../Config/paths";
-import { useUserContext } from "../Contexts";
-import { showToast } from "../utils/toast";
+import { BASE_SERVER_URL } from "../../Config/paths";
+import { useUserContext } from "../../Contexts";
+import { showToast } from "../../utils/toast";
 import { useState, useEffect } from "react";
 
-function useAddAdmin() {
+function useCreateCoupon() {
   const { config } = useUserContext();
   return async (data) => {
     try {
       const response = await axios.post(
-        `${BASE_SERVER_URL}/admin/create-admin`,
+        `${BASE_SERVER_URL}/admin/create/payment/method`,
         data,
         config
       );
@@ -33,23 +33,23 @@ function useAddAdmin() {
       if (error.response.data?.error) {
         showToast.error(error.response.data.message);
       } else {
-        showToast.error("An error occurred while adding Admin.");
+        showToast.error("An error occurred while creating coupon.");
       }
       return false;
     }
   };
 }
 
-const useFetchAdmins = () => {
+const useFetchCoupons = () => {
   const { config } = useUserContext();
   const [loading, setLoading] = useState(false);
-  const [admins, setAdmins] = useState([]);
+  const [methods, setMethods] = useState([]);
 
   const fetchData = async () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `${BASE_SERVER_URL}/admin/get-admins`,
+        `${BASE_SERVER_URL}/admin/payment-methods`,
         config
       );
 
@@ -58,7 +58,7 @@ const useFetchAdmins = () => {
       console.log(" Response:", result);
 
       if (result.code === 0) {
-        setAdmins(result.result);
+        setMethods(result.result);
       }
       setLoading(false);
     } catch (error) {
@@ -71,7 +71,7 @@ const useFetchAdmins = () => {
     fetchData();
   }, []);
 
-  return { admins, refetch: fetchData, loading };
+  return { methods, refetch: fetchData, loading };
 };
 
-export { useAddAdmin, useFetchAdmins };
+export { useCreateCoupon, useFetchCoupons };

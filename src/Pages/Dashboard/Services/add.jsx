@@ -7,81 +7,117 @@ import {
   Switch,
   TextField,
   Typography,
-  Chip
+  Chip,
+  IconButton,
+  FormControl,
+  MenuItem,
+  Select,
+  InputAdornment,
 } from "@mui/material";
-import { toast } from "react-toastify";
 import {
   AddOutlined,
   DeleteOutlined,
   VisibilityOutlined,
-  ArrowBackOutlined
+  ArrowBackOutlined,
+  AttachMoneyOutlined,
+  CloseOutlined
 } from "@mui/icons-material";
 import {
   InputLabel,
   CustomButton,
   PagesHeader,
-  UploadMedia
+  UploadMedia,
 } from "../../../Component";
 import { styles } from "../../../styles/dashboard";
-import { useAddCategories } from "../../../Hooks/categories";
 import { useNavigate } from "react-router-dom";
+import { useCreateServices } from "../../../Hooks/Dashboard/services";
+import { useFetchCategories } from "../../../Hooks/Dashboard/categories";
+import { useFetchSubCategories } from "../../../Hooks/Dashboard/sub_categories";
+import { showToast } from "../../../utils/toast";
+import { useLoader } from "../../../Contexts/LoaderContext";
+import { fileToBase64 } from "../../../utils/functions";
+import { useFetchServiceTypes } from "../../../Hooks/Dashboard/service_types";
+import { discountTypes } from "./data";
 
 const AddServicePage = () => {
-  const [categoryName, setCategoryName] = useState("");
-  const [categorySlug, setCategorySlug] = useState("");
-  const [categoryImg, setCategoryImg] = useState([]);
-  const [categoryStatus, setCategoryStatus] = useState(true);
-  const [categoryDesc, setCategoryDesc] = useState("");
-  const [seoKeywords, setSeoKeywords] = useState([]);
-  const [categoryContent, setCategoryContent] = useState("");
+  const [serviceName, setServiceName] = useState("");
+  const [categoryId, setCategoryId] = useState("");
+  const [subCatId, setSubCatId] = useState("");
+  const [discountType, setDiscountType] = useState("");
+  const [serviceType, setServiceType] = useState("");
+  const [discountValue, setDiscountValue] = useState("");
+  const [servicePrice, setServicePrice] = useState("");
+  const [serviceImg, setServiceImg] = useState("");
+  const [serviceStatus, setServiceStatus] = useState(true);
+  const [serviceDesc, setServiceDesc] = useState("");
+  const [attributes, setAttributes] = useState([]);
+  const [currentAttribute, setCurrentFeature] = useState("");
 
   const [loading, setLoading] = useState(false);
-  const addCategory = useAddCategories();
+  const addService = useCreateServices();
   const navigate = useNavigate();
+  const { hideLoader, showLoader } = useLoader();
+  const { categories } = useFetchCategories();
+  const { subCat } = useFetchSubCategories();
+  const { serviceTypes } = useFetchServiceTypes();
 
-  const handleFilesChange = (files) => {
-    setCategoryImg(files);
+  console.log("service types in services:", serviceTypes)
+
+  const handleAddFeature = () => {
+    if (currentAttribute.trim()) {
+      setAttributes([...attributes, currentAttribute.trim()]);
+      setCurrentFeature("");
+    }
   };
 
-  const formData = {
-    categoryName,
-    categorySlug,
-    categoryImg,
-    categoryStatus,
-    categoryDesc,
-    seoKeywords,
-    categoryContent
+  const handleRemoveFeature = (index) => {
+    setAttributes(attributes.filter((_, i) => i !== index));
   };
 
-  const handleSubmitAdmin = async () => {
-    if (
-      !categoryName.trim() ||
-      !categorySlug.trim() ||
-      categoryImg.length === 0 ||
-      !categoryDesc
-    ) {
-      toast.error("Please fill in all required fields.");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!serviceName.trim() || !serviceDesc.trim() || !serviceImg) {
+      showToast.warning(
+        "Please fill in all required fields and add atleast three service features."
+      );
       return;
     }
 
     setLoading(true);
-    try {
-      const response = await addCategory(formData);
+    showLoader("Adding Service...");
 
+    try {
+      const imageToBase64 = await fileToBase64(serviceImg);
+
+      const payload = {
+        service_name: serviceName,
+        service_image: imageToBase64,
+        category_id: categoryId,
+        subcategory_id: subCatId,
+        discount_type: discountType,
+        discount_value: discountValue,
+        service_description: serviceDesc,
+        service_attributes: attributes,
+        service_price: servicePrice,
+        service_status: serviceStatus,
+      };
+      console.log("PayLoad:", payload);
+
+      const response = await addService(payload);
       if (response) {
-        toast.success("Category added successfully!");
-        setCategoryName("");
-        setCategorySlug("");
-        setCategoryImg([]);
-        setCategoryStatus(true);
-        setCategoryDesc("");
-        setSeoKeywords([]);
-        setCategoryContent("");
+        showToast.success("Category added successfully!");
+        setServiceName("");
+        setServiceImg(null);
+        setServiceDesc("");
+        setAttributes([]);
+        navigate("/dashboard/admin/services");
       }
     } catch (error) {
-      toast.error(error);
+      showToast.error(error || "Failed to create category");
     } finally {
       setLoading(false);
+      hideLoader();
     }
   };
 
@@ -96,13 +132,13 @@ const AddServicePage = () => {
           {
             label: "View Services",
             icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/admin/services")
+            onClick: () => navigate("/dashboard/admin/services"),
           },
           {
             label: "Add Cateogries",
             icon: <AddOutlined />,
-            onClick: () => navigate("/dashboard/admin/add/categories")
-          }
+            onClick: () => navigate("/dashboard/admin/add/categories"),
+          },
         ]}
       />
 
@@ -111,12 +147,13 @@ const AddServicePage = () => {
           <Grid container spacing={3}>
             <Grid size={{ xs: 12, md: 5 }}>
               <UploadMedia
+                mode={"single"}
                 maxFiles={5}
                 maxSize={10}
                 acceptedFormats={["jpg", "png", "jpeg", "svg", "zip"]}
-                onFilesChange={handleFilesChange}
-                title="Media Upload"
-                description="Add your documents here, and you can upload up to 5 files max"
+                onFilesChange={setServiceImg}
+                title="Service Image Upload"
+                description="Add your documents here, and you can upload up to 1 files max"
               />
 
               <Box
@@ -125,19 +162,19 @@ const AddServicePage = () => {
                   borderRadius: 2,
                   p: 3,
                   bgcolor: "white",
-                  mt: 3
+                  mt: 3,
                 }}
               >
                 <Typography variant="subtitle1" fontWeight={600} mb={2}>
-                  Category Status
+                  Service Status
                 </Typography>
                 <Stack direction="row" alignItems="center" spacing={2}>
                   <Typography variant="body2" fontWeight={500}>
-                    {categoryStatus ? "Active" : "Inactive"}
+                    {serviceStatus ? "Active" : "Inactive"}
                   </Typography>
                   <Switch
-                    checked={categoryStatus}
-                    onChange={(e) => setCategoryStatus(e.target.checked)}
+                    checked={serviceStatus}
+                    onChange={(e) => setServiceStatus(e.target.checked)}
                     disabled={loading}
                     color="warning"
                   />
@@ -151,7 +188,7 @@ const AddServicePage = () => {
                   border: "1px solid #e0e0e0",
                   borderRadius: 2,
                   p: 3,
-                  bgcolor: "white"
+                  bgcolor: "white",
                 }}
               >
                 <Grid container spacing={3}>
@@ -160,119 +197,144 @@ const AddServicePage = () => {
                     <Input
                       disableUnderline
                       fullWidth
-                      placeholder="Mayol Lupa"
-                      value={categoryName}
-                      onChange={(e) => setCategoryName(e.target.value)}
+                      placeholder="Enter Service Name"
+                      value={serviceName}
+                      onChange={(e) => setServiceName(e.target.value)}
                       sx={{
                         border: "1px solid #e0e0e0",
                         borderRadius: 1,
                         px: 2,
                         py: 1.5,
-                        fontSize: "14px"
+                        fontSize: "14px",
                       }}
                     />
                   </Grid>
                   <Grid size={{ xs: 12 }}>
-                    <InputLabel text="Service Slug" />
-                    <Input
-                      disableUnderline
-                      fullWidth
-                      placeholder="Mayol Lupa"
-                      value={categorySlug}
-                      onChange={(e) => setCategorySlug(e.target.value)}
-                      sx={{
-                        border: "1px solid #e0e0e0",
-                        borderRadius: 1,
-                        px: 2,
-                        py: 1.5,
-                        fontSize: "14px"
-                      }}
-                    />
+                    <FormControl fullWidth>
+                      <InputLabel text="Service Category" />
+                      <Select
+                        value={categoryId}
+                        onChange={(e) => setCategoryId(e.target.value)}
+                        disableUnderline
+                        displayEmpty
+                      >
+                        <MenuItem value="" disabled>
+                          <InputLabel text="Select Service Category" />
+                        </MenuItem>
+
+                        {categories.map((cat, index) => (
+                          <MenuItem key={index} value={cat.id}>
+                            {cat.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
                   </Grid>
                   <Grid size={{ xs: 12 }}>
-                    <InputLabel text="Service Thumbnail" />
-                    <Input
-                      disableUnderline
-                      fullWidth
-                      placeholder="Mayol Lupa"
-                      value={categorySlug}
-                      onChange={(e) => setCategorySlug(e.target.value)}
-                      sx={{
-                        border: "1px solid #e0e0e0",
-                        borderRadius: 1,
-                        px: 2,
-                        py: 1.5,
-                        fontSize: "14px"
-                      }}
-                    />
+                    <FormControl fullWidth>
+                      <InputLabel text="Service Sub Category" />
+                      <Select
+                        value={subCatId}
+                        onChange={(e) => setSubCatId(e.target.value)}
+                        disableUnderline
+                        displayEmpty
+                      >
+                        <MenuItem value="" disabled>
+                          <InputLabel text="Select Service Sub Category" />
+                        </MenuItem>
+
+                        {subCat.map((cat, index) => (
+                          <MenuItem key={index} value={cat.id}>
+                            {cat.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
                   </Grid>
                   <Grid size={{ xs: 12 }}>
                     <InputLabel text="Service Price" />
                     <Input
                       disableUnderline
                       fullWidth
-                      placeholder="Mayol Lupa"
-                      value={categorySlug}
-                      onChange={(e) => setCategorySlug(e.target.value)}
+                      placeholder="0.00"
+                      type="number"
+                      value={servicePrice}
+                      onChange={(e) => setServicePrice(e.target.value)}
+                      startAdornment={
+                        <InputAdornment position="start">
+                          <AttachMoneyOutlined
+                            sx={{ fontSize: 20, color: "#666" }}
+                          />
+                        </InputAdornment>
+                      }
                       sx={{
                         border: "1px solid #e0e0e0",
                         borderRadius: 1,
                         px: 2,
                         py: 1.5,
-                        fontSize: "14px"
+                        fontSize: "14px",
                       }}
                     />
                   </Grid>
                   <Grid size={{ xs: 12 }}>
-                    <InputLabel text="Service Discount" />
+                    <FormControl fullWidth>
+                      <InputLabel text="Service Discount Type" />
+                      <Select
+                        value={discountType}
+                        onChange={(e) => setDiscountType(e.target.value)}
+                        disableUnderline
+                        displayEmpty
+                      >
+                        <MenuItem value="" disabled>
+                          <InputLabel text="Select Service Discount Type" />
+                        </MenuItem>
+
+                        {discountTypes.map((discount, index) => (
+                          <MenuItem key={index} value={discount.id}>
+                            {discount.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                  <Grid size={{ xs: 12 }}>
+                    <InputLabel text="Service Discount " />
                     <Input
                       disableUnderline
                       fullWidth
-                      placeholder="Mayol Lupa"
-                      value={categorySlug}
-                      onChange={(e) => setCategorySlug(e.target.value)}
+                      type="number"
+                      placeholder="0.00"
+                      value={discountValue}
+                      onChange={(e) => setDiscountValue(e.target.value)}
                       sx={{
                         border: "1px solid #e0e0e0",
                         borderRadius: 1,
                         px: 2,
                         py: 1.5,
-                        fontSize: "14px"
+                        fontSize: "14px",
                       }}
                     />
                   </Grid>
                   <Grid size={{ xs: 12 }}>
-                    <InputLabel text="Service Category" />
-                    <Input
-                      disableUnderline
-                      fullWidth
-                      placeholder="Mayol Lupa"
-                      value={categorySlug}
-                      onChange={(e) => setCategorySlug(e.target.value)}
-                      sx={{
-                        border: "1px solid #e0e0e0",
-                        borderRadius: 1,
-                        px: 2,
-                        py: 1.5,
-                        fontSize: "14px"
-                      }}
-                    />
-                  </Grid>
-                  <Grid size={{ xs: 12 }}>
-                    <InputLabel text="Service Sub Category" />
-                    <Input
-                      disableUnderline
-                      fullWidth
-                      placeholder="Mayol Lupa"
-                      value={categorySlug}
-                      onChange={(e) => setCategorySlug(e.target.value)}
-                      sx={{
-                        border: "1px solid #e0e0e0",
-                        borderRadius: 1,
-                        px: 2,
-                        py: 1.5,
-                        fontSize: "14px"
-                      }}
-                    />
+                    <FormControl fullWidth>
+                      <InputLabel text="Service Type" />
+                      <Select
+                        value={serviceType}
+                        onChange={(e) => setServiceType(e.target.value)}
+                        disableUnderline
+                        displayEmpty
+                      >
+                        <MenuItem value="" disabled>
+                          <InputLabel text="Select Service Type " />
+                        </MenuItem>
+
+                        {serviceTypes.map((type, index) => (
+                          <MenuItem key={index} value={type.id}>
+                            {type.service_type_name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
                   </Grid>
                 </Grid>
               </Box>
@@ -286,8 +348,8 @@ const AddServicePage = () => {
                 disableUnderline
                 fullWidth
                 placeholder="Long description here"
-                value={categoryDesc}
-                onChange={(e) => setCategoryDesc(e.target.value)}
+                value={serviceDesc}
+                onChange={(e) => setServiceDesc(e.target.value)}
               />
             </Grid>
           </Grid>
@@ -302,179 +364,55 @@ const AddServicePage = () => {
               borderRadius: 2,
               p: 3,
               bgcolor: "white",
-              mt: 2
+              mt: 2,
             }}
           >
             <Grid container spacing={3}>
-              <Grid size={{ xs: 12, md: 6 }}>
-                <Grid container spacing={2}>
-                  <Grid size={{ xs: 12 }}>
-                    <InputLabel text="Feature 1" />
-                    <Input
-                      disableUnderline
-                      fullWidth
-                      placeholder=""
-                      value={categoryName}
-                      onChange={(e) => setCategoryName(e.target.value)}
-                      sx={{
-                        border: "1px solid #e0e0e0",
-                        borderRadius: 1,
-                        px: 2,
-                        py: 1.5,
-                        fontSize: "14px"
-                      }}
-                    />
-                  </Grid>
-                  <Grid size={{ xs: 12 }}>
-                    <InputLabel text="Feature 2" />
-                    <Input
-                      disableUnderline
-                      fullWidth
-                      value={categoryName}
-                      onChange={(e) => setCategoryName(e.target.value)}
-                      sx={{
-                        border: "1px solid #e0e0e0",
-                        borderRadius: 1,
-                        px: 2,
-                        py: 1.5,
-                        fontSize: "14px"
-                      }}
-                    />
-                  </Grid>
-                  <Grid size={{ xs: 12 }}>
-                    <InputLabel text="Feature 3" />
-                    <Input
-                      disableUnderline
-                      fullWidth
-                      value={categoryName}
-                      onChange={(e) => setCategoryName(e.target.value)}
-                      sx={{
-                        border: "1px solid #e0e0e0",
-                        borderRadius: 1,
-                        px: 2,
-                        py: 1.5,
-                        fontSize: "14px"
-                      }}
-                    />
-                  </Grid>
-                  <Grid size={{ xs: 12 }}>
-                    <InputLabel text="Feature 4" />
-                    <Input
-                      disableUnderline
-                      fullWidth
-                      value={categorySlug}
-                      onChange={(e) => setCategorySlug(e.target.value)}
-                      sx={{
-                        border: "1px solid #e0e0e0",
-                        borderRadius: 1,
-                        px: 2,
-                        py: 1.5,
-                        fontSize: "14px"
-                      }}
-                    />
-                  </Grid>
-                  <Grid size={{ xs: 12 }}>
-                    <InputLabel text="Feature 5" />
-                    <Input
-                      disableUnderline
-                      fullWidth
-                      value={categorySlug}
-                      onChange={(e) => setCategorySlug(e.target.value)}
-                      sx={{
-                        border: "1px solid #e0e0e0",
-                        borderRadius: 1,
-                        px: 2,
-                        py: 1.5,
-                        fontSize: "14px"
-                      }}
-                    />
-                  </Grid>
-                </Grid>
-              </Grid>
+              <Grid size={{ xs: 12 }}>
+                <InputLabel text="Add Features *" />
+                <Stack direction="row" spacing={2}>
+                  <Input
+                    disableUnderline
+                    fullWidth
+                    placeholder="e.g., Unlimited storage, 24/7 support"
+                    value={currentAttribute}
+                    onChange={(e) => setCurrentFeature(e.target.value)}
+                    onKeyPress={(e) => e.key === "Enter" && handleAddFeature()}
+                    sx={{
+                      border: "1px solid #e0e0e0",
+                      borderRadius: 1,
+                      px: 2,
+                      py: 1.5,
+                      fontSize: "14px",
+                    }}
+                  />
+                  <IconButton
+                    onClick={handleAddFeature}
+                    sx={{
+                      bgcolor: "#1976d2",
+                      color: "white",
+                      "&:hover": { bgcolor: "#1565c0" },
+                    }}
+                  >
+                    <AddOutlined />
+                  </IconButton>
+                </Stack>
 
-              <Grid size={{ xs: 12, md: 6 }}>
-                <Grid container spacing={2}>
-                  <Grid size={{ xs: 12 }}>
-                    <InputLabel text="Feature 6" />
-                    <Input
-                      disableUnderline
-                      fullWidth
-                      value={categorySlug}
-                      onChange={(e) => setCategorySlug(e.target.value)}
-                      sx={{
-                        border: "1px solid #e0e0e0",
-                        borderRadius: 1,
-                        px: 2,
-                        py: 1.5,
-                        fontSize: "14px"
-                      }}
-                    />
-                  </Grid>
-                  <Grid size={{ xs: 12 }}>
-                    <InputLabel text="Feature 7" />
-                    <Input
-                      disableUnderline
-                      fullWidth
-                      value={categorySlug}
-                      onChange={(e) => setCategorySlug(e.target.value)}
-                      sx={{
-                        border: "1px solid #e0e0e0",
-                        borderRadius: 1,
-                        px: 2,
-                        py: 1.5,
-                        fontSize: "14px"
-                      }}
-                    />
-                  </Grid>
-                  <Grid size={{ xs: 12 }}>
-                    <InputLabel text="Feature 8" />
-                    <Input
-                      disableUnderline
-                      fullWidth
-                      value={categorySlug}
-                      onChange={(e) => setCategorySlug(e.target.value)}
-                      sx={{
-                        border: "1px solid #e0e0e0",
-                        borderRadius: 1,
-                        px: 2,
-                        py: 1.5,
-                        fontSize: "14px"
-                      }}
-                    />
-                  </Grid>
-                  <Grid size={{ xs: 12 }}>
-                    <InputLabel text="Feature 9" />
-                    <Input
-                      disableUnderline
-                      fullWidth
-                      value={categorySlug}
-                      onChange={(e) => setCategorySlug(e.target.value)}
-                      sx={{
-                        border: "1px solid #e0e0e0",
-                        borderRadius: 1,
-                        px: 2,
-                        py: 1.5,
-                        fontSize: "14px"
-                      }}
-                    />
-                  </Grid>
-                  <Grid size={{ xs: 12 }}>
-                    <InputLabel text="Feature 10" />
-                    <Input
-                      disableUnderline
-                      fullWidth
-                      value={categorySlug}
-                      onChange={(e) => setCategorySlug(e.target.value)}
-                      sx={{
-                        border: "1px solid #e0e0e0",
-                        borderRadius: 1,
-                        px: 2,
-                        py: 1.5,
-                        fontSize: "14px"
-                      }}
-                    />
-                  </Grid>
-                </Grid>
+                {attributes.length > 0 && (
+                  <Box mt={2}>
+                    <Stack direction="row" flexWrap="wrap" gap={1}>
+                      {attributes.map((feature, index) => (
+                        <Chip
+                          key={index}
+                          label={feature}
+                          onDelete={() => handleRemoveFeature(index)}
+                          deleteIcon={<CloseOutlined />}
+                          sx={{ bgcolor: "#e3f2fd" }}
+                        />
+                      ))}
+                    </Stack>
+                  </Box>
+                )}
               </Grid>
             </Grid>
           </Box>
@@ -509,7 +447,7 @@ const AddServicePage = () => {
                     color="primary"
                     variant="filled"
                     disabled={loading}
-                    onClick={handleSubmitAdmin}
+                    onClick={handleSubmit}
                     sx={{ textTransform: "none", px: 4 }}
                   />
                 </Stack>

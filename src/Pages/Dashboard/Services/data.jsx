@@ -6,98 +6,12 @@ export const headers = [
   { key: "dueDate", label: "Due Date" },
   { key: "amount", label: "Amount" },
   { key: "status", label: "Status" },
-  { key: "actions", label: "", width: "40px" }
+  { key: "actions", label: "", width: "40px" },
 ];
 
-export const services = [
-  {
-    id: "4YBJ6",
-    subject: "Logo",
-    description: "Landing Page",
-    dueDate: "Today",
-    amount: "GHS 700",
-    status: "pending"
-  },
-  {
-    id: "9B11W12",
-    subject: "Logo",
-    description: "Landing Page",
-    dueDate: "Today",
-    amount: "GHS 700",
-    status: "completed"
-  },
-  {
-    id: "4YBJDE6",
-    subject: "Logo",
-    description: "Landing Page",
-    dueDate: "Today",
-    amount: "GHS 700",
-    status: "pending"
-  },
-  {
-    id: "9B1D12",
-    subject: "Logo",
-    description: "Landing Page",
-    dueDate: "Today",
-    amount: "GHS 700",
-    status: "completed"
-  },
-  {
-    id: "4YABHJ6",
-    subject: "Logo",
-    description: "Landing Page",
-    dueDate: "Today",
-    amount: "GHS 700",
-    status: "pending"
-  },
-  {
-    id: "9B4512",
-    subject: "Logo",
-    description: "Landing Page",
-    dueDate: "Today",
-    amount: "GHS 700",
-    status: "completed"
-  },
-  {
-    id: "5KD88",
-    subject: "Logo",
-    description: "Landing Page",
-    dueDate: "Today",
-    amount: "GHS 700",
-    status: "cancelled"
-  },
-  {
-    id: "5KD678",
-    subject: "Logo",
-    description: "Landing Page",
-    dueDate: "Today",
-    amount: "GHS 700",
-    status: "cancelled"
-  },
-  {
-    id: "5KAS488",
-    subject: "Logo",
-    description: "Landing Page",
-    dueDate: "Today",
-    amount: "GHS 700",
-    status: "cancelled"
-  },
-  {
-    id: "34FG8",
-    subject: "Logo",
-    description: "Landing Page",
-    dueDate: "Today",
-    amount: "GHS 700",
-    status: "cancelled"
-  },
-  {
-    id: "88KD5",
-    subject: "Logo",
-    description: "Landing Page",
-    dueDate: "Today",
-    amount: "GHS 700",
-    status: "cancelled"
-  }
+export const discountTypes = [
+  { id: 1, name: "Fixed", value: "Fixed" },
+  { id: 2, name: "Percentage", value: "Percentage" },
 ];
 
 export const serviceData = [
@@ -105,5 +19,5 @@ export const serviceData = [
   { name: "Branding", value: 25, color: "#10B981" },
   { name: "Logo", value: 20, color: "#F59E0B" },
   { name: "Website", value: 15, color: "#EF4444" },
-  { name: "Sports", value: 10, color: "#8B5CF6" }
+  { name: "Sports", value: 10, color: "#8B5CF6" },
 ];

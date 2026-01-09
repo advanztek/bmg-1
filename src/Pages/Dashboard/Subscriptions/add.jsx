@@ -13,7 +13,7 @@ import {
   MenuItem,
   Select,
   InputAdornment,
-  Divider
+  Divider,
 } from "@mui/material";
 import {
   AddOutlined,
@@ -21,11 +21,13 @@ import {
   VisibilityOutlined,
   ArrowBackOutlined,
   CloseOutlined,
-  AttachMoneyOutlined
+  AttachMoneyOutlined,
 } from "@mui/icons-material";
 import { CustomButton, InputLabel, PagesHeader } from "../../../Component";
 import { useNavigate } from "react-router-dom";
 import { showToast } from "../../../utils/toast";
+import { useLoader } from "../../../Contexts/LoaderContext";
+import { useCreateSubPlan } from "../../../Hooks/Dashboard/subscriptions";
 
 const AddSubscriptionPage = () => {
   const [planName, setPlanName] = useState("");
@@ -34,14 +36,12 @@ const AddSubscriptionPage = () => {
   const [duration, setDuration] = useState("monthly");
   const [description, setDescription] = useState("");
   const [isActive, setIsActive] = useState(true);
-  const [isFeatured, setIsFeatured] = useState(false);
   const [features, setFeatures] = useState([]);
   const [currentFeature, setCurrentFeature] = useState("");
-  const [maxUsers, setMaxUsers] = useState("");
-  const [maxProjects, setMaxProjects] = useState("");
-  const [support, setSupport] = useState("email");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { hideLoader, showLoader } = useLoader();
+  const addPlan = useCreateSubPlan()
 
   const handleAddFeature = () => {
     if (currentFeature.trim()) {
@@ -54,7 +54,9 @@ const AddSubscriptionPage = () => {
     setFeatures(features.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
     if (
       !planName.trim() ||
       !price ||
@@ -68,38 +70,36 @@ const AddSubscriptionPage = () => {
     }
 
     setLoading(true);
+    showLoader("Creating Subscription Plan...");
 
-    const formData = {
-      planName,
-      planSlug,
-      price: parseFloat(price),
-      duration,
-      description,
-      isActive,
-      isFeatured,
-      features,
-      maxUsers: maxUsers ? parseInt(maxUsers) : null,
-      maxProjects: maxProjects ? parseInt(maxProjects) : null,
-      support
-    };
+    try {
+      const payload = {
+        title: planName,
+        duration: duration,
+        description: description,
+        price: price,
+        label: planSlug,
+        plans: features,
+      };
+      console.log("PayLoad:", payload);
 
-    // Simulate API call
-    setTimeout(() => {
-      console.log("Subscription plan data:", formData);
-      showToast.success("Subscription plan added successfully!");
+      const response = await addPlan(payload);
+      if (response) {
+        showToast.success("Plan added successfully!");
+        setPlanName("");
+        setPlanSlug("");
+        setPrice("");
+        setDuration("monthly");
+        setDescription("");
+        setFeatures([]);
+        navigate("/dashboard/admin/categories");
+      }
+    } catch (error) {
+      showToast.error(error || "Failed to create category");
+    } finally {
       setLoading(false);
-
-      // Reset form
-      setPlanName("");
-      setPlanSlug("");
-      setPrice("");
-      setDuration("monthly");
-      setDescription("");
-      setFeatures([]);
-      setMaxUsers("");
-      setMaxProjects("");
-      setSupport("email");
-    }, 1500);
+      hideLoader();
+    }
   };
 
   return (
@@ -112,18 +112,18 @@ const AddSubscriptionPage = () => {
           {
             label: "View Subscription Plan",
             icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/admin/add/sub-plans")
+            onClick: () => navigate("/dashboard/admin/subscriptions"),
           },
           {
             label: "Add Category",
             icon: <AddOutlined />,
-            onClick: () => navigate("/dashboard/admin/add/categories")
+            onClick: () => navigate("/dashboard/admin/add/categories"),
           },
           {
             label: "Add Service",
             icon: <AddOutlined />,
-            onClick: () => navigate("/dashboard/admin/add/services")
-          }
+            onClick: () => navigate("/dashboard/admin/add/services"),
+          },
         ]}
       />
 
@@ -153,7 +153,7 @@ const AddSubscriptionPage = () => {
                 borderRadius: 1,
                 px: 2,
                 py: 1.5,
-                fontSize: "14px"
+                fontSize: "14px",
               }}
             />
           </Grid>
@@ -172,7 +172,7 @@ const AddSubscriptionPage = () => {
                 px: 2,
                 py: 1.5,
                 fontSize: "14px",
-                bgcolor: "#f9f9f9"
+                bgcolor: "#f9f9f9",
               }}
             />
           </Grid>
@@ -196,7 +196,7 @@ const AddSubscriptionPage = () => {
                 borderRadius: 1,
                 px: 2,
                 py: 1.5,
-                fontSize: "14px"
+                fontSize: "14px",
               }}
             />
           </Grid>
@@ -209,8 +209,8 @@ const AddSubscriptionPage = () => {
                 onChange={(e) => setDuration(e.target.value)}
                 sx={{
                   "& .MuiOutlinedInput-notchedOutline": {
-                    border: "1px solid #e0e0e0"
-                  }
+                    border: "1px solid #e0e0e0",
+                  },
                 }}
               >
                 <MenuItem value="monthly">Monthly</MenuItem>
@@ -233,9 +233,9 @@ const AddSubscriptionPage = () => {
               sx={{
                 "& .MuiOutlinedInput-root": {
                   "& fieldset": {
-                    borderColor: "#e0e0e0"
-                  }
-                }
+                    borderColor: "#e0e0e0",
+                  },
+                },
               }}
             />
           </Grid>
@@ -263,7 +263,7 @@ const AddSubscriptionPage = () => {
                   borderRadius: 1,
                   px: 2,
                   py: 1.5,
-                  fontSize: "14px"
+                  fontSize: "14px",
                 }}
               />
               <IconButton
@@ -271,7 +271,7 @@ const AddSubscriptionPage = () => {
                 sx={{
                   bgcolor: "#1976d2",
                   color: "white",
-                  "&:hover": { bgcolor: "#1565c0" }
+                  "&:hover": { bgcolor: "#1565c0" },
                 }}
               >
                 <AddOutlined />
@@ -293,72 +293,6 @@ const AddSubscriptionPage = () => {
                 </Stack>
               </Box>
             )}
-          </Grid>
-
-          {/* Limits Section */}
-          <Grid size={{ xs: 12 }} mt={2}>
-            <Typography variant="h6" fontWeight={600} mb={2}>
-              Usage Limits
-            </Typography>
-            <Divider />
-          </Grid>
-
-          <Grid size={{ xs: 12, md: 4 }}>
-            <InputLabel text="Max Users" />
-            <Input
-              disableUnderline
-              fullWidth
-              type="number"
-              placeholder="Unlimited if empty"
-              value={maxUsers}
-              onChange={(e) => setMaxUsers(e.target.value)}
-              sx={{
-                border: "1px solid #e0e0e0",
-                borderRadius: 1,
-                px: 2,
-                py: 1.5,
-                fontSize: "14px"
-              }}
-            />
-          </Grid>
-
-          <Grid size={{ xs: 12, md: 4 }}>
-            <InputLabel text="Max Projects" />
-            <Input
-              disableUnderline
-              fullWidth
-              type="number"
-              placeholder="Unlimited if empty"
-              value={maxProjects}
-              onChange={(e) => setMaxProjects(e.target.value)}
-              sx={{
-                border: "1px solid #e0e0e0",
-                borderRadius: 1,
-                px: 2,
-                py: 1.5,
-                fontSize: "14px"
-              }}
-            />
-          </Grid>
-
-          <Grid size={{ xs: 12, md: 4 }}>
-            <InputLabel text="Support Level" />
-            <FormControl fullWidth>
-              <Select
-                value={support}
-                onChange={(e) => setSupport(e.target.value)}
-                sx={{
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    border: "1px solid #e0e0e0"
-                  }
-                }}
-              >
-                <MenuItem value="none">No Support</MenuItem>
-                <MenuItem value="email">Email Support</MenuItem>
-                <MenuItem value="priority">Priority Support</MenuItem>
-                <MenuItem value="dedicated">Dedicated Support</MenuItem>
-              </Select>
-            </FormControl>
           </Grid>
 
           {/* Status Section */}
@@ -393,32 +327,7 @@ const AddSubscriptionPage = () => {
             </Box>
           </Grid>
 
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Box sx={{ border: "1px solid #e0e0e0", borderRadius: 2, p: 3 }}>
-              <Stack
-                direction="row"
-                justifyContent="space-between"
-                alignItems="center"
-              >
-                <Box>
-                  <Typography variant="subtitle1" fontWeight={600}>
-                    Featured Plan
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    Highlight this plan as recommended
-                  </Typography>
-                </Box>
-                <Switch
-                  checked={isFeatured}
-                  onChange={(e) => setIsFeatured(e.target.checked)}
-                  color="warning"
-                />
-              </Stack>
-            </Box>
-          </Grid>
-
-          {/* Action Buttons */}
-          <Grid size={{ xs: 12 }} mt={3}>
+          <Grid size={{ xs: 12 }} mt={5}>
             <Stack direction="row" justifyContent="space-between">
               <CustomButton
                 title="Back"

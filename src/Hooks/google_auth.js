@@ -1,9 +1,9 @@
 import axios from "axios";
-import { showToast } from "../utils/toast";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setUser } from "../store/slices/userSlice";
 import { useLoader } from "../Contexts/LoaderContext";
+import { showToast } from "../utils/toast";
 
 /**
  * Google Register Hook

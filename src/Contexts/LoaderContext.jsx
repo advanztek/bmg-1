@@ -5,12 +5,27 @@ const LoaderContext = createContext(null);
 
 export const LoaderProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
+  const [title, setTitle] = useState("");
 
-  const showLoader = () => setLoading(true);
-  const hideLoader = () => setLoading(false);
+  const showLoader = (loaderTitle = "") => {
+    setTitle(loaderTitle);
+    setLoading(true);
+  };
+
+  const hideLoader = () => {
+    setLoading(false);
+    setTitle("");
+  };
 
   return (
-    <LoaderContext.Provider value={{ loading, showLoader, hideLoader }}>
+    <LoaderContext.Provider
+      value={{
+        loading,
+        title,
+        showLoader,
+        hideLoader,
+      }}
+    >
       {children}
     </LoaderContext.Provider>
   );

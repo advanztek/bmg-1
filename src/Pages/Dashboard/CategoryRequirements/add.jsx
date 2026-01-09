@@ -10,18 +10,18 @@ import {
   Chip,
   FormControl,
   MenuItem,
-  Select
+  Select,
 } from "@mui/material";
 import { toast } from "react-toastify";
 import {
   AddOutlined,
   DeleteOutlined,
   VisibilityOutlined,
-  ArrowBackOutlined
+  ArrowBackOutlined,
 } from "@mui/icons-material";
 import { InputLabel, CustomButton, PagesHeader } from "../../../Component";
 import { styles } from "../../../styles/dashboard";
-import { useAddCategories } from "../../../Hooks/categories";
+import { useCreateCategories } from "../../../Hooks/Dashboard/categories";
 import { useNavigate } from "react-router-dom";
 import { category as categories } from "./data";
 
@@ -36,7 +36,7 @@ const AddCategoryRequirement = () => {
   const [categoryContent, setCategoryContent] = useState("");
 
   const [loading, setLoading] = useState(false);
-  const addCategory = useAddCategories();
+  const addCategory = useCreateCategories();
   const navigate = useNavigate();
 
   const handleAddKeyword = () => {
@@ -57,7 +57,7 @@ const AddCategoryRequirement = () => {
     categoryStatus,
     categoryDesc,
     required,
-    categoryContent
+    categoryContent,
   };
 
   const handleSubmitAdmin = async () => {
@@ -98,18 +98,18 @@ const AddCategoryRequirement = () => {
           {
             label: "View Categories",
             icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/admin/categories")
+            onClick: () => navigate("/dashboard/admin/categories"),
           },
           {
             label: "View Requirements",
             icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/admin/categories-requirements")
+            onClick: () => navigate("/dashboard/admin/categories-requirements"),
           },
           {
             label: "Add Service",
             icon: <AddOutlined />,
-            onClick: () => navigate("/dashboard/admin/add/services")
-          }
+            onClick: () => navigate("/dashboard/admin/add/services"),
+          },
         ]}
       />
 
@@ -119,7 +119,7 @@ const AddCategoryRequirement = () => {
             border: "1px solid #e0e0e0",
             borderRadius: 2,
             p: 3,
-            bgcolor: "white"
+            bgcolor: "white",
           }}
         >
           <Box component="form" mt={3}>
@@ -143,7 +143,7 @@ const AddCategoryRequirement = () => {
                         borderRadius: 1,
                         px: 2,
                         py: 1.5,
-                        fontSize: "14px"
+                        fontSize: "14px",
                       }}
                     />
                   </Grid>
@@ -193,7 +193,7 @@ const AddCategoryRequirement = () => {
                         borderRadius: 2,
                         p: 3,
                         bgcolor: "white",
-                        mt: 3
+                        mt: 3,
                       }}
                     >
                       <Typography variant="subtitle1" fontWeight={600} mb={2}>
@@ -237,7 +237,7 @@ const AddCategoryRequirement = () => {
                         borderRadius: 2,
                         p: 2,
                         bgcolor: "white",
-                        mt: 3
+                        mt: 3,
                       }}
                     >
                       <Typography variant="subtitle1" fontWeight={600} mb={2}>
@@ -248,7 +248,7 @@ const AddCategoryRequirement = () => {
                           display: "flex",
                           gap: 1,
                           flexWrap: "wrap",
-                          mb: 2
+                          mb: 2,
                         }}
                       >
                         {options.map((keyword, index) => (
@@ -279,7 +279,7 @@ const AddCategoryRequirement = () => {
                             borderRadius: 1,
                             px: 2,
                             py: 3,
-                            fontSize: "14px"
+                            fontSize: "14px",
                           }}
                         />
                       </Box>

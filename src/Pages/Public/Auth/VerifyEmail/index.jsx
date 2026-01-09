@@ -5,7 +5,7 @@ import {
   Button,
   Typography,
   Link,
-  CircularProgress
+  CircularProgress,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { AuthSlider } from "../../../../Component";
@@ -13,17 +13,18 @@ import {
   useVerifyLogin,
   useVerifyRegisteration,
   useVerifyForgotPwdOtp,
-  useResendOTP
+  useResendOTP,
 } from "../../../../Hooks/auth";
 import { showToast } from "../../../../utils/toast";
-
 import { useLocation, useNavigate } from "react-router-dom";
 import { OTP_MODES } from "../../../../Config/auth/constants";
+import { useLoader } from "../../../../Contexts/LoaderContext";
 
 const VerifyEmailPage = () => {
   const theme = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
+  const { showLoader, hideLoader } = useLoader();
 
   const { verifyLogin } = useVerifyLogin();
   const { verifyEmailOtp } = useVerifyRegisteration();
@@ -33,7 +34,7 @@ const VerifyEmailPage = () => {
   const {
     mode = OTP_MODES.VERIFY_EMAIL,
     email,
-    otpMethod
+    otpMethod,
   } = location.state || {};
 
   const [verificationCode, setVerificationCode] = useState([
@@ -42,7 +43,7 @@ const VerifyEmailPage = () => {
     "",
     "",
     "",
-    ""
+    "",
   ]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isResending, setIsResending] = useState(false);
@@ -91,6 +92,7 @@ const VerifyEmailPage = () => {
     const otp = verificationCode.join("");
 
     setIsSubmitting(true);
+    showLoader();
     if (otp.length !== 6) {
       return showToast.error("Invalid OTP, Please enter a 6-digit OTP.");
     }
@@ -99,7 +101,7 @@ const VerifyEmailPage = () => {
         await verifyLogin({
           email: email,
           otp: otp,
-          otp_type: "login"
+          otp_type: "login",
         });
       } else if (mode === OTP_MODES.FORGOT_PASSWORD) {
         const success = await verifyOtp(otp, email);
@@ -107,20 +109,21 @@ const VerifyEmailPage = () => {
           setIsSubmitting(false);
           navigate({
             pathname: "/(auth)/reset-password",
-            state: { otp, email }
+            state: { otp, email },
           });
         }
       } else if (mode === OTP_MODES.VERIFY_EMAIL) {
         await verifyEmailOtp({
           email: email,
           otp: otp,
-          otp_type: "registration"
+          otp_type: "registration",
         });
       }
     } catch (error) {
       showToast.error(error || "OTP Verification Failed");
     } finally {
       setIsSubmitting(false);
+      hideLoader();
     }
   };
 
@@ -151,7 +154,7 @@ const VerifyEmailPage = () => {
         minHeight: "100vh",
         bgcolor: theme.palette.background.default,
         display: "flex",
-        overflow: "hidden"
+        overflow: "hidden",
       }}
     >
       <Grid
@@ -159,7 +162,7 @@ const VerifyEmailPage = () => {
         sx={{
           minHeight: "100vh",
           margin: 0,
-          width: "100%"
+          width: "100%",
         }}
       >
         <Grid
@@ -170,7 +173,7 @@ const VerifyEmailPage = () => {
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
-            p: { xs: 4, md: 7 }
+            p: { xs: 4, md: 7 },
           }}
         >
           <AuthSlider />
@@ -184,7 +187,7 @@ const VerifyEmailPage = () => {
             justifyContent: "center",
             alignItems: "center",
             px: { xs: 4, md: 6 },
-            bgcolor: theme.palette.background.default
+            bgcolor: theme.palette.background.default,
           }}
         >
           <Box sx={{ maxWidth: 450, width: "100%", textAlign: "center" }}>
@@ -194,7 +197,7 @@ const VerifyEmailPage = () => {
                 fontWeight: 600,
                 mb: 2,
                 fontSize: { xs: "1.5rem", md: "1.75rem" },
-                color: theme.palette.text.heading
+                color: theme.palette.text.heading,
               }}
             >
               Verify Email Address
@@ -206,7 +209,7 @@ const VerifyEmailPage = () => {
                 mb: 4,
                 color: theme.palette.text.secondary,
                 fontSize: "0.95rem",
-                lineHeight: 1.6
+                lineHeight: 1.6,
               }}
             >
               We've sent a verification code to you. Please enter the 6-digit
@@ -219,7 +222,7 @@ const VerifyEmailPage = () => {
                 display: "flex",
                 justifyContent: "center",
                 gap: { xs: 1, sm: 2 },
-                mb: 3
+                mb: 3,
               }}
             >
               {verificationCode.map((digit, index) => (
@@ -250,11 +253,11 @@ const VerifyEmailPage = () => {
                     color: theme.palette.text.primary,
                     "&:focus": {
                       borderColor: theme.palette.primary.main,
-                      boxShadow: `0 0 0 3px ${theme.palette.primary.main}20`
+                      boxShadow: `0 0 0 3px ${theme.palette.primary.main}20`,
                     },
                     "&::placeholder": {
-                      color: theme.palette.text.disabled
-                    }
+                      color: theme.palette.text.disabled,
+                    },
                   }}
                 />
               ))}
@@ -266,7 +269,7 @@ const VerifyEmailPage = () => {
               sx={{
                 mb: 4,
                 color: theme.palette.text.secondary,
-                fontSize: "0.875rem"
+                fontSize: "0.875rem",
               }}
             >
               Didn't receive the code?{" "}
@@ -278,7 +281,7 @@ const VerifyEmailPage = () => {
                   fontWeight: 600,
                   textDecoration: "none",
                   cursor: "pointer",
-                  "&:hover": { textDecoration: "underline" }
+                  "&:hover": { textDecoration: "underline" },
                 }}
               >
                 {isResending ? (
@@ -289,7 +292,7 @@ const VerifyEmailPage = () => {
                     sx={{
                       color: countdown > 0 ? "gray" : "#2C3891",
                       fontSize: "0.875rem",
-                      fontWeight: 600
+                      fontWeight: 600,
                     }}
                   >
                     {countdown > 0 ? `Resend in ${countdown}s` : "Resend Code"}
@@ -315,15 +318,15 @@ const VerifyEmailPage = () => {
                 backgroundColor: theme.palette.primary.main,
                 color: theme.palette.primary.contrastText,
                 "&:hover": {
-                  backgroundColor: theme.palette.primary.bg
+                  backgroundColor: theme.palette.primary.bg,
                 },
                 "&:disabled": {
                   backgroundColor: theme.palette.action.disabledBackground,
-                  color: theme.palette.action.disabled
-                }
+                  color: theme.palette.action.disabled,
+                },
               }}
             >
-              VERIFY EMAIL
+              {isSubmitting ? "VERIFYING..." : "VERIFY EMAIL"}
             </Button>
 
             {/* Back to Login */}
@@ -332,7 +335,7 @@ const VerifyEmailPage = () => {
               sx={{
                 textAlign: "center",
                 mt: 3,
-                color: theme.palette.text.secondary
+                color: theme.palette.text.secondary,
               }}
             >
               Remember your password?{" "}
@@ -342,7 +345,7 @@ const VerifyEmailPage = () => {
                   color: theme.palette.primary.main,
                   fontWeight: 600,
                   textDecoration: "none",
-                  "&:hover": { textDecoration: "underline" }
+                  "&:hover": { textDecoration: "underline" },
                 }}
               >
                 Back to Login

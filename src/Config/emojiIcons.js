@@ -39,4 +39,7 @@ export const EMOJI_ICONS = {
   generatedSpeeches: "🗣️",
   permissions: "🔑",
   paymethods: "🖥️",
+  requirements: "📋",
+  types: "🧩",
+  overview: "📈",
 };

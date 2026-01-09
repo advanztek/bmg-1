@@ -58,3 +58,6 @@ export { default as RecipientsTable } from "./Dashboard/Mails/RecipientsTable";
 export { default as SideBar } from "./Dashboard/Mails/SideBar";
 export { default as EmojiIcon } from "./Dashboard/EmojiIcon";
 export { default as StatusBadge } from "./Dashboard/CustomBadge";
+export { default as SideDrawer } from "./Dashboard/AI/SideDrawer";
+export { default as DashboardTab } from "./Dashboard/DashboardTab";
+export { default as CustomTab } from "./Dashboard/CustomTab";

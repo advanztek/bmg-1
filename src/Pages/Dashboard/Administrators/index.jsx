@@ -10,7 +10,7 @@ import {
 import { CustomTable, StatusChip, PagesHeader } from "../../../Component";
 import { headers } from "./data";
 import { VisibilityOutlined } from "@mui/icons-material";
-import { useFetchAdmins } from "../../../Hooks/admins";
+import { useFetchAdmins } from "../../../Hooks/Dashboard/admins";
 import { formatDate } from "../../../utils/functions";
 
 const Administrators = () => {

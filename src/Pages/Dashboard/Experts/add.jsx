@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import {
   Grid,
   Box,
@@ -19,36 +19,25 @@ import { skills, experience } from "./data";
 import { validateEmail } from "../../../utils/functions";
 import { styles } from "../../../styles/dashboard";
 import { useNavigate } from "react-router-dom";
-import { useAddExpert } from "../../../Hooks/experts";
+import { useAddExpert } from "../../../Hooks/Dashboard/experts";
 import { showToast } from "../../../utils/toast";
 import { useLoader } from "../../../Contexts/LoaderContext";
 
-const INITIAL_FORM_STATE = {
-  firstname: "",
-  lastname: "",
-  email: "",
-  phone: "",
-  skill: "",
-  experience: ""
-};
-
 const AddExpertPage = () => {
-  const [form, setForm] = useState(INITIAL_FORM_STATE);
+  const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [skill, setSkill] = useState("");
+  const [experience, setExperience] = useState("");
   const [loading, setLoading] = useState(false);
-  const { hideLoader, showLoader } = useLoader();
 
   const addExpert = useAddExpert();
   const navigate = useNavigate();
+  const { hideLoader, showLoader } = useLoader();
 
-  const handleChange = useCallback(
-    (field) => (e) => {
-      setForm((prev) => ({ ...prev, [field]: e.target.value }));
-    },
-    []
-  );
 
   const validateForm = () => {
-    const { firstname, lastname, email, phone, skill, experience } = form;
 
     if (
       !firstname.trim() ||
@@ -70,31 +59,45 @@ const AddExpertPage = () => {
     return true;
   };
 
-  const handleSubmit = async (e) => {
+    const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validateForm()) return;
 
-    try {
-      setLoading(true);
-      showLoader();
-      const response = await addExpert(form);
+    setLoading(true);
+    showLoader("Adding Expert...");
 
+    try {
+      const payload = {
+        first_name: firstname,
+        last_name: lastname,
+        email: email,
+        skill,
+        phone,
+        experience,
+      };
+      console.log("PayLoad:", payload);
+
+      const response = await addExpert(payload);
       if (response) {
-        showToast.success("Expert added successfully");
-        setForm(INITIAL_FORM_STATE);
+        showToast.success("Category added successfully!");
+        setFirstname("");
+        setEmail("");
+        setLastname("");
+        setPhone("");
         navigate("/dashboard/view/experts");
       }
     } catch (error) {
-      showToast.error(error.message || "Failed to add expert");
+      showToast.error(error || "Failed to create category");
     } finally {
-      hideLoader();
       setLoading(false);
+      hideLoader();
     }
   };
 
+
   const handleCancel = () => {
-    navigate("/dashboard/view/experts");
+    navigate("/dashboard/admin/experts");
   };
 
   return (
@@ -107,7 +110,7 @@ const AddExpertPage = () => {
           {
             label: "View Experts",
             icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/view/experts")
+            onClick: () => navigate("/dashboard/admin/experts")
           }
         ]}
       />
@@ -122,8 +125,8 @@ const AddExpertPage = () => {
                 disableUnderline
                 fullWidth
                 sx={styles.input}
-                value={form.firstname}
-                onChange={handleChange("firstname")}
+                value={firstname}
+                onChange={setFirstname}
                 disabled={loading}
               />
             </Grid>
@@ -134,8 +137,8 @@ const AddExpertPage = () => {
                 disableUnderline
                 fullWidth
                 sx={styles.input}
-                value={form.lastname}
-                onChange={handleChange("lastname")}
+                value={lastname}
+                onChange={setLastname}
                 disabled={loading}
               />
             </Grid>
@@ -149,8 +152,8 @@ const AddExpertPage = () => {
                 disableUnderline
                 fullWidth
                 sx={styles.input}
-                value={form.email}
-                onChange={handleChange("email")}
+                value={email}
+                onChange={setEmail}
                 disabled={loading}
               />
             </Grid>
@@ -162,8 +165,8 @@ const AddExpertPage = () => {
                 fullWidth
                 type="number"
                 sx={styles.input}
-                value={form.phone}
-                onChange={handleChange("phone")}
+                value={phone}
+                onChange={setPhone}
                 disabled={loading}
               />
             </Grid>
@@ -175,8 +178,8 @@ const AddExpertPage = () => {
               <FormControl fullWidth>
                 <InputLabel text="Skill" />
                 <Select
-                  value={form.skill}
-                  onChange={handleChange("skill")}
+                  value={skill}
+                  onChange={setSkill}
                   disableUnderline
                   sx={styles.input}
                   displayEmpty
@@ -198,8 +201,8 @@ const AddExpertPage = () => {
               <FormControl fullWidth>
                 <InputLabel text="Experience" />
                 <Select
-                  value={form.experience}
-                  onChange={handleChange("experience")}
+                  value={experience}
+                  onChange={setExperience}
                   disableUnderline
                   sx={styles.input}
                   displayEmpty

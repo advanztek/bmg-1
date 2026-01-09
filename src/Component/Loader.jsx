@@ -1,10 +1,10 @@
 import React from "react";
-import { Box } from "@mui/material";
+import { Box, Typography, Stack } from "@mui/material";
 import { DotLoader } from "react-spinners";
 import { useLoader } from "../Contexts/LoaderContext";
 
 const GlobalLoader = () => {
-  const { loading } = useLoader();
+  const { loading, title } = useLoader();
 
   if (!loading) return null;
 
@@ -17,10 +17,20 @@ const GlobalLoader = () => {
         zIndex: 2000,
         display: "flex",
         alignItems: "center",
-        justifyContent: "center"
+        justifyContent: "center",
       }}
     >
-      <DotLoader color="#2C3891" size={60} loading={loading} />
+      <Stack alignItems="center" spacing={2}>
+        <DotLoader color="#2C3891" size={60} />
+        {title && (
+          <Typography
+            variant="body1"
+            sx={{ color: "#2C3891", fontWeight: 500 }}
+          >
+            {title}
+          </Typography>
+        )}
+      </Stack>
     </Box>
   );
 };

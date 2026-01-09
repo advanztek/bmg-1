@@ -172,12 +172,12 @@ const ComposeMailPage = () => {
             {/* SideBar */}
             <Grid size={{ xs: 12, md: 3 }}>
               <CustomButton
-                title={"Inbox"}
+                title={"Go To Inbox"}
                 fullWidth
                 variant="filled"
                 color="primary"
-                startIcon={<MailOutlined />}
-                style={{ marginBottom: "10px" }}
+                endIcon={<MailOutlined />}
+                style={{ marginBottom: "10px", py: 2 }}
               />
               <SideBar mailCount={12} />
             </Grid>

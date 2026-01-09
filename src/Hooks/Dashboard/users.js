@@ -1,14 +1,14 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import axios from "axios";
-import { BASE_SERVER_URL } from "../Config/paths";
-import { useUserContext } from "../Contexts";
-import { showToast } from "../utils/toast";
+import { BASE_SERVER_URL } from "../../Config/paths";
+import { useUserContext } from "../../Contexts";
+import { showToast } from "../../utils/toast";
 import { useState, useEffect } from "react";
 
 const useFetchUsers = () => {
   const { config } = useUserContext();
   const [loading, setLoading] = useState(false);
-  const [admins, setAdmins] = useState([]);
+  const [users, setUsers] = useState([]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -23,7 +23,7 @@ const useFetchUsers = () => {
       console.log(" Response:", result);
 
       if (result.code === 0) {
-        setAdmins(result.result);
+        setUsers(result.result);
       }
       setLoading(false);
     } catch (error) {
@@ -36,7 +36,7 @@ const useFetchUsers = () => {
     fetchData();
   }, []);
 
-  return { admins, refetch: fetchData, loading };
+  return { users, refetch: fetchData, loading };
 };
 
 function useAddUser() {

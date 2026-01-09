@@ -5,22 +5,26 @@ import {
   TableCell,
   Checkbox,
   IconButton,
-  Grid
+  Grid,
+  Stack,
+  Typography,
 } from "@mui/material";
 import {
   CustomTable,
   StatusChip,
   PagesHeader,
   TopSellingServicesCard,
-  CategoryOverviewCard
+  CategoryOverviewCard,
 } from "../../../Component";
-import { services, headers, serviceData } from "./data";
+import { headers, serviceData } from "./data";
 import { AddOutlined, VisibilityOutlined } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { useFetchServices } from "../../../Hooks/Dashboard/services";
 
 const ServicesPage = () => {
   const [search, setSearch] = useState();
   const navigate = useNavigate();
+  const { services, loading: servicesLoading, refetch } = useFetchServices();
 
   return (
     <div>
@@ -35,13 +39,13 @@ const ServicesPage = () => {
           {
             label: "Add Service",
             icon: <AddOutlined />,
-            onClick: () => navigate("/dashboard/admin/add/services")
+            onClick: () => navigate("/dashboard/admin/add/services"),
           },
           {
             label: "Add Category",
             icon: <AddOutlined />,
-            onClick: () => navigate("/dashboard/admin/add/category")
-          }
+            onClick: () => navigate("/dashboard/admin/add/category"),
+          },
         ]}
       />
 
@@ -66,29 +70,52 @@ const ServicesPage = () => {
 
       <Box mt={3} mb={3}>
         <CustomTable title="Total Services" headers={headers}>
-          {services.map((row) => (
-            <TableRow hover key={row.id}>
-              <TableCell>
-                <Checkbox />
-              </TableCell>
-
-              <TableCell>{row.id}</TableCell>
-              <TableCell>{row.subject}</TableCell>
-              <TableCell>{row.description}</TableCell>
-              <TableCell>{row.dueDate}</TableCell>
-              <TableCell>{row.amount}</TableCell>
-
-              <TableCell>
-                <StatusChip status={row.status} label={row.status} />
-              </TableCell>
-
-              <TableCell>
-                <IconButton size="small">
-                  <VisibilityOutlined fontSize="small" />
-                </IconButton>
+          {servicesLoading ? (
+            <TableRow>
+              <TableCell colSpan={6}>
+                <CircularProgress
+                  color="secondary"
+                  sx={{ display: "block", marginX: "auto" }}
+                />
               </TableCell>
             </TableRow>
-          ))}
+          ) : services.length > 0 ? (
+            services.map((row, index) => (
+              <TableRow hover key={index}>
+                <TableCell>
+                  <Checkbox />
+                </TableCell>
+
+                <TableCell>{row.subject}</TableCell>
+                <TableCell>{row.description}</TableCell>
+                <TableCell>{row.dueDate}</TableCell>
+                <TableCell>{row.amount}</TableCell>
+
+                <TableCell>
+                  <StatusChip status={row.status} label={row.status} />
+                </TableCell>
+
+                <TableCell>
+                  <IconButton size="small">
+                    <VisibilityOutlined fontSize="small" />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={6}>
+                <Stack alignItems="center" spacing={2}>
+                  <Typography
+                    variant="body1"
+                    sx={{ color: "#2C3891", fontWeight: 600 }}
+                  >
+                    No Services Available.
+                  </Typography>
+                </Stack>
+              </TableCell>
+            </TableRow>
+          )}
         </CustomTable>
       </Box>
     </div>

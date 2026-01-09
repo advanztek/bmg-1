@@ -26,9 +26,9 @@ import {
   UploadMedia
 } from "../../../Component";
 import { styles } from "../../../styles/dashboard";
-import { useAddCategories } from "../../../Hooks/categories";
 import { useNavigate } from "react-router-dom";
 import { services } from "./data";
+import { useAddTestimonial } from "../../../Hooks/Dashboard/testimonials";
 
 const AddTestimonialsPage = () => {
   const [categoryName, setCategoryName] = useState("");
@@ -39,7 +39,7 @@ const AddTestimonialsPage = () => {
   const [service, setService] = useState("");
 
   const [loading, setLoading] = useState(false);
-  const addCategory = useAddCategories();
+  const addTestimonial = useAddTestimonial();
   const navigate = useNavigate();
 
   const handleFilesChange = (files) => {
@@ -67,7 +67,7 @@ const AddTestimonialsPage = () => {
 
     setLoading(true);
     try {
-      const response = await addCategory(formData);
+      const response = await addTestimonial(formData);
 
       if (response) {
         toast.success("Category added successfully!");

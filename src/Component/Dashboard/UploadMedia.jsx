@@ -3,29 +3,39 @@ import {
   Box,
   Typography,
   IconButton,
-  LinearProgress,
   Stack,
   Input,
-  Button
+  Button,
 } from "@mui/material";
 import {
   CloudUploadOutlined,
   CloseOutlined,
-  InsertDriveFileOutlined
+  InsertDriveFileOutlined,
 } from "@mui/icons-material";
 
 const UploadMedia = ({
+  mode = "single" | "multiple",
   maxFiles = 5,
   maxSize = 10, // in MB
   acceptedFormats = ["jpg", "png", "jpeg", "svg", "zip"],
   onFilesChange,
   title = "Media Upload",
-  description = "Add your documents here, and you can upload up to 5 files max"
+  description = "Add your documents here, and you can upload up to 5 files max",
 }) => {
   const [files, setFiles] = useState([]);
   const [urlInput, setUrlInput] = useState("");
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef(null);
+
+  const emitChange = (updatedFiles) => {
+    if (!onFilesChange) return;
+
+    if (mode === "single") {
+      onFilesChange(updatedFiles[0] || "");
+    } else {
+      onFilesChange(updatedFiles);
+    }
+  };
 
   const formatFileSize = (bytes) => {
     return `${(bytes / 1024).toFixed(0)}kb`;
@@ -53,16 +63,21 @@ const UploadMedia = ({
       return true;
     });
 
-    if (files.length + validFiles.length > maxFiles) {
+    if (mode === "single" && validFiles.length > 1) {
+      alert("Only one file is allowed");
+      return;
+    }
+
+    const updatedFiles =
+      mode === "single" ? validFiles.slice(0, 1) : [...files, ...validFiles];
+
+    if (updatedFiles.length > maxFiles) {
       alert(`You can only upload up to ${maxFiles} files`);
       return;
     }
 
-    const updatedFiles = [...files, ...validFiles];
     setFiles(updatedFiles);
-    if (onFilesChange) {
-      onFilesChange(updatedFiles);
-    }
+    emitChange(updatedFiles);
   };
 
   const handleDrag = (e) => {
@@ -93,22 +108,20 @@ const UploadMedia = ({
   };
 
   const handleUrlUpload = () => {
-    if (urlInput.trim()) {
-      // Create a mock file object for URL
-      const urlFile = {
-        name: urlInput.split("/").pop() || "url-file",
-        size: 0,
-        type: "url",
-        url: urlInput
-      };
-      
-      const updatedFiles = [...files, urlFile];
-      setFiles(updatedFiles);
-      if (onFilesChange) {
-        onFilesChange(updatedFiles);
-      }
-      setUrlInput("");
-    }
+    if (!urlInput.trim()) return;
+
+    const urlFile = {
+      name: urlInput.split("/").pop() || "url-file",
+      size: 0,
+      type: "url",
+      url: urlInput,
+    };
+
+    const updatedFiles = mode === "single" ? [urlFile] : [...files, urlFile];
+
+    setFiles(updatedFiles);
+    emitChange(updatedFiles);
+    setUrlInput("");
   };
 
   const removeFile = (index) => {
@@ -129,10 +142,15 @@ const UploadMedia = ({
         border: "1px solid #e0e0e0",
         borderRadius: 2,
         p: 3,
-        bgcolor: "white"
+        bgcolor: "white",
       }}
     >
-      <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={2}
+      >
         <Box>
           <Typography variant="h6" fontWeight={600}>
             {title}
@@ -159,7 +177,7 @@ const UploadMedia = ({
           textAlign: "center",
           bgcolor: dragActive ? "#f5f5f5" : "transparent",
           cursor: "pointer",
-          transition: "all 0.3s"
+          transition: "all 0.3s",
         }}
         onClick={onButtonClick}
       >
@@ -168,25 +186,34 @@ const UploadMedia = ({
           Drag your file(s) or{" "}
           <Typography
             component="span"
-            sx={{ color: "#2196f3", cursor: "pointer", textDecoration: "underline" }}
+            sx={{
+              color: "#2196f3",
+              cursor: "pointer",
+              textDecoration: "underline",
+            }}
           >
             browse
           </Typography>
         </Typography>
         <Typography variant="caption" color="text.secondary">
-          Max {maxSize}MB files are allowed
+          Maximum file size allowed {maxSize}MB
         </Typography>
         <input
           ref={fileInputRef}
           type="file"
-          multiple
+          multiple={mode === "multiple"} // 👈 IMPORTANT
           onChange={handleChange}
           style={{ display: "none" }}
           accept={acceptedFormats.map((f) => `.${f}`).join(",")}
         />
       </Box>
 
-      <Typography variant="body2" color="text.secondary" textAlign="center" my={2}>
+      <Typography
+        variant="body2"
+        color="text.secondary"
+        textAlign="center"
+        my={2}
+      >
         Only support .{acceptedFormats.join(", .")} and .zip files
       </Typography>
 
@@ -214,7 +241,7 @@ const UploadMedia = ({
               borderRadius: 1,
               px: 2,
               py: 1,
-              fontSize: "14px"
+              fontSize: "14px",
             }}
           />
           <Button
@@ -240,7 +267,7 @@ const UploadMedia = ({
                 p: 1.5,
                 border: "1px solid #e0e0e0",
                 borderRadius: 1,
-                mb: 1
+                mb: 1,
               }}
             >
               <InsertDriveFileOutlined sx={{ color: "#ff9800" }} />

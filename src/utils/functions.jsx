@@ -21,16 +21,36 @@ const formatDate = (dateString) => {
   const datePart = date.toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
-    day: "numeric"
+    day: "numeric",
   });
 
   const timePart = date.toLocaleTimeString("en-US", {
     hour: "numeric",
     minute: "2-digit",
-    hour12: true
+    hour12: true,
   });
 
   return `${datePart} | ${timePart.toLowerCase()}`;
 };
 
-export { validateEmail, validatePassword, formatDate };
+const fileToBase64 = (file) => {
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+};
+
+const truncateText = (text = "", maxLength = 80) => {
+  if (!text) return "-";
+  return text.length > maxLength ? `${text.slice(0, maxLength)}…` : text;
+};
+
+export {
+  validateEmail,
+  validatePassword,
+  formatDate,
+  fileToBase64,
+  truncateText,
+};

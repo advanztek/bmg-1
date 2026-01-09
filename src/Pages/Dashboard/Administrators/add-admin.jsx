@@ -17,10 +17,10 @@ import {
 import { InputLabel, CustomButton, PagesHeader } from "../../../Component";
 import { validateEmail } from "../../../utils/functions";
 import { styles } from "../../../styles/dashboard";
-import { useAddAdmin } from "../../../Hooks/admins";
+import { useAddAdmin } from "../../../Hooks/Dashboard/admins";
 import { useNavigate } from "react-router-dom";
 import { showToast } from "../../../utils/toast";
-import { useGetAdminTypes } from "../../../Hooks/admin_types";
+import { useGetAdminTypes } from "../../../Hooks/Dashboard/admin_types";
 
 const AddAdminPage = () => {
   const [first_name, setFirstname] = useState("");

@@ -26,7 +26,7 @@ import {
   UploadMedia
 } from "../../../Component";
 import { styles } from "../../../styles/dashboard";
-import { useAddCategories } from "../../../Hooks/categories";
+import { useCreateBlogs } from "../../../Hooks/Dashboard/blogs";
 import { useNavigate } from "react-router-dom";
 import { categories } from "./data";
 
@@ -40,7 +40,7 @@ const AddBlogs = () => {
   const [options, setOptions] = useState([]);
 
   const [loading, setLoading] = useState(false);
-  const addCategory = useAddCategories();
+  const postBlog = useCreateBlogs();
   const navigate = useNavigate();
 
   const formData = {
@@ -65,7 +65,7 @@ const AddBlogs = () => {
 
     setLoading(true);
     try {
-      const response = await addCategory(formData);
+      const response = await postBlog(formData);
 
       if (response) {
         toast.success("Category added successfully!");

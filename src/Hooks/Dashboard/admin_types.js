@@ -1,8 +1,8 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { BASE_SERVER_URL } from "../Config/paths";
-import { useUserContext } from "../Contexts";
-import { showToast } from "../utils/toast";
+import { BASE_SERVER_URL } from "../../Config/paths";
+import { useUserContext } from "../../Contexts";
+import { showToast } from "../../utils/toast";
 
 function useAddAdminRole() {
   const { config } = useUserContext();

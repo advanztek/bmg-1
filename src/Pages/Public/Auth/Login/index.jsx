@@ -11,7 +11,7 @@ import {
   IconButton,
   InputAdornment,
   Link,
-  CircularProgress
+  CircularProgress,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { Eye24Regular, EyeOff24Regular } from "@fluentui/react-icons";
@@ -21,12 +21,14 @@ import { showToast } from "../../../../utils/toast";
 import { OTP_MODES } from "../../../../Config/auth/constants";
 import { signInWithGooglePopup } from "../../../../utils/googleAuth";
 import { useGoogleAuthLogin } from "../../../../Hooks/google_auth";
+import { useLoader } from "../../../../Contexts/LoaderContext";
 
 const LoginPage = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const loginUser = useLogin();
   const googleLogin = useGoogleAuthLogin();
+  const { hideLoader, showLoader } = useLoader();
 
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -36,7 +38,7 @@ const LoginPage = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    rememberMe: false
+    rememberMe: false,
   });
 
   const [errors, setErrors] = useState({});
@@ -52,13 +54,13 @@ const LoginPage = () => {
 
     setFormData({
       ...formData,
-      [field]: value
+      [field]: value,
     });
 
     if (errors[field]) {
       setErrors({
         ...errors,
-        [field]: ""
+        [field]: "",
       });
     }
   };
@@ -66,7 +68,7 @@ const LoginPage = () => {
   const handleBlur = (field) => () => {
     setTouched({
       ...touched,
-      [field]: true
+      [field]: true,
     });
     validateField(field, formData[field]);
   };
@@ -99,7 +101,7 @@ const LoginPage = () => {
 
     setErrors((prev) => ({
       ...prev,
-      [field]: error
+      [field]: error,
     }));
 
     return error;
@@ -134,6 +136,7 @@ const LoginPage = () => {
 
   const handleGoogleSignIn = async () => {
     try {
+      showLoader();
       setGoogleBtnLoading(true);
       const googleAccessToken = await signInWithGooglePopup();
 
@@ -142,18 +145,20 @@ const LoginPage = () => {
       console.error("Google sign-in error:", error);
     } finally {
       setGoogleBtnLoading(false);
+      hideLoader();
     }
   };
 
   const handleOtpMethodSelect = async (otpMethod) => {
     setIsSubmitting(true);
+    showLoader();
     setShowOtpModal(false);
 
     try {
       const response = await loginUser({
         email: formData.email,
         password: formData.password,
-        verify_method: otpMethod
+        verify_method: otpMethod,
       });
 
       if (response) {
@@ -166,17 +171,18 @@ const LoginPage = () => {
           state: {
             email: formData.email,
             otpMethod: "login",
-            mode: OTP_MODES.LOGIN
-          }
+            mode: OTP_MODES.LOGIN,
+          },
         });
       }
     } catch (error) {
       console.error("Login error:", error);
       setErrors({
-        submit: error.message || "Login failed. Please check your credentials."
+        submit: error.message || "Login failed. Please check your credentials.",
       });
     } finally {
       setIsSubmitting(false);
+      hideLoader();
     }
   };
 
@@ -186,12 +192,12 @@ const LoginPage = () => {
     "& .MuiInputBase-root": {
       backgroundColor: "transparent !important",
       borderRadius: 0,
-      color: theme.palette.text.primary
+      color: theme.palette.text.primary,
     },
     "& input": {
       backgroundColor: "transparent !important",
-      color: theme.palette.text.primary
-    }
+      color: theme.palette.text.primary,
+    },
   };
 
   const getFieldError = (field) => {
@@ -204,7 +210,7 @@ const LoginPage = () => {
         minHeight: "100vh",
         bgcolor: theme.palette.background.default,
         display: "flex",
-        overflow: "hidden"
+        overflow: "hidden",
       }}
     >
       <Grid
@@ -212,7 +218,7 @@ const LoginPage = () => {
         sx={{
           minHeight: "100vh",
           margin: 0,
-          width: "100%"
+          width: "100%",
         }}
       >
         {/* Left Side - Auth Slider */}
@@ -224,7 +230,7 @@ const LoginPage = () => {
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
-            p: { xs: 4, md: 7 }
+            p: { xs: 4, md: 7 },
           }}
         >
           <AuthSlider />
@@ -239,7 +245,7 @@ const LoginPage = () => {
             justifyContent: "center",
             alignItems: "center",
             px: { xs: 4, md: 6 },
-            bgcolor: theme.palette.background.default
+            bgcolor: theme.palette.background.default,
           }}
         >
           <Box sx={{ maxWidth: 450, width: "100%" }}>
@@ -250,7 +256,7 @@ const LoginPage = () => {
                 mb: 2,
                 textAlign: "center",
                 fontSize: { xs: "1.25rem", md: "1rem" },
-                color: theme.palette.text.heading
+                color: theme.palette.text.heading,
               }}
             >
               Connect with other Creatives
@@ -273,8 +279,8 @@ const LoginPage = () => {
                   fontWeight: 500,
                   "&:hover": {
                     borderColor: theme.palette.divider,
-                    background: theme.palette.background.paper
-                  }
+                    background: theme.palette.background.paper,
+                  },
                 }}
                 startIcon={
                   !googleBtnLoading && (
@@ -312,7 +318,7 @@ const LoginPage = () => {
                 sx={{
                   mb: 0.5,
                   fontWeight: 600,
-                  color: theme.palette.text.heading
+                  color: theme.palette.text.heading,
                 }}
               >
                 Email *
@@ -333,7 +339,7 @@ const LoginPage = () => {
                 sx={{
                   mb: 0.5,
                   fontWeight: 600,
-                  color: theme.palette.text.heading
+                  color: theme.palette.text.heading,
                 }}
               >
                 Password *
@@ -355,7 +361,7 @@ const LoginPage = () => {
                         {showPassword ? <EyeOff24Regular /> : <Eye24Regular />}
                       </IconButton>
                     </InputAdornment>
-                  )
+                  ),
                 }}
               />
               <Box
@@ -363,7 +369,7 @@ const LoginPage = () => {
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
-                  mb: 3
+                  mb: 3,
                 }}
               >
                 <FormControlLabel
@@ -375,8 +381,8 @@ const LoginPage = () => {
                       sx={{
                         color: theme.palette.primary.main,
                         "&.Mui-checked": {
-                          color: theme.palette.primary.main
-                        }
+                          color: theme.palette.primary.main,
+                        },
                       }}
                     />
                   }
@@ -385,7 +391,7 @@ const LoginPage = () => {
                       variant="body2"
                       sx={{
                         fontSize: ".875rem",
-                        color: theme.palette.text.primary
+                        color: theme.palette.text.primary,
                       }}
                     >
                       Remember me
@@ -400,7 +406,7 @@ const LoginPage = () => {
                     color: theme.palette.primary.main,
                     fontWeight: 600,
                     textDecoration: "none",
-                    "&:hover": { textDecoration: "underline" }
+                    "&:hover": { textDecoration: "underline" },
                   }}
                 >
                   Forgot Password?
@@ -420,11 +426,11 @@ const LoginPage = () => {
                   bgcolor: theme.palette.primary.main,
                   color: theme.palette.primary.contrastText,
                   "&:hover": {
-                    bgcolor: theme.palette.primary.dark
+                    bgcolor: theme.palette.primary.dark,
                   },
                   "&:disabled": {
-                    bgcolor: theme.palette.action.disabledBackground
-                  }
+                    bgcolor: theme.palette.action.disabledBackground,
+                  },
                 }}
               >
                 {isSubmitting ? (
@@ -443,7 +449,7 @@ const LoginPage = () => {
               sx={{
                 textAlign: "center",
                 mt: 3,
-                color: theme.palette.text.secondary
+                color: theme.palette.text.secondary,
               }}
             >
               Don't have an Account?{" "}
@@ -453,7 +459,7 @@ const LoginPage = () => {
                   color: theme.palette.primary.main,
                   fontWeight: 600,
                   textDecoration: "none",
-                  "&:hover": { textDecoration: "underline" }
+                  "&:hover": { textDecoration: "underline" },
                 }}
               >
                 Create One

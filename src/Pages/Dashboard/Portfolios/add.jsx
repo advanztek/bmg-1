@@ -8,25 +8,25 @@ import {
   Typography,
   FormControl,
   Select,
-  MenuItem
+  MenuItem,
 } from "@mui/material";
 import { toast } from "react-toastify";
 import {
   AddOutlined,
   DeleteOutlined,
   VisibilityOutlined,
-  ArrowBackOutlined
+  ArrowBackOutlined,
 } from "@mui/icons-material";
 import {
   InputLabel,
   CustomButton,
   PagesHeader,
-  UploadMedia
+  UploadMedia,
 } from "../../../Component";
 import { styles } from "../../../styles/dashboard";
-import { useAddCategories } from "../../../Hooks/categories";
 import { useNavigate } from "react-router-dom";
 import { categories, services } from "./data";
+import { useCreatePortfolios } from "../../../Hooks/Dashboard/portfolios";
 
 const AddPortfolios = () => {
   const [category, setCategory] = useState("");
@@ -36,7 +36,7 @@ const AddPortfolios = () => {
   const [categoryDesc, setCategoryDesc] = useState("");
 
   const [loading, setLoading] = useState(false);
-  const addCategory = useAddCategories();
+  const addPortfolio = useCreatePortfolios();
   const navigate = useNavigate();
 
   const handleFilesChange = (files) => {
@@ -48,7 +48,7 @@ const AddPortfolios = () => {
     category,
     categoryImg,
     categoryStatus,
-    categoryDesc
+    categoryDesc,
   };
 
   const handleSubmitAdmin = async () => {
@@ -64,7 +64,7 @@ const AddPortfolios = () => {
 
     setLoading(true);
     try {
-      const response = await addCategory(formData);
+      const response = await addPortfolio(formData);
 
       if (response) {
         toast.success("Category added successfully!");
@@ -92,13 +92,13 @@ const AddPortfolios = () => {
           {
             label: "View Portfolios",
             icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/admin/portfolios")
+            onClick: () => navigate("/dashboard/admin/portfolios"),
           },
           {
             label: "Add Service",
             icon: <AddOutlined />,
-            onClick: () => navigate("/dashboard/admin/add/services")
-          }
+            onClick: () => navigate("/dashboard/admin/add/services"),
+          },
         ]}
       />
 
@@ -122,7 +122,7 @@ const AddPortfolios = () => {
                   border: "1px solid #e0e0e0",
                   borderRadius: 2,
                   p: 3,
-                  bgcolor: "white"
+                  bgcolor: "white",
                 }}
               >
                 <Grid container spacing={3}>
@@ -176,7 +176,7 @@ const AddPortfolios = () => {
                         borderRadius: 2,
                         p: 3,
                         bgcolor: "white",
-                        mt: 3
+                        mt: 3,
                       }}
                     >
                       <Typography variant="subtitle1" fontWeight={600} mb={2}>
