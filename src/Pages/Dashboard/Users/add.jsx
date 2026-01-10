@@ -1,78 +1,94 @@
 import React, { useState } from "react";
-import {
-  Grid,
-  Box,
-  Input,
-  Select,
-  FormControl,
-  MenuItem,
-  Stack,
-  CircularProgress,
-} from "@mui/material";
+import { Grid, Box, Input, Stack } from "@mui/material";
 import {
   AddOutlined,
   DeleteOutlined,
+  Password,
   VisibilityOutlined,
 } from "@mui/icons-material";
 import { InputLabel, CustomButton, PagesHeader } from "../../../Component";
 import { validateEmail } from "../../../utils/functions";
 import { styles } from "../../../styles/dashboard";
-import { useAddAdmin } from "../../../Hooks/Dashboard/admins";
 import { useNavigate } from "react-router-dom";
 import { showToast } from "../../../utils/toast";
-import { useGetAdminTypes } from "../../../Hooks/Dashboard/admin_types";
+import { useAddUser } from "../../../Hooks/Dashboard/users";
 import { useLoader } from "../../../Contexts/LoaderContext";
 
-const AddAdminPage = () => {
+const AddUsersPage = () => {
   const [first_name, setFirstname] = useState("");
   const [last_name, setLastname] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [sub_role, setSubRole] = useState([]);
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [errors, setErrors] = useState({});
 
   const [loading, setLoading] = useState(false);
-  const { hideLoader, showLoader } = useLoader();
-
-  const submitAdmin = useAddAdmin();
-  const { adminTypes, loading: typesLoading } = useGetAdminTypes();
+  const addUser = useAddUser();
   const navigate = useNavigate();
+  const { showLoader, hideLoader } = useLoader();
 
-  const adminFormData = {
+  const formData = {
     first_name,
     last_name,
     email,
     phone,
-    sub_role,
+    password,
   };
 
-  const handleSubmitAdmin = async (e) => {
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!first_name.trim()) newErrors.first_name = "First name is required";
+    if (!last_name.trim()) newErrors.last_name = "Last name is required";
+
+    if (!email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!validateEmail(email)) {
+      newErrors.email = "Invalid email address";
+    }
+
+    if (!phone.trim()) newErrors.phone = "Phone number is required";
+
+    if (!password) {
+      newErrors.password = "Password is required";
+    } else if (password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
+    }
+
+    if (!confirmPassword) {
+      newErrors.confirmPassword = "Please confirm password";
+    } else if (password !== confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (
-      !first_name.trim() ||
-      !last_name.trim() ||
-      !email.trim() ||
-      !phone.trim() ||
-      sub_role.length === 0 ||
-      !validateEmail(email)
-    ) {
-      showToast.warning("Please fill in all fields correctly.");
+    if (!validateForm()) {
+      showToast.warning("Please fix the errors in the form.");
       return;
     }
 
     setLoading(true);
     showLoader();
     try {
-      const response = await submitAdmin(adminFormData);
+      const response = await addUser(formData);
 
       if (response) {
         setFirstname("");
         setLastname("");
         setEmail("");
         setPhone("");
-        setSubRole([]);
+        setPassword("");
+
+        navigate("/dashboard/admin/customers");
       }
     } catch (error) {
-      showToast.error(error || "Admin registration failed.");
+      showToast.error(error || "User registration failed.");
     } finally {
       setLoading(false);
       hideLoader();
@@ -82,19 +98,19 @@ const AddAdminPage = () => {
   return (
     <>
       <PagesHeader
-        label="Add Administrator"
-        desc={"Add an administrator, assign privileges and manage controls"}
+        label="Manage Customers"
+        desc={"Manage customers, assign privileges and manage controls"}
         searchEnabled={false}
         actions={[
           {
-            label: "View Admins",
+            label: "View Customers",
             icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/view/admins"),
+            onClick: () => navigate("/dashboard/admin/customers"),
           },
           {
-            label: "Manage Roles",
+            label: "Manage Administrators",
             icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/view/admin-roles"),
+            onClick: () => navigate("/dashboard/view/admins"),
           },
         ]}
       />
@@ -149,44 +165,29 @@ const AddAdminPage = () => {
                 onChange={(e) => setPhone(e.target.value)}
               />
             </Grid>
-          </Grid>
 
-          <Grid container spacing={2} mt={1.5}>
             <Grid size={{ xs: 12, md: 6 }}>
-              <FormControl fullWidth disabled={typesLoading}>
-                <InputLabel text="Admin Role" />
-                <Select
-                  labelId="admin-role-label"
-                  multiple
-                  value={sub_role}
-                  onChange={(e) => setSubRole(e.target.value)}
-                  displayEmpty
-                  label="Admin Role"
-                  renderValue={(selected) => {
-                    if (!selected.length) {
-                      return <em>Select admin role(s)</em>;
-                    }
+              <InputLabel text="Customer Password" />
+              <Input
+                disableUnderline
+                fullWidth
+                sx={styles.input}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                error={Boolean(errors.password)}
+              />
+            </Grid>
 
-                    return adminTypes
-                      .filter((t) => selected.includes(t.id))
-                      .map((t) => t.name)
-                      .join(", ");
-                  }}
-                >
-                  {typesLoading ? (
-                    <MenuItem disabled>
-                      <CircularProgress size={18} sx={{ mr: 1 }} />
-                      Loading roles...
-                    </MenuItem>
-                  ) : (
-                    adminTypes.map((type) => (
-                      <MenuItem key={type.id} value={type.id}>
-                        {type.name}
-                      </MenuItem>
-                    ))
-                  )}
-                </Select>
-              </FormControl>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <InputLabel text="Confirm Password" />
+              <Input
+                disableUnderline
+                fullWidth
+                sx={styles.input}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                error={Boolean(errors.confirmPassword)}
+              />
             </Grid>
           </Grid>
 
@@ -205,12 +206,12 @@ const AddAdminPage = () => {
                 />
 
                 <CustomButton
-                  title={loading ? "Adding..." : "Add Administrator"}
+                  title={loading ? "Adding..." : "Add Customer"}
                   color="primary"
                   variant="filled"
                   startIcon={<AddOutlined />}
                   disabled={loading}
-                  onClick={handleSubmitAdmin}
+                  onClick={handleSubmit}
                   sx={{ textTransform: "none", paddingInline: 20 }}
                 />
               </Stack>
@@ -222,4 +223,4 @@ const AddAdminPage = () => {
   );
 };
 
-export default AddAdminPage;
+export default AddUsersPage;

@@ -8,6 +8,11 @@ export const videoTabs = [
   { label: "Image To Video", key: 1 },
 ];
 
+export const speechTabs = [
+  { label: "Text To Audio", key: 0 },
+  { label: "Audio To Text", key: 1 },
+];
+
 export const timeframe = [
   { id: 1, name: "3s", value: "3s" },
   { id: 2, name: "5s", value: "5s" },

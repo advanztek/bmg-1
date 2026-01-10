@@ -26,7 +26,7 @@ export const ADMIN_NAV = [
   },
   {
     label: "Manage Users",
-    path: "/dashboard/users",
+    path: "/dashboard/admin/customers",
     icon: EMOJI_ICONS.people,
     children: [],
   },

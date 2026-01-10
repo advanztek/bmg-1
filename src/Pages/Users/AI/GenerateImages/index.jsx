@@ -22,13 +22,12 @@ import { DashboardTab, CustomTab } from "../../../../Component";
 import { imageTabs } from "../data";
 import ImageToImageInput from "./image-to-image";
 import TextToImageInput from "./text-to-image";
-
-const DRAWER_WIDTH = 320;
-const DRAWER_COLLAPSED_WIDTH = 70;
+import { GeneratingLoader } from "../../../../Component";
 
 const UserGenerateImages = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [activeTab, setActiveTab] = useState(0);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   function updateActiveTab(tab) {
     setActiveTab(tab);
@@ -110,7 +109,6 @@ const UserGenerateImages = () => {
         overflow: "hidden",
       }}
     >
-      {/* Main Content */}
       <Box
         component="main"
         sx={{
@@ -148,7 +146,7 @@ const UserGenerateImages = () => {
             />
 
             <DashboardTab tabKey={0} activeTab={activeTab}>
-              <TextToImageInput />
+              <TextToImageInput onGeneratingChange={setIsGenerating} />
             </DashboardTab>
 
             <DashboardTab tabKey={1} activeTab={activeTab}>
@@ -172,119 +170,125 @@ const UserGenerateImages = () => {
                 </Typography>
               </Stack>
 
-              {/* Image Grid */}
-              <Grid container spacing={3}>
-                {generatedImages.map((image) => (
-                  <Grid item size={{ xs: 12, md: 4, lg: 3 }} key={image.id}>
-                    <Card
-                      elevation={0}
-                      onClick={() => handleImageClick(image)}
-                      sx={{
-                        cursor: "pointer",
-                        position: "relative",
-                        overflow: "hidden",
-                        borderRadius: 1,
-                        transition: "all 0.3s",
-                        "&:hover": {
-                          transform: "translateY(-4px)",
-                          boxShadow: 6,
-                          "& .image-overlay": {
-                            opacity: 1,
-                          },
-                          "& .card-image": {
-                            transform: "scale(1.1)",
-                          },
-                        },
-                      }}
-                    >
-                      <CardMedia
-                        component="img"
-                        image={image.url}
-                        alt={image.prompt}
-                        className="card-image"
+              <Grid container spacing={1}>
+                {isGenerating ? (
+                  <Stack alignItems="center" spacing={2}>
+                    <GeneratingLoader />
+                    <Typography mt={2} fontWeight={500}>
+                      Generating Image...
+                    </Typography>
+                  </Stack>
+                ) : (
+                  generatedImages.map((image) => (
+                    <Grid item size={{ xs: 12, md: 4, lg: 4 }} key={image.id}>
+                      <Card
+                        elevation={0}
+                        onClick={() => handleImageClick(image)}
                         sx={{
-                          aspectRatio: "1/1",
-                          objectFit: "cover",
-                          transition: "transform 0.3s",
-                        }}
-                      />
-
-                      {/* Hover Overlay */}
-                      <Box
-                        className="image-overlay"
-                        sx={{
-                          position: "absolute",
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          background:
-                            "linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.4), transparent)",
-                          p: 2,
-                          opacity: 0,
-                          transition: "opacity 0.3s",
+                          cursor: "pointer",
+                          position: "relative",
+                          overflow: "hidden",
+                          borderRadius: 1,
+                          transition: "all 0.3s",
+                          "&:hover": {
+                            transform: "translateY(-4px)",
+                            boxShadow: 6,
+                            "& .image-overlay": {
+                              opacity: 1,
+                            },
+                            "& .card-image": {
+                              transform: "scale(1.1)",
+                            },
+                          },
                         }}
                       >
-                        <Typography
-                          variant="body2"
-                          color="white"
-                          fontWeight={500}
+                        <CardMedia
+                          component="img"
+                          image={image.url}
+                          alt={image.prompt}
+                          className="card-image"
                           sx={{
-                            mb: 1,
-                            display: "-webkit-box",
-                            WebkitLineClamp: 2,
-                            WebkitBoxOrient: "vertical",
-                            overflow: "hidden",
+                            aspectRatio: "1/1",
+                            objectFit: "cover",
+                            transition: "transform 0.3s",
+                          }}
+                        />
+
+                        <Box
+                          className="image-overlay"
+                          sx={{
+                            position: "absolute",
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            background:
+                              "linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.4), transparent)",
+                            p: 2,
+                            opacity: 0,
+                            transition: "opacity 0.3s",
                           }}
                         >
-                          {image.prompt}
-                        </Typography>
-                        <Stack direction="row" spacing={1}>
-                          <IconButton
-                            size="small"
+                          <Typography
+                            variant="body2"
+                            color="white"
+                            fontWeight={500}
                             sx={{
-                              bgcolor: "rgba(255,255,255,0.2)",
-                              color: "white",
-                              backdropFilter: "blur(10px)",
-                              "&:hover": {
-                                bgcolor: "rgba(255,255,255,0.3)",
-                              },
-                            }}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              console.log("Download", image.id);
+                              mb: 1,
+                              display: "-webkit-box",
+                              WebkitLineClamp: 2,
+                              WebkitBoxOrient: "vertical",
+                              overflow: "hidden",
                             }}
                           >
-                            <Download fontSize="small" />
-                          </IconButton>
-                          <IconButton
-                            size="small"
-                            sx={{
-                              bgcolor: "rgba(255,255,255,0.2)",
-                              color: "white",
-                              backdropFilter: "blur(10px)",
-                              "&:hover": {
-                                bgcolor: "rgba(255,255,255,0.3)",
-                              },
-                            }}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              console.log("Delete", image.id);
-                            }}
-                          >
-                            <Delete fontSize="small" />
-                          </IconButton>
-                        </Stack>
-                      </Box>
-                    </Card>
-                  </Grid>
-                ))}
+                            {image.prompt}
+                          </Typography>
+                          <Stack direction="row" spacing={1}>
+                            <IconButton
+                              size="small"
+                              sx={{
+                                bgcolor: "rgba(255,255,255,0.2)",
+                                color: "white",
+                                backdropFilter: "blur(10px)",
+                                "&:hover": {
+                                  bgcolor: "rgba(255,255,255,0.3)",
+                                },
+                              }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                console.log("Download", image.id);
+                              }}
+                            >
+                              <Download fontSize="small" />
+                            </IconButton>
+                            <IconButton
+                              size="small"
+                              sx={{
+                                bgcolor: "rgba(255,255,255,0.2)",
+                                color: "white",
+                                backdropFilter: "blur(10px)",
+                                "&:hover": {
+                                  bgcolor: "rgba(255,255,255,0.3)",
+                                },
+                              }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                console.log("Delete", image.id);
+                              }}
+                            >
+                              <Delete fontSize="small" />
+                            </IconButton>
+                          </Stack>
+                        </Box>
+                      </Card>
+                    </Grid>
+                  ))
+                )}
               </Grid>
             </Box>
           </Grid>
         </Grid>
       </Box>
 
-      {/* Image Preview Modal */}
       <Dialog
         open={Boolean(selectedImage)}
         onClose={handleCloseModal}

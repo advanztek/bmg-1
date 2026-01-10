@@ -8,6 +8,7 @@ import {
   Grid,
   Stack,
   Typography,
+  CircularProgress,
 } from "@mui/material";
 import {
   CustomTable,
@@ -20,6 +21,7 @@ import { headers, serviceData } from "./data";
 import { AddOutlined, VisibilityOutlined } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useFetchServices } from "../../../Hooks/Dashboard/services";
+import { formatDate } from "../../../utils/functions";
 
 const ServicesPage = () => {
   const [search, setSearch] = useState();
@@ -86,13 +88,18 @@ const ServicesPage = () => {
                   <Checkbox />
                 </TableCell>
 
-                <TableCell>{row.subject}</TableCell>
-                <TableCell>{row.description}</TableCell>
-                <TableCell>{row.dueDate}</TableCell>
-                <TableCell>{row.amount}</TableCell>
+                <TableCell>{row.service_name}</TableCell>
+                <TableCell>{row.service_price}</TableCell>
+                <TableCell>{row.discount_type}</TableCell>
+                <TableCell>{row.category_name}</TableCell>
+                <TableCell>{formatDate(row.created_at)}</TableCell>
+                <TableCell>{formatDate(row.updated_at)}</TableCell>
 
                 <TableCell>
-                  <StatusChip status={row.status} label={row.status} />
+                  <StatusChip
+                    status={row.service_status === true ? "active" : "inactive"}
+                    label={row.service_status === true ? "Active" : "Disabled"}
+                  />
                 </TableCell>
 
                 <TableCell>

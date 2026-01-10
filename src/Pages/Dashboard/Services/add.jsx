@@ -417,7 +417,7 @@ const AddServicePage = () => {
             </Grid>
           </Box>
 
-          <Grid container spacing={2} mt={3}>
+          <Grid container spacing={2} mt={5}>
             <Grid size={{ xs: 12 }}>
               <Stack
                 direction="row"
@@ -443,7 +443,7 @@ const AddServicePage = () => {
                     sx={{ textTransform: "none", px: 4 }}
                   />
                   <CustomButton
-                    title={loading ? "Submitting..." : "Submit"}
+                    title={loading ? "Adding..." : "Add Service"}
                     color="primary"
                     variant="filled"
                     disabled={loading}

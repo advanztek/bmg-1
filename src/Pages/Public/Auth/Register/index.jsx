@@ -28,7 +28,6 @@ const LoginPage = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const { showLoader, hideLoader } = useLoader();
-
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);

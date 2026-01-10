@@ -118,7 +118,7 @@ const SubCategoriesPage = () => {
                   >
                     No Sub Category Available...
                   </Typography>
-                </Stack>{" "}
+                </Stack>
               </TableCell>
             </TableRow>
           )}

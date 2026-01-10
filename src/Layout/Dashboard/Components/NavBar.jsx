@@ -6,7 +6,7 @@ import {
   Typography,
   Menu,
   MenuItem,
-  ListItemIcon
+  ListItemIcon,
 } from "@mui/material";
 import { Menu as MenuIcon, Notifications, Logout } from "@mui/icons-material";
 import NotificationsMenu from "./NotificationsMenu";
@@ -15,12 +15,16 @@ import MenuBox from "./MenuBox";
 import { WavingHandOutlined } from "@mui/icons-material";
 import { dbColors } from "../../../Config/color";
 import { useNavigate } from "react-router-dom";
+import { useUserContext } from "../../../Contexts";
+import { getTimeGreeting, getFormattedDate } from "../../../utils/functions";
 
 function NavBar({ sideNavWidth, layoutPadding, navHeight, onMenuClick }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [notificationsAnchorEl, setNotificationsAnchorEl] = useState(null);
 
   const navigate = useNavigate();
+  const { user } = useUserContext();
+  const userInfo = user?.user;
 
   const handleSettingsClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -53,7 +57,7 @@ function NavBar({ sideNavWidth, layoutPadding, navHeight, onMenuClick }) {
         right: 0,
         pl: {
           xs: `${layoutPadding}px`,
-          md: `${sideNavWidth + layoutPadding}px`
+          md: `${sideNavWidth + layoutPadding}px`,
         },
         pr: `${layoutPadding}px`,
         height: `${navHeight}px`,
@@ -62,7 +66,7 @@ function NavBar({ sideNavWidth, layoutPadding, navHeight, onMenuClick }) {
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        zIndex: 99
+        zIndex: 99,
       }}
     >
       <Stack direction="row" alignItems="center">
@@ -79,19 +83,20 @@ function NavBar({ sideNavWidth, layoutPadding, navHeight, onMenuClick }) {
               fontSize={{ xs: 16, md: 24 }}
               fontWeight={700}
               color="#000"
+              textTransform={"capitalize"}
             >
-              Good Morning, Jimie
+              {getTimeGreeting()}, {userInfo.last_name}
             </Typography>
             <WavingHandOutlined
               sx={{
                 fontSize: { xs: 20, md: 30 },
                 mt: -0.5,
-                color: dbColors.main.default
+                color: dbColors.main.default,
               }}
             />
           </Stack>
           <Typography display={{ xs: "none", md: "block" }} fontSize={12}>
-            Wednesday, November 19, 2025{" "}
+            {getFormattedDate()}
           </Typography>
         </Box>
       </Stack>
@@ -108,7 +113,10 @@ function NavBar({ sideNavWidth, layoutPadding, navHeight, onMenuClick }) {
             onClose={handleNotificationsClose}
           />
 
-          <UserAvatar onClick={handleSettingsClick} />
+          <UserAvatar
+            onClick={handleSettingsClick}
+            initial={userInfo?.first_name?.[0]}
+          />
 
           <Menu
             anchorEl={anchorEl}

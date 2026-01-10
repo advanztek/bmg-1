@@ -42,4 +42,6 @@ export const EMOJI_ICONS = {
   requirements: "📋",
   types: "🧩",
   overview: "📈",
+  music: "🎵",
+  audioWave: "🎶",
 };

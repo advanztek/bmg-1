@@ -48,6 +48,7 @@ import {
   ServiceTypesPage,
   AddServiceTypePage,
   AddSubscriptionPage,
+  AddUsersPage,
 } from "../Pages/Dashboard";
 
 import { ExpertOverview, ExpertOrders } from "../Pages/Experts";
@@ -69,7 +70,6 @@ import {
   UserGenerateWebsites,
   UserGenerateSpeeches,
   UserGenerateStrategy,
-  UserEditVideos,
 } from "../Pages/Users";
 
 import DashboardLayout from "../Layout/Dashboard";
@@ -85,7 +85,7 @@ const DashboardRoutes = () => {
         <Route path="view/admin-roles" element={<AdminRoles />} />
         <Route path="add/admin-roles" element={<AddAdminRole />} />
 
-        <Route path="users" element={<UsersPage />} />
+        <Route path="admin/customers" element={<UsersPage />} />
         <Route path="admin/experts" element={<ExpertsPage />} />
         <Route path="admin/add/experts" element={<AddExpertPage />} />
         <Route path="admin/services" element={<ServicesPage />} />
@@ -153,6 +153,7 @@ const DashboardRoutes = () => {
           path="admin/add/subscription"
           element={<AddSubscriptionPage />}
         />
+        <Route path="admin/add/customer" element={<AddUsersPage />} />
 
         {/* ----- EXPERT ROUTES ----- */}
         <Route path="expert/overview" element={<ExpertOverview />} />
@@ -178,14 +179,13 @@ const DashboardRoutes = () => {
           element={<UserGenerateWebsites />}
         />
         <Route
-          path="user/generate-speechs"
+          path="user/generate-speeches"
           element={<UserGenerateSpeeches />}
         />
         <Route
           path="user/generate-strategy"
           element={<UserGenerateStrategy />}
         />
-        <Route path="user/edit-videos" element={<UserEditVideos />} />
       </Routes>
     </DashboardLayout>
   );

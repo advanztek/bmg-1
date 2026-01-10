@@ -16,7 +16,7 @@ export const skills = [
   { id: 4, skill: "Product Manager" },
 ];
 
-export const experience = [
+export const level = [
   { experience: "0-1 year" },
   { experience: "2-5 years" },
   { experience: "5-10 years" },

@@ -15,17 +15,10 @@ import {
   Chip,
   Divider,
 } from "@mui/material";
-import {
-  AutoAwesome,
-  History,
-  Delete,
-  Download,
-  Close,
-  Send,
-} from "@mui/icons-material";
-import { EMOJI_ICONS } from "../../../Config/emojiIcons";
+import { History, Delete, Download, Close, Send } from "@mui/icons-material";
+import { EMOJI_ICONS } from "../../../../Config/emojiIcons";
 
-const UserGenerateSpeeches = () => {
+const TextToAudioInput = () => {
   const [prompt, setPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedSpeech, setSelectedSpeech] = useState(null);
@@ -65,30 +58,9 @@ const UserGenerateSpeeches = () => {
 
   return (
     <Box sx={{ height: "100%" }}>
-      {/* Header */}
-      <Box
-        sx={{
-          borderBottom: "1px solid #eaeaea",
-          px: 3,
-          py: 3,
-        }}
-      >
-        <Stack direction="row" spacing={2} alignItems="center">
-          {EMOJI_ICONS.generatedSpeeches}
-          <Box>
-            <Typography variant="h5" fontWeight={700}>
-              Speech Generator
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Generate powerful, ready-to-use speeches with AI
-            </Typography>
-          </Box>
-        </Stack>
-      </Box>
+ 
 
-      {/* Main Layout */}
       <Grid container sx={{ height: "calc(100% - 96px)" }}>
-        {/* History Column */}
         <Grid
           item
           size={{ xs: 12, md: 3 }}
@@ -223,7 +195,6 @@ const UserGenerateSpeeches = () => {
         </Grid>
       </Grid>
 
-      {/* Speech Preview Dialog */}
       <Dialog
         open={Boolean(selectedSpeech)}
         onClose={() => setSelectedSpeech(null)}
@@ -263,4 +234,4 @@ const UserGenerateSpeeches = () => {
   );
 };
 
-export default UserGenerateSpeeches;
+export default TextToAudioInput;

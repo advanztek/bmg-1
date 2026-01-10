@@ -5,20 +5,20 @@ import {
   TableCell,
   Checkbox,
   IconButton,
-  CircularProgress
+  CircularProgress,
 } from "@mui/material";
 import { CustomTable, StatusChip, PagesHeader } from "../../../Component";
 import { headers } from "./data";
-import { VisibilityOutlined } from "@mui/icons-material";
+import { AddOutlined, VisibilityOutlined } from "@mui/icons-material";
 import { useFetchAdmins } from "../../../Hooks/Dashboard/admins";
 import { formatDate } from "../../../utils/functions";
+import { useNavigate } from "react-router-dom";
 
 const Administrators = () => {
   const [search, setSearch] = useState();
+  const navigate = useNavigate();
 
   const { refetch, admins, loading } = useFetchAdmins();
-
-  console.log("Admins in Administrators Page:", admins);
 
   return (
     <div>
@@ -28,6 +28,18 @@ const Administrators = () => {
         enableSearch
         searchValue={search}
         onSearchChange={setSearch}
+        actions={[
+          {
+            label: "Add Admininistrator",
+            icon: <AddOutlined />,
+            onClick: () => navigate("/dashboard/add/admin"),
+          },
+          {
+            label: "Manage Roles",
+            icon: <VisibilityOutlined />,
+            onClick: () => navigate("/dashboard/view/admin-roles"),
+          },
+        ]}
       />
 
       <Box mt={3} mb={3}>
@@ -55,8 +67,8 @@ const Administrators = () => {
               <TableCell>{formatDate(row.created_at)}</TableCell>
               <TableCell>
                 <StatusChip
-                  status={row.status === true ? "active" : "inactive"}
-                  label={row.status === true ? "Active" : "Disabled"}
+                  status={row.status === 1 ? "active" : "inactive"}
+                  label={row.status === 1 ? "Active" : "Disabled"}
                 />
               </TableCell>
 

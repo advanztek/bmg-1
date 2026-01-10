@@ -1,35 +1,49 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   TextField,
   Button,
   Typography,
-  FormControl,
-  InputLabel,
   Card,
   CardContent,
-  Select,
-  MenuItem,
   Stack,
   CircularProgress,
 } from "@mui/material";
 import { Send } from "@mui/icons-material";
-import { discountTypes } from "../data";
-import { CustomButton } from "../../../../Component";
+import { useGenerateImage } from "../../../../Hooks/Dashboard/generate_images";
+import { showToast } from "../../../../utils/toast";
 
-const TextToImageInput = () => {
+const TextToImageInput = ({ onGeneratingChange }) => {
   const [prompt, setPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
-  const [discountType, setDiscountType] = useState(false);
+  const generateImage = useGenerateImage();
 
-  const handleGenerate = () => {
+  /* notify parent whenever generating changes */
+  useEffect(() => {
+    onGeneratingChange?.(isGenerating);
+  }, [isGenerating, onGeneratingChange]);
+
+  const handleGenerate = async (e) => {
+    e.preventDefault();
+
     if (!prompt.trim()) return;
     setIsGenerating(true);
 
-    // Simulate generation
-    setTimeout(() => {
+    try {
+      const payload = {
+        prompt,
+      };
+      console.log("PayLoad:", payload);
+
+      const response = await generateImage(payload);
+      if (response) {
+        setPrompt("");
+      }
+    } catch (error) {
+      showToast.error(error || "Failed to create category");
+    } finally {
       setIsGenerating(false);
-    }, 2000);
+    }
   };
 
   return (
@@ -44,6 +58,7 @@ const TextToImageInput = () => {
           >
             Describe your ideas and images for reference
           </Typography>
+
           <Box sx={{ position: "relative" }}>
             <TextField
               fullWidth
@@ -52,7 +67,6 @@ const TextToImageInput = () => {
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="Describe your ideas and images for reference"
-              variant="outlined"
               sx={{
                 "& .MuiOutlinedInput-root": {
                   borderRadius: 2,
@@ -61,102 +75,37 @@ const TextToImageInput = () => {
                 },
               }}
             />
-          </Box>
 
-          <Box
-            sx={{
-              border: "1px solid #e0e0e0",
-              borderRadius: 2,
-              p: 3,
-              bgcolor: "white",
-              mt: 2,
-            }}
-          >
-            <Typography variant="subtitle1" fontWeight={600} mb={2}>
-              Settings
-            </Typography>
-            <Stack direction="row" alignItems="center" spacing={2}>
-              <FormControl fullWidth>
-                <InputLabel text="Service Discount Type" />
-                <Select
-                  value={discountType}
-                  onChange={(e) => setDiscountType(e.target.value)}
-                  disableUnderline
-                  displayEmpty
-                >
-                  <MenuItem value="" disabled>
-                    <InputLabel text="Select Service Discount Type" />
-                  </MenuItem>
-
-                  {discountTypes.map((discount, index) => (
-                    <MenuItem key={index} value={discount.id}>
-                      {discount.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <FormControl fullWidth>
-                <InputLabel text="Service Discount Type" />
-                <Select
-                  value={discountType}
-                  onChange={(e) => setDiscountType(e.target.value)}
-                  disableUnderline
-                  displayEmpty
-                >
-                  <MenuItem value="" disabled>
-                    <InputLabel text="Select Service Discount Type" />
-                  </MenuItem>
-
-                  {discountTypes.map((discount, index) => (
-                    <MenuItem key={index} value={discount.id}>
-                      {discount.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <FormControl fullWidth>
-                <InputLabel text="Service Discount Type" />
-                <Select
-                  value={discountType}
-                  onChange={(e) => setDiscountType(e.target.value)}
-                  disableUnderline
-                  displayEmpty
-                >
-                  <MenuItem value="" disabled>
-                    <InputLabel text="Select Service Discount Type" />
-                  </MenuItem>
-
-                  {discountTypes.map((discount, index) => (
-                    <MenuItem key={index} value={discount.id}>
-                      {discount.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Stack>
-
-            <CustomButton
-              fullWidth
-              title={isGenerating ? "Generating..." : "Generate"}
-              color="accent"
-              variant="filled"
-              onClick={handleGenerate}
-              disabled={!prompt.trim() || isGenerating}
-              endIcon={
-                isGenerating ? (
-                  <CircularProgress size={20} color="inherit" />
-                ) : (
-                  <Send />
-                )
-              }
+            <Stack
+              direction="row"
+              justifyContent="flex-end"
               sx={{
-                marginTop: 10,
-                textTransform: "none",
-                px: 4,
-                borderRadius: 4,
-                fontWeight: 600,
+                position: "absolute",
+                bottom: 16,
+                right: 16,
               }}
-            />
+            >
+              <Button
+                variant="contained"
+                endIcon={
+                  isGenerating ? (
+                    <CircularProgress size={18} color="inherit" />
+                  ) : (
+                    <Send />
+                  )
+                }
+                onClick={handleGenerate}
+                disabled={!prompt.trim() || isGenerating}
+                sx={{
+                  textTransform: "none",
+                  px: 4,
+                  borderRadius: 1,
+                  fontWeight: 600,
+                }}
+              >
+                {isGenerating ? "Generating..." : "Generate"}
+              </Button>
+            </Stack>
           </Box>
         </CardContent>
       </Card>

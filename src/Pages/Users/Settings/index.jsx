@@ -1,289 +1,273 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Grid,
   Card,
   CardContent,
-  Typography,
   TextField,
   Button,
-  Switch,
-  FormControlLabel,
   Avatar,
-  IconButton,
-  Tabs,
-  Tab,
   Stack,
-  Divider,
-  Alert,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel
+  Typography,
 } from "@mui/material";
 import {
   PhotoCamera,
-  Visibility,
-  VisibilityOff,
   Save,
-  Delete,
   AddOutlined,
-  VisibilityOutlined
+  VisibilityOutlined,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { PagesHeader } from "../../../Component";
+import { DashboardTab, CustomTab } from "../../../Component";
+import { settingsTabs } from "./data";
+import SecurityTab from "./security-tab";
+import PrivacyTab from "./privacy";
+import PrefrenceTab from "./prefrences";
+import { useUserContext } from "../../../Contexts";
 
 const UserSettingsPage = () => {
   const [activeTab, setActiveTab] = useState(0);
-  const [showPassword, setShowPassword] = useState(false);
+  const { user } = useUserContext();
+  const navigate = useNavigate();
+
+  const userInfo = user?.user;
 
   const [profileData, setProfileData] = useState({
-    firstName: "John",
-    lastName: "Doe",
-    email: "user@example.com",
-    phone: "+1 (555) 123-4567",
-    bio: "Creative professional passionate about design and innovation",
-    country: "United States",
-    timezone: "America/New_York"
+    first_name: "",
+    last_name: "",
+    email: "",
+    phone: "",
+    address_one: "",
+    address_two: "",
+    city: "",
+    state: "",
+    country: "",
+    zip_code: "",
+    profile_picture: null,
   });
 
-  const [notifications, setNotifications] = useState({
-    emailNotifications: true,
-    pushNotifications: true,
-    smsNotifications: false,
-    weeklyDigest: true,
-    productUpdates: true
-  });
+  useEffect(() => {
+    if (!userInfo) return;
 
-  const [security, setSecurity] = useState({
-    twoFactor: false,
-    loginAlerts: true,
-    sessionTimeout: "30"
-  });
+    setProfileData({
+      first_name: userInfo.first_name || "",
+      last_name: userInfo.last_name || "",
+      email: userInfo.email || "",
+      phone: userInfo.phone || "",
+      address_one: userInfo.address_one || "",
+      address_two: userInfo.address_two || "",
+      city: userInfo.city || "",
+      state: userInfo.state || "",
+      country: userInfo.country || "",
+      zip_code: userInfo.zip_code || "",
+      profile_picture: null,
+    });
+  }, [userInfo]);
 
-  const handleTabChange = (_, newValue) => setActiveTab(newValue);
+  const handleChange = (field) => (e) => {
+    setProfileData((prev) => ({
+      ...prev,
+      [field]: e.target.value,
+    }));
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setProfileData((prev) => ({
+      ...prev,
+      profile_picture: file,
+    }));
+  };
 
   const handleSave = () => {
-    console.log("Settings saved");
+    const payload = new FormData();
+
+    Object.entries(profileData).forEach(([key, value]) => {
+      if (value !== null && value !== "") {
+        payload.append(key, value);
+      }
+    });
+
+    console.log("Submitting profile update:", [...payload.entries()]);
   };
-  const navigate = useNavigate();
 
   return (
     <Box>
       <PagesHeader
         label="Settings"
-        desc={"Manage your account settings and preferences"}
+        desc="Manage your account settings and preferences"
         actions={[
           {
             label: "Book Consultation",
             icon: <AddOutlined />,
-            onClick: () => navigate("/dashboard/user/book-consultation")
+            onClick: () => navigate("/dashboard/user/consultations"),
           },
           {
             label: "My Orders",
             icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/user/orders")
+            onClick: () => navigate("/dashboard/user/orders"),
           },
           {
             label: "AI Services",
             icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/user/artificial-intelligence")
-          }
+            onClick: () => navigate("/dashboard/user/artificial-intelligence"),
+          },
         ]}
       />
 
-      <Card>
-        <Tabs
-          value={activeTab}
-          onChange={handleTabChange}
-          sx={{ borderBottom: 1, borderColor: "divider", px: 2 }}
-        >
-          <Tab label="Profile" />
-          <Tab label="Security" />
-          <Tab label="Notifications" />
-          <Tab label="Preferences" />
-          <Tab label="Privacy" />
-        </Tabs>
+      <CustomTab
+        tabs={settingsTabs}
+        activeTab={activeTab}
+        updateActiveTab={setActiveTab}
+      />
 
-        <CardContent sx={{ p: 4 }}>
-          {activeTab === 0 && (
-            <Box>
-              <Stack direction="row" spacing={3} mb={4}>
-                <Avatar
-                  sx={{ width: 120, height: 120, bgcolor: "primary.main" }}
+      <DashboardTab tabKey={0} activeTab={activeTab}>
+        <Card>
+          <CardContent sx={{ p: 4 }}>
+            <Stack direction="row" spacing={3} mb={4} alignItems={"baseline"}>
+              <Avatar
+                sx={{ width: 100, height: 100, bgcolor: "primary.main" }}
+                src={userInfo?.profile_picture}
+              >
+                <Typography sx={{ textTransform: "uppercase" }}>
+                  {profileData.first_name?.[0] || "U"}
+                </Typography>
+              </Avatar>
+
+              <Box>
+                <Button
+                  component="label"
+                  startIcon={<PhotoCamera />}
+                  variant="outlined"
                 >
-                  JD
-                </Avatar>
-                <Button startIcon={<PhotoCamera />} variant="outlined">
                   Upload Photo
-                </Button>
-              </Stack>
-
-              <Grid container spacing={3}>
-                {["firstName", "lastName", "email", "phone"].map((field) => (
-                  <Grid item xs={12} md={6} key={field}>
-                    <TextField
-                      fullWidth
-                      label={field.replace(/^\w/, (c) => c.toUpperCase())}
-                      value={profileData[field]}
-                      onChange={(e) =>
-                        setProfileData({
-                          ...profileData,
-                          [field]: e.target.value
-                        })
-                      }
-                    />
-                  </Grid>
-                ))}
-
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    multiline
-                    rows={4}
-                    label="Bio"
-                    value={profileData.bio}
-                    onChange={(e) =>
-                      setProfileData({ ...profileData, bio: e.target.value })
-                    }
+                  <input
+                    hidden
+                    accept="image/*"
+                    type="file"
+                    onChange={handleFileChange}
                   />
-                </Grid>
+                </Button>
+              </Box>
+            </Stack>
+
+            <Grid container spacing={3}>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  label="First Name"
+                  fullWidth
+                  value={profileData.first_name}
+                  onChange={handleChange("first_name")}
+                />
               </Grid>
 
-              <Button
-                variant="contained"
-                startIcon={<Save />}
-                sx={{ mt: 4 }}
-                onClick={handleSave}
-              >
-                Save Changes
-              </Button>
-            </Box>
-          )}
-
-          {/* SECURITY TAB */}
-          {activeTab === 1 && (
-            <Box>
-              <Typography variant="h6" mb={2}>
-                Password & Security
-              </Typography>
-
-              <TextField
-                fullWidth
-                label="Current Password"
-                type={showPassword ? "text" : "password"}
-                InputProps={{
-                  endAdornment: (
-                    <IconButton onClick={() => setShowPassword(!showPassword)}>
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  )
-                }}
-              />
-
-              <Divider sx={{ my: 3 }} />
-
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={security.twoFactor}
-                    onChange={(e) =>
-                      setSecurity({ ...security, twoFactor: e.target.checked })
-                    }
-                  />
-                }
-                label="Enable Two-Factor Authentication"
-              />
-
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={security.loginAlerts}
-                    onChange={(e) =>
-                      setSecurity({
-                        ...security,
-                        loginAlerts: e.target.checked
-                      })
-                    }
-                  />
-                }
-                label="Login Alerts"
-              />
-            </Box>
-          )}
-
-          {/* NOTIFICATIONS TAB */}
-          {activeTab === 2 && (
-            <Box>
-              <Typography variant="h6" mb={3}>
-                Notification Settings
-              </Typography>
-
-              {Object.keys(notifications).map((key) => (
-                <FormControlLabel
-                  key={key}
-                  control={
-                    <Switch
-                      checked={notifications[key]}
-                      onChange={(e) =>
-                        setNotifications({
-                          ...notifications,
-                          [key]: e.target.checked
-                        })
-                      }
-                    />
-                  }
-                  label={key.replace(/([A-Z])/g, " $1")}
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  label="Last Name"
+                  fullWidth
+                  value={profileData.last_name}
+                  onChange={handleChange("last_name")}
                 />
-              ))}
-            </Box>
-          )}
+              </Grid>
 
-          {/* PREFERENCES TAB */}
-          {activeTab === 3 && (
-            <Box>
-              <Typography variant="h6" mb={3}>
-                Preferences
-              </Typography>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  label="Email"
+                  fullWidth
+                  value={profileData.email}
+                  disabled
+                />
+              </Grid>
 
-              <FormControl fullWidth sx={{ mb: 3 }}>
-                <InputLabel>Theme</InputLabel>
-                <Select label="Theme" defaultValue="system">
-                  <MenuItem value="light">Light</MenuItem>
-                  <MenuItem value="dark">Dark</MenuItem>
-                  <MenuItem value="system">System</MenuItem>
-                </Select>
-              </FormControl>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  label="Phone"
+                  fullWidth
+                  value={profileData.phone}
+                  onChange={handleChange("phone")}
+                />
+              </Grid>
 
-              <FormControl fullWidth>
-                <InputLabel>Language</InputLabel>
-                <Select label="Language" defaultValue="en">
-                  <MenuItem value="en">English</MenuItem>
-                  <MenuItem value="fr">French</MenuItem>
-                  <MenuItem value="es">Spanish</MenuItem>
-                </Select>
-              </FormControl>
-            </Box>
-          )}
+              <Grid size={{ xs: 12 }}>
+                <TextField
+                  label="Address Line 1"
+                  fullWidth
+                  value={profileData.address_one}
+                  onChange={handleChange("address_one")}
+                />
+              </Grid>
 
-          {/* PRIVACY TAB */}
-          {activeTab === 4 && (
-            <Box>
-              <Typography variant="h6" mb={2} color="error">
-                Danger Zone
-              </Typography>
+              <Grid size={{ xs: 12 }}>
+                <TextField
+                  label="Address Line 2"
+                  fullWidth
+                  value={profileData.address_two}
+                  onChange={handleChange("address_two")}
+                />
+              </Grid>
 
-              <Alert severity="warning" sx={{ mb: 3 }}>
-                Deleting your account is permanent and cannot be undone.
-              </Alert>
+              <Grid size={{ xs: 12, md: 4 }}>
+                <TextField
+                  label="City"
+                  fullWidth
+                  value={profileData.city}
+                  onChange={handleChange("city")}
+                />
+              </Grid>
 
-              <Button variant="contained" color="error" startIcon={<Delete />}>
-                Delete Account
-              </Button>
-            </Box>
-          )}
-        </CardContent>
-      </Card>
+              <Grid size={{ xs: 12, md: 4 }}>
+                <TextField
+                  label="State"
+                  fullWidth
+                  value={profileData.state}
+                  onChange={handleChange("state")}
+                />
+              </Grid>
+
+              <Grid size={{ xs: 12, md: 4 }}>
+                <TextField
+                  label="ZIP Code"
+                  fullWidth
+                  value={profileData.zip_code}
+                  onChange={handleChange("zip_code")}
+                />
+              </Grid>
+
+              <Grid size={{ xs: 12 }}>
+                <TextField
+                  label="Country"
+                  fullWidth
+                  value={profileData.country}
+                  disabled
+                />
+              </Grid>
+            </Grid>
+
+            <Button
+              variant="contained"
+              startIcon={<Save />}
+              sx={{ mt: 4 }}
+              onClick={handleSave}
+            >
+              Save Changes
+            </Button>
+          </CardContent>
+        </Card>
+      </DashboardTab>
+
+      <DashboardTab tabKey={1} activeTab={activeTab}>
+        <SecurityTab />
+      </DashboardTab>
+
+      <DashboardTab tabKey={2} activeTab={activeTab}>
+        <PrefrenceTab />
+      </DashboardTab>
+
+      <DashboardTab tabKey={3} activeTab={activeTab}>
+        <PrivacyTab />
+      </DashboardTab>
     </Box>
   );
 };

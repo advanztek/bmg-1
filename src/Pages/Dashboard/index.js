@@ -46,3 +46,4 @@ export { default as AddPaymentMethods } from "./PaymentMethods/add";
 export { default as ServiceTypesPage } from "./ServiceTypes";
 export { default as AddServiceTypePage } from "./ServiceTypes/add";
 export { default as AddSubscriptionPage } from "./Subscriptions/add";
+export { default as AddUsersPage } from "./Users/add";

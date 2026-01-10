@@ -39,17 +39,12 @@ export const USER_NAV = [
         icon: EMOJI_ICONS.generateVideo,
       },
       {
-        label: "Edit Videos",
-        path: "/dashboard/user/edit-videos",
-        icon: EMOJI_ICONS.editedVideo,
-      },
-      {
         label: "Build Website",
         path: "/dashboard/user/generate-website",
         icon: EMOJI_ICONS.generatedWebsites,
       },
       {
-        label: "Generate Speechs",
+        label: "Generate Audio",
         path: "/dashboard/user/generate-speechs",
         icon: EMOJI_ICONS.generatedSpeeches,
       },

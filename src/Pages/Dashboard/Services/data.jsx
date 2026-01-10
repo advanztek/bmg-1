@@ -1,10 +1,12 @@
 export const headers = [
   { key: "select", label: "", width: "40px" },
-  { key: "id", label: "ID" },
-  { key: "subject", label: "Subject" },
-  { key: "description", label: "Description" },
-  { key: "dueDate", label: "Due Date" },
-  { key: "amount", label: "Amount" },
+  { key: "subject", label: "Service Name" },
+  { key: "description", label: "Service Price" },
+  { key: "dueDate", label: "Discount Type" },
+  { key: "amount", label: "Category" },
+  { key: "amount", label: "Date Created" },
+  { key: "amount", label: "Last Updated" },
+
   { key: "status", label: "Status" },
   { key: "actions", label: "", width: "40px" },
 ];
@@ -21,3 +23,4 @@ export const serviceData = [
   { name: "Website", value: 15, color: "#EF4444" },
   { name: "Sports", value: 10, color: "#8B5CF6" },
 ];
+s;

@@ -44,30 +44,28 @@ function useAddUser() {
   return async (data) => {
     try {
       const response = await axios.post(
-        `${BASE_SERVER_URL}/admin/create-user`,
+        `${BASE_SERVER_URL}/admin/add/customers`,
         data,
         config
       );
+
       const result = response.data;
       console.log(result);
-      if (result?.error === 0) {
+
+      if (result?.code === 0) {
         showToast.success(result.message);
         return true;
       }
-      if (result?.error === 2) {
-        showToast.success(result.message);
-        return false;
-      }
-      if (result?.error) {
-        showToast.error(result?.message);
+      if (result?.code !== 0) {
+        showToast.error(result?.message?.message || "An error occured, please try again...");
         return false;
       }
     } catch (error) {
       console.error("Error:", error.response.data);
-      if (error.response.data?.error) {
-        showToast.error(error.response.data.message);
+      if (error.response.data?.error !== 0) {
+        showToast.error(error?.response?.data?.message);
       } else {
-        showToast.error("An error occurred while adding Admin.");
+        showToast.error("An error occurred while adding Customer.");
       }
       return false;
     }

@@ -1,5 +1,5 @@
 import React from "react";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 function UserAvatar({ onClick, initial = "U" }) {
   return (
@@ -19,12 +19,12 @@ function UserAvatar({ onClick, initial = "U" }) {
         transition: "all 0.2s ease-in-out",
         "&:hover": {
           backgroundColor: "#C0C0C0",
-          transform: "scale(1.05)"
-        }
+          transform: "scale(1.05)",
+        },
       }}
       onClick={onClick}
     >
-      {initial}
+      <Typography sx={{ textTransform: "uppercase" }}>{initial}</Typography>
     </Box>
   );
 }

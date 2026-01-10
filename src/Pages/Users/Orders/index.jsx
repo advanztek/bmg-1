@@ -42,7 +42,7 @@ const UserOrders = () => {
           {
             label: "AI Services",
             icon: <TipsAndUpdatesOutlined />,
-            onClick: () => navigate("/dashboard/users/artificial-intelligence")
+            onClick: () => navigate("/dashboard/user/artificial-intelligence")
           }
         ]}
       />

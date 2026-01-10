@@ -23,9 +23,6 @@ import { videoTabs } from "../data";
 import ImageToVideoInput from "./image-to-video";
 import TextToVideoInput from "./text-to-video";
 
-const DRAWER_WIDTH = 320;
-const DRAWER_COLLAPSED_WIDTH = 70;
-
 const UserGenerateVideos = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [activeTab, setActiveTab] = useState(0);
@@ -110,7 +107,6 @@ const UserGenerateVideos = () => {
         overflow: "hidden",
       }}
     >
-      {/* Main Content */}
       <Box
         component="main"
         sx={{
@@ -172,10 +168,9 @@ const UserGenerateVideos = () => {
                 </Typography>
               </Stack>
 
-              {/* Image Grid */}
-              <Grid container spacing={3}>
+              <Grid container spacing={2}>
                 {generatedImages.map((image) => (
-                  <Grid item size={{ xs: 12, md: 4, lg: 3 }} key={image.id}>
+                  <Grid item size={{ xs: 12, md: 4, lg: 4 }} key={image.id}>
                     <Card
                       elevation={0}
                       onClick={() => handleImageClick(image)}

@@ -5,7 +5,7 @@ import { NavBar, MobileSideNav, SideNav } from "./Components";
 import { useUserContext } from "../../Contexts";
 import { useNavigate } from "react-router-dom";
 
-const SIDE_NAV_WIDTH = 200;
+const SIDE_NAV_WIDTH = 210;
 const LAYOUT_PADDING = 20;
 const NAV_HEIGHT = 80;
 

@@ -6,24 +6,40 @@ import {
   Checkbox,
   IconButton,
   CircularProgress,
+  Stack,
+  Typography,
 } from "@mui/material";
 import { CustomTable, StatusChip, PagesHeader } from "../../../Component";
 import { headers } from "./data";
-import { VisibilityOutlined } from "@mui/icons-material";
+import { VisibilityOutlined, AddOutlined } from "@mui/icons-material";
 import { useFetchUsers } from "../../../Hooks/Dashboard/users";
+import { useNavigate } from "react-router-dom";
 
 const UsersPage = () => {
   const [search, setSearch] = useState();
   const { users, refetch, loading: userLoading } = useFetchUsers();
+  const navigate = useNavigate();
 
   return (
     <div>
       <PagesHeader
-        label="Manage Users"
+        label="Manage Customers"
         desc="Manage user base, view profiles and active status, disable or terminate users, send mails. "
         enableSearch
         searchValue={search}
         onSearchChange={setSearch}
+        actions={[
+          {
+            label: "Add Customer",
+            icon: <AddOutlined />,
+            onClick: () => navigate("/dashboard/admin/add/customer"),
+          },
+          {
+            label: "Manage Experts",
+            icon: <VisibilityOutlined />,
+            onClick: () => navigate("/dashboard/admin/experts"),
+          },
+        ]}
       />
 
       <Box mt={3} mb={3}>
@@ -72,7 +88,16 @@ const UsersPage = () => {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={6}>No User Found.</TableCell>
+              <TableCell colSpan={7}>
+                <Stack alignItems="center" spacing={2}>
+                  <Typography
+                    variant="body1"
+                    sx={{ color: "#2C3891", fontWeight: 600 }}
+                  >
+                    No User Found
+                  </Typography>
+                </Stack>
+              </TableCell>
             </TableRow>
           )}
         </CustomTable>

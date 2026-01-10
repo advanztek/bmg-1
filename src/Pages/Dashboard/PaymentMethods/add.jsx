@@ -46,10 +46,6 @@ const AddPaymentMethods = () => {
     code,
   };
 
-  const handleFilesChange = (files) => {
-    setLogo(files);
-  };
-
   const handleSubmitAdmin = async () => {
     if (!name.trim() || !description.trim() || !code) {
       showToast.warning("Please fill in all required fields.");
@@ -62,7 +58,7 @@ const AddPaymentMethods = () => {
       const response = await addPayMethod(formData);
 
       if (response) {
-        toast.success("Category added successfully!");
+        toast.success("Method added successfully!");
         setDescription("");
         setName("");
         setLogo("");
@@ -199,12 +195,13 @@ const AddPaymentMethods = () => {
                 <Grid container spacing={2}>
                   <Grid size={{ xs: 12 }}>
                     <UploadMedia
-                      maxFiles={5}
-                      maxSize={10}
+                      mode={"single"}
+                      maxFiles={1}
+                      maxSize={5}
                       acceptedFormats={["jpg", "png", "jpeg", "svg", "zip"]}
-                      onFilesChange={handleFilesChange}
+                      onFilesChange={setLogo}
                       title="Media Upload"
-                      description="Add your documents here, and you can upload up to 5 files max"
+                      description="Add your documents here, and you can upload up to 1 files max"
                     />
                   </Grid>
                 </Grid>

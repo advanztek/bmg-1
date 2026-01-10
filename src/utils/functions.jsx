@@ -47,10 +47,35 @@ const truncateText = (text = "", maxLength = 80) => {
   return text.length > maxLength ? `${text.slice(0, maxLength)}…` : text;
 };
 
+const getTimeGreeting = () => {
+  const hour = new Date().getHours();
+
+  if (hour < 12) {
+    return "Good morning";
+  }
+
+  if (hour < 18) {
+    return "Good afternoon";
+  }
+
+  return "Good evening";
+};
+
+const getFormattedDate = () => {
+  return new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+};
+
 export {
   validateEmail,
   validatePassword,
   formatDate,
   fileToBase64,
   truncateText,
+  getTimeGreeting,
+  getFormattedDate,
 };
