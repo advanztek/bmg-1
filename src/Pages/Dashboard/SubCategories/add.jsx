@@ -51,17 +51,18 @@ const AddSubCategoriesPage = () => {
       showToast.warning("Please fill in all required fields.");
       return;
     }
+    console.log("Creating Sub Category...", categoryImg);
 
     setLoading(true);
     showLoader("Creating Sub Category...");
 
     try {
-      const imageToBase64 = await fileToBase64(categoryImg);
+      // const imageToBase64 = fileToBase64(categoryImg);
 
       const payload = {
         category_id: parentCategory,
         name: categoryName,
-        image: imageToBase64,
+        image: categoryImg,
         status: categoryStatus,
         description: categoryDesc,
       };
@@ -115,8 +116,8 @@ const AddSubCategoriesPage = () => {
             <Grid size={{ xs: 12, md: 5 }}>
               <UploadMedia
                 mode={"single"}
-                maxFiles={5}
-                maxSize={10}
+                maxFiles={1}
+                maxSize={5}
                 acceptedFormats={["jpg", "png", "jpeg", "svg", "zip"]}
                 onFilesChange={setCategoryImg}
                 title="Media Upload"

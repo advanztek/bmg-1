@@ -15,10 +15,25 @@ import { AddOutlined, VisibilityOutlined } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useFetchPayMethods } from "../../../Hooks/Dashboard/payment_methods";
 import { formatDate, truncateText } from "../../../utils/functions";
+import SingleMethodModal from "./single";
 
 const PaymentsMethodsPage = () => {
   const [search, setSearch] = useState();
   const navigate = useNavigate();
+
+  const [open, setOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+
+  const handleOpen = (id) => {
+    setSelectedId(id);
+    setOpen(true);
+  };
+
+  const handleClose = async () => {
+    setOpen(false);
+    await refetch();
+    setSelectedId(null);
+  };
 
   const { refetch, methods, loading: methodsLoading } = useFetchPayMethods();
 
@@ -67,10 +82,7 @@ const PaymentsMethodsPage = () => {
                     textOverflow: "ellipsis",
                   }}
                 >
-                  <Typography
-                    variant="body2"
-                    title={row.description} // shows full text on hover
-                  >
+                  <Typography variant="body2" title={row.description}>
                     {truncateText(row.description, 80)}
                   </Typography>
                 </TableCell>
@@ -85,7 +97,7 @@ const PaymentsMethodsPage = () => {
                 </TableCell>
 
                 <TableCell>
-                  <IconButton size="small">
+                  <IconButton size="small" onClick={() => handleOpen(row.id)}>
                     <VisibilityOutlined fontSize="small" />
                   </IconButton>
                 </TableCell>
@@ -107,6 +119,12 @@ const PaymentsMethodsPage = () => {
           )}
         </CustomTable>
       </Box>
+
+      <SingleMethodModal
+        open={open}
+        onClose={handleClose}
+        methodId={selectedId}
+      />
     </div>
   );
 };

@@ -14,13 +14,14 @@ function useAddPayMethods() {
         data,
         config
       );
+
       const result = response.data;
       console.log(result);
-      if (result?.error === 0) {
+      if (result?.code === 0) {
         showToast.success(result.message);
         return true;
       }
-      if (result?.error !== 0) {
+      if (result?.code !== 0) {
         showToast.error(result.message);
         return false;
       }
@@ -70,4 +71,41 @@ const useFetchPayMethods = () => {
   return { methods, refetch: fetchData, loading };
 };
 
-export { useAddPayMethods, useFetchPayMethods };
+function useGetPayMethod() {
+  const [loading, setLoading] = useState(false);
+  const { config } = useUserContext();
+  const [methodData, setMethodData] = useState(null);
+
+  const getMethod = async (methodId) => {
+    if (!methodId) {
+      console.error("No method ID provided");
+      return;
+    }
+
+    setLoading(true);
+    console.log("Fetching method with ID:", methodId);
+
+    try {
+      const response = await axios.get(
+        `${BASE_SERVER_URL}/admin/payment-method/${methodId}`,
+        config
+      );
+
+      const result = response.data;
+      console.log("single res:", result);
+
+      if (result?.code === 0) {
+        setMethodData(result?.result);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setMethodData(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { methodData, loading, getMethod };
+}
+
+export { useAddPayMethods, useFetchPayMethods, useGetPayMethod };

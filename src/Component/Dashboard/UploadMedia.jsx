@@ -14,7 +14,7 @@ import {
 } from "@mui/icons-material";
 
 const UploadMedia = ({
-  mode = "single" | "multiple",
+  mode = "single",
   maxFiles = 5,
   maxSize = 10, // in MB
   acceptedFormats = ["jpg", "png", "jpeg", "svg", "zip"],
@@ -27,13 +27,43 @@ const UploadMedia = ({
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef(null);
 
-  const emitChange = (updatedFiles) => {
+  const convertFileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const emitChange = async (updatedFiles) => {
     if (!onFilesChange) return;
 
     if (mode === "single") {
-      onFilesChange(updatedFiles[0] || "");
+      // For single mode, return just the base64 string or URL string
+      if (updatedFiles.length > 0) {
+        const file = updatedFiles[0];
+        if (file.type === "url") {
+          onFilesChange(file.url);
+        } else {
+          const base64String = await convertFileToBase64(file);
+          onFilesChange(base64String);
+        }
+      } else {
+        onFilesChange("");
+      }
     } else {
-      onFilesChange(updatedFiles);
+      // For multiple mode, return array of base64 strings
+      const fileStrings = await Promise.all(
+        updatedFiles.map(async (file) => {
+          if (file.type === "url") {
+            return file.url;
+          } else {
+            return await convertFileToBase64(file);
+          }
+        })
+      );
+      onFilesChange(fileStrings);
     }
   };
 
@@ -127,9 +157,7 @@ const UploadMedia = ({
   const removeFile = (index) => {
     const updatedFiles = files.filter((_, i) => i !== index);
     setFiles(updatedFiles);
-    if (onFilesChange) {
-      onFilesChange(updatedFiles);
-    }
+    emitChange(updatedFiles);
   };
 
   const onButtonClick = () => {
@@ -201,7 +229,7 @@ const UploadMedia = ({
         <input
           ref={fileInputRef}
           type="file"
-          multiple={mode === "multiple"} // 👈 IMPORTANT
+          multiple={mode === "multiple"}
           onChange={handleChange}
           style={{ display: "none" }}
           accept={acceptedFormats.map((f) => `.${f}`).join(",")}

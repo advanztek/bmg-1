@@ -101,36 +101,34 @@ function NavBar({ sideNavWidth, layoutPadding, navHeight, onMenuClick }) {
         </Box>
       </Stack>
 
-      <Stack direction="row" alignItems="center" gap={{ xs: 1, md: 4 }}>
-        <Stack direction="row" alignItems="center" gap={{ xs: 2, md: 7 }}>
-          <Box onClick={handleNotificationsClick}>
-            <MenuBox icon={<Notifications />} count={3} />
-          </Box>
+      <Stack direction="row" alignItems="center" gap={{ xs: 2, md: 4 }}>
+        <Box onClick={handleNotificationsClick}>
+          <MenuBox icon={<Notifications />} count={3} />
+        </Box>
 
-          <NotificationsMenu
-            anchorEl={notificationsAnchorEl}
-            open={Boolean(notificationsAnchorEl)}
-            onClose={handleNotificationsClose}
-          />
+        <NotificationsMenu
+          anchorEl={notificationsAnchorEl}
+          open={Boolean(notificationsAnchorEl)}
+          onClose={handleNotificationsClose}
+        />
 
-          <UserAvatar
-            onClick={handleSettingsClick}
-            initial={userInfo?.first_name?.[0]}
-          />
+        <UserAvatar
+          onClick={handleSettingsClick}
+          initial={userInfo?.last_name?.[0]}
+        />
 
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleMenuClose}
-          >
-            <MenuItem onClick={handleLogout}>
-              <ListItemIcon>
-                <Logout />
-              </ListItemIcon>
-              Logout
-            </MenuItem>
-          </Menu>
-        </Stack>
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+        >
+          <MenuItem onClick={handleLogout}>
+            <ListItemIcon>
+              <Logout />
+            </ListItemIcon>
+            Logout
+          </MenuItem>
+        </Menu>
       </Stack>
     </Box>
   );

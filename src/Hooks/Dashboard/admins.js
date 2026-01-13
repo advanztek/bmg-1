@@ -73,4 +73,44 @@ const useFetchAdmins = () => {
   return { admins, refetch: fetchData, loading };
 };
 
-export { useAddAdmin, useFetchAdmins };
+
+function useGetAdmin() {
+  const [loading, setLoading] = useState(false);
+  const { config } = useUserContext();
+  const [adminData, setAdminData] = useState(null);
+
+  const getMethod = async (adminId) => {
+    if (!adminId) {
+      console.error("No method ID provided");
+      return;
+    }
+
+    setLoading(true);
+    console.log("Fetching method with ID:", adminId);
+
+    try {
+      const response = await axios.get(
+        `${BASE_SERVER_URL}/admin/payment-method/${adminId}`,
+        config
+      );
+
+      const result = response.data;
+      console.log("single res:", result);
+
+      if (result?.code === 0) {
+        setAdminData(result?.result);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setAdminData(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { adminData, loading, getMethod };
+}
+
+
+
+export { useAddAdmin, useFetchAdmins, useGetAdmin };

@@ -53,16 +53,17 @@ const AddPaymentMethods = () => {
     }
 
     setLoading(true);
-    showLoader();
+    showLoader("Adding Payment Method...");
     try {
       const response = await addPayMethod(formData);
 
       if (response) {
-        toast.success("Method added successfully!");
+        showToast.success("Method added successfully!");
         setDescription("");
         setName("");
-        setLogo("");
+        setLogo(null);
         setCode("");
+        navigate("/dashboard/manage/payment-methods");
       }
     } catch (error) {
       showToast.error(error);
@@ -195,13 +196,13 @@ const AddPaymentMethods = () => {
                 <Grid container spacing={2}>
                   <Grid size={{ xs: 12 }}>
                     <UploadMedia
-                      mode={"single"}
+                      mode="single"
                       maxFiles={1}
-                      maxSize={5}
-                      acceptedFormats={["jpg", "png", "jpeg", "svg", "zip"]}
+                      maxSize={2}
                       onFilesChange={setLogo}
-                      title="Media Upload"
-                      description="Add your documents here, and you can upload up to 1 files max"
+                      acceptedFormats={["jpg", "png", "jpeg", "svg", "zip"]}
+                      title="Category Image Upload"
+                      description="Add your documents here, and you can upload max of 1 file only"
                     />
                   </Grid>
                 </Grid>

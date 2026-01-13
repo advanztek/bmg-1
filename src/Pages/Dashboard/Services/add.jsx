@@ -20,7 +20,7 @@ import {
   VisibilityOutlined,
   ArrowBackOutlined,
   AttachMoneyOutlined,
-  CloseOutlined
+  CloseOutlined,
 } from "@mui/icons-material";
 import {
   InputLabel,
@@ -61,7 +61,7 @@ const AddServicePage = () => {
   const { subCat } = useFetchSubCategories();
   const { serviceTypes } = useFetchServiceTypes();
 
-  console.log("service types in services:", serviceTypes)
+  console.log("service types in services:", serviceTypes);
 
   const handleAddFeature = () => {
     if (currentAttribute.trim()) {
@@ -88,7 +88,7 @@ const AddServicePage = () => {
     showLoader("Adding Service...");
 
     try {
-      const imageToBase64 = await fileToBase64(serviceImg);
+      const imageToBase64 = fileToBase64(serviceImg);
 
       const payload = {
         service_name: serviceName,

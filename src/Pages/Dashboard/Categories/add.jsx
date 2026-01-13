@@ -70,8 +70,8 @@ const AddCategoriePage = () => {
     showLoader("Creating Category...");
 
     try {
-      const imageToBase64 = await fileToBase64(categoryImg);
-      const bannerImageToBase64 = await fileToBase64(categoryBanner);
+      const imageToBase64 = fileToBase64(categoryImg);
+      const bannerImageToBase64 = fileToBase64(categoryBanner);
 
       const payload = {
         name: categoryName,
