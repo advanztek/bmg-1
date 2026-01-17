@@ -5,54 +5,80 @@ import {
   TableCell,
   Checkbox,
   Stack,
-  CircularProgress
+  CircularProgress,
 } from "@mui/material";
 import {
   CustomButton,
   CustomTable,
   PagesHeader,
-  StatusBadge
+  StatusBadge,
 } from "../../../Component";
-import { AddOutlined, VisibilityOutlined, DeleteOutlined } from "@mui/icons-material";
+import {
+  AddOutlined,
+  VisibilityOutlined,
+  DeleteOutlined,
+} from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useGetAdminTypes } from "../../../Hooks/Dashboard/admin_types";
 import { headers } from "./data";
 import { formatDate } from "../../../utils/functions";
 import { showToast } from "../../../utils/toast";
 import { useLoader } from "../../../Contexts/LoaderContext";
-import { useDisableAdminType } from "../../../Hooks/Dashboard/admin_types";
+import { useUpdateAdminType } from "../../../Hooks/Dashboard/admin_types";
+import AdminRoleEditModal from "./edit-roles-modal";
 
 const AdminRoles = () => {
   const [search, setSearch] = useState();
   const navigate = useNavigate();
   const [loadingId, setLoadingId] = useState(null);
-  const [row, setRow] = useState(null);
   const { showLoader, hideLoader } = useLoader();
   const [editModal, setEditModal] = useState(false);
+  const [selectedRole, setSelectedRole] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const { adminTypes, refetch, loading } = useGetAdminTypes();
-  const { updateStatus, loading: disableLoading } = useDisableAdminType();
+  const { adminTypes, refetch, loading: typesLoading } = useGetAdminTypes();
+  const { updateStatus, loading: disableLoading } = useUpdateAdminType();
 
   const handleDisableType = (id, status) => async (e) => {
     e.preventDefault();
-    setRow({ id, status });
 
     try {
-      setLoadingId(row.id);
-      showLoader();
-      await updateStatus(row.id, { status: row.status });
+      setLoadingId(id);
+      await updateStatus(id, { status });
       await refetch();
-      setLoadingId(null);
     } catch (error) {
-      showToast.error(error || "Failed to add role");
+      showToast.error(error || "Failed to update role");
     } finally {
-      hideLoader();
       setLoadingId(null);
     }
   };
 
-  const handleEdit = () => {
+  const handleEdit = (row) => {
+    setSelectedRole(row);
     setEditModal(true);
+  };
+
+  const handleUpdateRole = async ({ payload }) => {
+    if (!selectedRole) return;
+
+    try {
+      setLoading(true);
+      showLoader();
+
+      const res = await updateStatus(selectedRole.id, payload);
+      if (res) {
+        showToast.success("Role updated successfully.");
+        await refetch();
+      }
+
+      setEditModal(false);
+      setSelectedRole(null);
+    } catch (error) {
+      showToast.error(error || "Role update failed.");
+    } finally {
+      setLoading(false);
+      hideLoader();
+    }
   };
 
   return (
@@ -68,19 +94,19 @@ const AdminRoles = () => {
           {
             label: "Add Role",
             icon: <AddOutlined />,
-            onClick: () => navigate("/dashboard/add/admin-roles")
+            onClick: () => navigate("/dashboard/add/admin-roles"),
           },
           {
             label: "Manage Permissions",
             icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/manage/admin-permissions")
-          }
+            onClick: () => navigate("/dashboard/manage/admin-permissions"),
+          },
         ]}
       />
 
       <Box mt={3} mb={3}>
         <CustomTable title="Admin Roles" headers={headers}>
-          {loading && (
+          {typesLoading && (
             <TableRow>
               <TableCell colSpan={6}>
                 <CircularProgress
@@ -155,6 +181,17 @@ const AdminRoles = () => {
           ))}
         </CustomTable>
       </Box>
+
+      <AdminRoleEditModal
+        open={editModal}
+        onClose={() => {
+          setEditModal(false);
+          setSelectedRole(null);
+        }}
+        role={selectedRole}
+        loading={loading}
+        onUpdate={handleUpdateRole}
+      />
     </div>
   );
 };

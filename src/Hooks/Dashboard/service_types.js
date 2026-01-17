@@ -51,6 +51,7 @@ const useFetchServiceTypes = () => {
       );
 
       const result = response.data;
+      console.log("service type res:", result);
 
       if (result.code === 0) {
         setServiceTypes(result.result);
@@ -69,4 +70,41 @@ const useFetchServiceTypes = () => {
   return { serviceTypes, refetch: fetchData, loading };
 };
 
-export { useCreateServiceTypes, useFetchServiceTypes };
+function useGetServiceType() {
+  const [loading, setLoading] = useState(false); // Changed to false initially
+  const { config } = useUserContext();
+  const [typeData, setTypeData] = useState(null); // Changed to null
+
+  const getServiceType = async (catId) => {
+    if (!catId) {
+      console.error("No category ID provided");
+      return;
+    }
+
+    setLoading(true);
+    console.log("Fetching category with ID:", catId);
+
+    try {
+      const response = await axios.get(
+        `${BASE_SERVER_URL}/admin/service-type/${catId}`,
+        config
+      );
+
+      const result = response.data;
+      console.log("single res:", result);
+
+      if (result?.code === 0) {
+        setTypeData(result?.result);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setTypeData(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { typeData, loading, getServiceType };
+}
+
+export { useCreateServiceTypes, useFetchServiceTypes, useGetServiceType };

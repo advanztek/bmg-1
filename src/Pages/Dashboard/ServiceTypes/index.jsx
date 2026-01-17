@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 import { formatDate } from "../../../utils/functions";
 import { useFetchServiceTypes } from "../../../Hooks/Dashboard/service_types";
 import { truncateText } from "../../../utils/functions";
+import ServiceTypeModal from "./single";
 
 const ServiceTypesPage = () => {
   const [search, setSearch] = useState();
@@ -25,6 +26,20 @@ const ServiceTypesPage = () => {
     refetch,
     loading: typeLoading,
   } = useFetchServiceTypes();
+
+  const [open, setOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+
+  const handleOpen = (id) => {
+    setSelectedId(id);
+    setOpen(true);
+  };
+
+  const handleClose = async () => {
+    setOpen(false);
+    await refetch();
+    setSelectedId(null);
+  };
 
   return (
     <div>
@@ -81,11 +96,8 @@ const ServiceTypesPage = () => {
                     textOverflow: "ellipsis",
                   }}
                 >
-                  <Typography
-                    variant="body2"
-                    title={row.description} // shows full text on hover
-                  >
-                    {truncateText(row.description, 80)}
+                  <Typography variant="body2" title={row.description}>
+                    {truncateText(row.description, 50)}
                   </Typography>
                 </TableCell>{" "}
                 <TableCell>{formatDate(row.created_at)}</TableCell>
@@ -97,7 +109,7 @@ const ServiceTypesPage = () => {
                   />
                 </TableCell>
                 <TableCell>
-                  <IconButton size="small">
+                  <IconButton size="small" onClick={() => handleOpen(row.id)}>
                     <VisibilityOutlined fontSize="small" />
                   </IconButton>
                 </TableCell>
@@ -119,6 +131,8 @@ const ServiceTypesPage = () => {
           )}
         </CustomTable>
       </Box>
+
+      <ServiceTypeModal open={open} onClose={handleClose} typeId={selectedId} />
     </div>
   );
 };

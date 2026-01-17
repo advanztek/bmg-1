@@ -21,12 +21,25 @@ import { headers } from "./data";
 import { AddOutlined, VisibilityOutlined } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useFetchExperts } from "../../../Hooks/Dashboard/experts";
+import SingleExpertModal from "./single";
 
 const ExpertsPage = () => {
   const [search, setSearch] = useState();
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+  const { experts, loading: expertsLoading, refetch } = useFetchExperts();
 
-  const { experts, loading: expertsLoading } = useFetchExperts();
+  const handleOpen = (id) => {
+    setSelectedId(id);
+    setOpen(true);
+  };
+
+  const handleClose = async () => {
+    setOpen(false);
+    await refetch();
+    setSelectedId(null);
+  };
 
   return (
     <div>
@@ -106,7 +119,7 @@ const ExpertsPage = () => {
                 </TableCell>
 
                 <TableCell>
-                  <IconButton size="small">
+                  <IconButton size="small" onClick={() => handleOpen(row.id)}>
                     <VisibilityOutlined fontSize="small" />
                   </IconButton>
                 </TableCell>
@@ -128,6 +141,12 @@ const ExpertsPage = () => {
           )}
         </CustomTable>
       </Box>
+
+      <SingleExpertModal
+        open={open}
+        onClose={handleClose}
+        userId={selectedId}
+      />
     </div>
   );
 };

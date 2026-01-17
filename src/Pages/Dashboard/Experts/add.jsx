@@ -85,7 +85,7 @@ const AddExpertPage = () => {
         setEmail("");
         setLastname("");
         setPhone("");
-        navigate("/dashboard/view/experts");
+        navigate("/dashboard/admin/experts");
       }
     } catch (error) {
       showToast.error(error || "Failed to add expert");

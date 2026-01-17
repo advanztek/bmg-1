@@ -5,18 +5,63 @@ import { BASE_SERVER_URL } from "../../Config/paths";
 import { useUserContext } from "../../Contexts";
 import { showToast } from "../../utils/toast";
 
-function useGenerateImage() {
+/**
+ * Hook: Generate speech audio from text
+ * Returns base64 audio data on success
+ */
+function useGenerateTextToAudio() {
+  const { config } = useUserContext();
+
+  const generateAudio = async (payload) => {
+    try {
+      const response = await axios.post(
+        `${BASE_SERVER_URL}/ai/text-to-voice`,
+        payload,
+        config
+      );
+
+      const { success, message, result, code } = response.data;
+      console.log("Text → Audio response:", response.data);
+
+      if (success === true && code === 0 && result?.audio) {
+        return {
+          audioBase64: result.audio,
+          format: result.format || "mp3",
+          model: result.model,
+          message,
+        };
+      }
+
+      showToast.error(message || "Failed to generate speech");
+      return null;
+    } catch (error) {
+      console.error("Text to audio error:", error);
+
+      const apiMessage =
+        error?.response?.data?.message ||
+        "Unexpected error occurred. Please try again.";
+
+      showToast.error(apiMessage);
+      return null;
+    }
+  };
+
+  return generateAudio;
+}
+
+function useGenerateAudioToText() {
   const { config } = useUserContext();
 
   return async (data) => {
     try {
       const response = await axios.post(
-        `${BASE_SERVER_URL}/ai/text-to-image`,
+        `${BASE_SERVER_URL}/ai/audio-to-text`,
         data,
         config
       );
 
       const result = response.data;
+      console.log("generated image:", result);
 
       if (result?.strategy || result?.message || result?.status === true) {
         return result;
@@ -39,7 +84,7 @@ function useGenerateImage() {
   };
 }
 
-const useFetchGeneratedImages = () => {
+const useFetchGeneratedAudios = () => {
   const { config } = useUserContext();
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState([]);
@@ -71,39 +116,8 @@ const useFetchGeneratedImages = () => {
   return { images, refetch: fetchData, loading };
 };
 
-function useGenerateImageToImage() {
-  const { config } = useUserContext();
-
-  return async (data) => {
-    try {
-      const response = await axios.post(
-        `${BASE_SERVER_URL}/ai/image-to-image`,
-        data,
-        config
-      );
-
-      const result = response.data;
-      console.log("generated image:", result);
-
-      if (result?.strategy || result?.message || result?.status === true) {
-        return result;
-      }
-
-      if (result?.error || result?.message) {
-        const msg = result?.message || result?.error;
-        showToast.error(msg);
-        return false;
-      }
-    } catch (error) {
-      console.error("Error:", error.response.data);
-      if (error.response.data?.code !== 0) {
-        showToast.error(error.response.data.message);
-      } else {
-        showToast.error("Unexpected error occurred. Please try again.");
-      }
-      return false;
-    }
-  };
-}
-
-export { useGenerateImage, useFetchGeneratedImages, useGenerateImageToImage };
+export {
+  useGenerateTextToAudio,
+  useFetchGeneratedAudios,
+  useGenerateAudioToText,
+};

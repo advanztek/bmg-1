@@ -8,9 +8,14 @@ export const videoTabs = [
   { label: "Image To Video", key: 1 },
 ];
 
-export const speechTabs = [
+export const audioTabs = [
   { label: "Text To Audio", key: 0 },
   { label: "Audio To Text", key: 1 },
+];
+
+export const strategyTabs = [
+  { label: "Manual Mode", key: 0 },
+  { label: "Quick Mode", key: 1 },
 ];
 
 export const timeframe = [

@@ -109,4 +109,58 @@ function useGetAdmin() {
   return { adminData, loading, getAdmin };
 }
 
-export { useAddAdmin, useFetchAdmins, useGetAdmin };
+const useUpdateAdmin = () => {
+  return async (data, id) => {
+    if (!id || typeof id === "object") {
+      console.error("Invalid admin ID:", id);
+      return;
+    }
+
+    try {
+      const response = await axios.put(
+        `${BASE_SERVER_URL}/admin/update-admin/${id}`,
+        data
+      );
+
+      const result = response.data;
+      console.log("Update Response:", result);
+
+      showToast.success(result.message);
+      return result;
+    } catch (error) {
+      console.error("Error:", error.response?.data || error.message);
+      showToast.error(
+        error?.response?.data?.message ||
+          "Error occurred while updating administrator."
+      );
+    }
+  };
+};
+
+const useDeleteAdmin = () => {
+  return async (id) => {
+    try {
+      const response = await axios.delete(
+        `${BASE_SERVER_URL}/admin/delete-admin/${id}`,
+        {}
+      );
+
+      const result = response.data;
+
+      showToast.success(result.message);
+      return result;
+    } catch (error) {
+      console.error("Error:", error.response?.data || error.message);
+      showToast.error("error occurred while deleting administrator.");
+      throw error;
+    }
+  };
+};
+
+export {
+  useAddAdmin,
+  useFetchAdmins,
+  useGetAdmin,
+  useDeleteAdmin,
+  useUpdateAdmin,
+};

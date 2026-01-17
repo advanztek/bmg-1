@@ -10,7 +10,6 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
-import { toast } from "react-toastify";
 import {
   AddOutlined,
   DeleteOutlined,
@@ -27,22 +26,20 @@ import { styles } from "../../../styles/dashboard";
 import { useNavigate } from "react-router-dom";
 import { categories, services } from "./data";
 import { useAddPortfolio } from "../../../Hooks/Dashboard/portfolios";
-
+import { showToast } from "../../../utils/toast";
+import { useLoader } from "../../../Contexts/LoaderContext";
 
 const AddPortfolios = () => {
   const [category, setCategory] = useState("");
   const [service, setService] = useState("");
-  const [categoryImg, setCategoryImg] = useState([]);
+  const [categoryImg, setCategoryImg] = useState("");
   const [categoryStatus, setCategoryStatus] = useState(true);
   const [categoryDesc, setCategoryDesc] = useState("");
 
   const [loading, setLoading] = useState(false);
   const addPortfolio = useAddPortfolio();
   const navigate = useNavigate();
-
-  const handleFilesChange = (files) => {
-    setCategoryImg(files);
-  };
+  const { hideLoader, showLoader } = useLoader();
 
   const formData = {
     service,
@@ -52,23 +49,25 @@ const AddPortfolios = () => {
     categoryDesc,
   };
 
-  const handleSubmitAdmin = async () => {
+  const handleSubmitAdmin = async (e) => {
+    e.preventDefault();
     if (
       !service.trim() ||
       !category.trim() ||
       categoryImg.length === 0 ||
       !categoryDesc
     ) {
-      toast.error("Please fill in all required fields.");
+      showToast.warning("Please fill in all required fields.");
       return;
     }
 
     setLoading(true);
+    showLoader("Adding Portfolio");
     try {
       const response = await addPortfolio(formData);
 
       if (response) {
-        toast.success("Category added successfully!");
+        showToast.success("Category added successfully!");
         setService("");
         setCategory("");
         setCategoryImg([]);
@@ -76,9 +75,10 @@ const AddPortfolios = () => {
         setCategoryDesc("");
       }
     } catch (error) {
-      toast.error(error);
+      showToast.error(error);
     } finally {
       setLoading(false);
+      hideLoader();
     }
   };
 
@@ -108,10 +108,11 @@ const AddPortfolios = () => {
           <Grid container spacing={3}>
             <Grid size={{ xs: 12, md: 5 }}>
               <UploadMedia
-                maxFiles={5}
-                maxSize={10}
+                mode="single"
+                maxFiles={1}
+                maxSize={2}
                 acceptedFormats={["jpg", "png", "jpeg", "svg", "zip"]}
-                onFilesChange={handleFilesChange}
+                onFilesChange={setCategoryImg}
                 title="Media Upload"
                 description="Add your documents here, and you can upload up to 5 files max"
               />

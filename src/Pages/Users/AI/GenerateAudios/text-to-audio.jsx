@@ -1,235 +1,239 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
-  Grid,
   TextField,
-  Button,
   Typography,
-  IconButton,
   Card,
   CardContent,
   Stack,
   CircularProgress,
-  Dialog,
-  DialogContent,
   Chip,
-  Divider,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Slider,
+  alpha,
 } from "@mui/material";
-import { History, Delete, Download, Close, Send } from "@mui/icons-material";
-import { EMOJI_ICONS } from "../../../../Config/emojiIcons";
+import { Send, GraphicEq, Speed, Person } from "@mui/icons-material";
+import { CustomButton } from "../../../../Component";
+import { showToast } from "../../../../utils/toast";
+import { useGenerateTextToAudio } from "../../../../Hooks/Users/generate_audio";
 
-const TextToAudioInput = () => {
-  const [prompt, setPrompt] = useState("");
+const VOICES = [
+  { id: "alloy", name: "Alloy - Neutral" },
+  { id: "echo", name: "Echo - Male" },
+  { id: "fable", name: "Fable - British Male" },
+  { id: "onyx", name: "Onyx - Deep Male" },
+  { id: "nova", name: "Nova - Female" },
+  { id: "shimmer", name: "Shimmer - Soft Female" },
+];
+
+const TextToAudioInput = ({ onGeneratingChange, onAudioGenerated }) => {
+  const [input, setInput] = useState("");
+  const [voice, setVoice] = useState("alloy");
+  const [speed, setSpeed] = useState(1.0);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [selectedSpeech, setSelectedSpeech] = useState(null);
 
-  /* mock speeches */
-  const speeches = [
-    {
-      id: 1,
-      title: "Motivational Speech",
-      excerpt:
-        "Success is not defined by how many times you win, but by how many times you rise...",
-      content:
-        "Success is not defined by how many times you win, but by how many times you rise after falling. Every challenge is a lesson...",
-      timestamp: "5 mins ago",
-    },
-    {
-      id: 2,
-      title: "Wedding Speech",
-      excerpt:
-        "Today we celebrate love, partnership, and a lifetime of shared dreams...",
-      content:
-        "Today we celebrate love, partnership, and a lifetime of shared dreams. Marriage is not just about finding the right person...",
-      timestamp: "12 mins ago",
-    },
-  ];
+  const generateAudio = useGenerateTextToAudio();
 
-  const history = speeches.slice(0, 5);
+  useEffect(() => {
+    onGeneratingChange?.(isGenerating);
+  }, [isGenerating, onGeneratingChange]);
 
-  const handleGenerate = () => {
-    if (!prompt.trim()) return;
+  const handleGenerate = async (e) => {
+    e.preventDefault();
+
+    if (!input.trim()) {
+      showToast.error("Please enter some text");
+      return;
+    }
+
     setIsGenerating(true);
 
-    setTimeout(() => {
+    try {
+      const payload = {
+        input,
+        voice,
+        speed,
+      };
+
+      console.log("Text-to-Audio Payload:", payload);
+
+      const response = await generateAudio(payload);
+      if (response) {
+        // Notify parent component about the new image
+        onAudioGenerated?.(response);
+        setInput("");
+        showToast.success("audio generated successfully!");
+      }
+    } catch (error) {
+      showToast.error(error || "Failed to generate audio");
       setIsGenerating(false);
-    }, 2000);
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   return (
-    <Box sx={{ height: "100%" }}>
- 
-
-      <Grid container sx={{ height: "calc(100% - 96px)" }}>
-        <Grid
-          item
-          size={{ xs: 12, md: 3 }}
+    <Box maxWidth={800} mx="auto" mb={4}>
+      <Card
+        elevation={0}
+        sx={{
+          border: "1px solid",
+          borderColor: "divider",
+          borderRadius: 3,
+          overflow: "hidden",
+        }}
+      >
+        {/* Header with gradient */}
+        <Box
           sx={{
-            bgcolor: "#F9FAFB",
-            p: 1,
-            mt: 3,
-            boxShadow: 5,
-            borderRadius: 1,
+            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            p: 3,
+            color: "white",
           }}
         >
-          <Stack direction="row" spacing={1} alignItems="center" mb={2}>
-            <History fontSize="small" />
-            <Typography fontWeight={600}>Recent Speeches</Typography>
-          </Stack>
-
-          <Stack spacing={1}>
-            {history.map((item) => (
-              <Card
-                key={item.id}
-                variant="outlined"
-                sx={{
-                  cursor: "pointer",
-                  "&:hover": { bgcolor: "grey.50" },
-                }}
-                onClick={() => setSelectedSpeech(item)}
-              >
-                <CardContent sx={{ p: 2 }}>
-                  <Typography variant="body2" fontWeight={600} noWrap>
-                    {item.title}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {item.timestamp}
-                  </Typography>
-                </CardContent>
-              </Card>
-            ))}
-          </Stack>
-        </Grid>
-
-        {/* Content Column */}
-        <Grid item size={{ xs: 12, md: 9 }} sx={{ p: 3, overflowY: "auto" }}>
-          {/* Prompt Input */}
-          <Card variant="outlined" sx={{ borderRadius: 1, mb: 4 }}>
-            <CardContent>
-              <Typography fontWeight={600} mb={1}>
-                Describe the speech you want
+          <Stack direction="row" spacing={2} alignItems="center" mb={1}>
+            <Box
+              sx={{
+                p: 1.5,
+                bgcolor: "rgba(255,255,255,0.2)",
+                borderRadius: 2,
+                backdropFilter: "blur(10px)",
+              }}
+            >
+              <GraphicEq sx={{ fontSize: 28 }} />
+            </Box>
+            <Box>
+              <Typography variant="h5" fontWeight={700}>
+                Text to Audio Generator
               </Typography>
+              <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                Convert your text into natural-sounding speech
+              </Typography>
+            </Box>
+          </Stack>
+        </Box>
 
-              <TextField
-                fullWidth
-                multiline
-                rows={4}
-                placeholder="E.g. A motivational speech for young entrepreneurs..."
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-              />
+        <CardContent sx={{ p: 4 }}>
+          {/* Text Input */}
+          <Box sx={{ mb: 3 }}>
+            <Typography variant="subtitle1" fontWeight={600} gutterBottom>
+              Your Text 📝
+            </Typography>
+            <TextField
+              fullWidth
+              multiline
+              rows={5}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Enter the text you want to convert to speech..."
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 2,
+                },
+              }}
+            />
+            <Stack direction="row" justifyContent="space-between" mt={1}>
+              <Typography variant="caption" color="text.secondary">
+                {input.length} characters
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                Max 5000 characters
+              </Typography>
+            </Stack>
+          </Box>
 
-              <Stack direction="row" justifyContent="flex-end" mt={2}>
-                <Button
-                  variant="contained"
-                  endIcon={
-                    isGenerating ? (
-                      <CircularProgress size={18} color="inherit" />
-                    ) : (
-                      <Send />
-                    )
-                  }
-                  onClick={handleGenerate}
-                  disabled={!prompt.trim() || isGenerating}
-                  sx={{ textTransform: "none", px: 4 }}
-                >
-                  {isGenerating ? "Generating..." : "Generate Speech"}
-                </Button>
-              </Stack>
-            </CardContent>
-          </Card>
-
+          {/* Voice Settings */}
           <Box
             sx={{
-              border: "1px solid #e0e0e0",
+              p: 3,
+              bgcolor: alpha("#667eea", 0.05),
               borderRadius: 2,
-              p: 2,
-              mt: 3,
+              mb: 3,
             }}
           >
-            <Typography fontWeight={700} mb={2}>
-              Generated Speeches
+            <Typography variant="subtitle1" fontWeight={600} gutterBottom>
+              Voice Settings 🎙️
             </Typography>
 
-            <Grid container spacing={3}>
-              {speeches.map((speech) => (
-                <Grid item xs={12} md={6} key={speech.id}>
-                  <Card
-                    variant="outlined"
-                    sx={{
-                      height: "100%",
-                      cursor: "pointer",
-                      "&:hover": { boxShadow: 3 },
-                    }}
-                    onClick={() => setSelectedSpeech(speech)}
-                  >
-                    <CardContent>
-                      <Stack
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                        mb={1}
-                      >
-                        <Typography fontWeight={600}>{speech.title}</Typography>
-                        <Chip size="small" label="AI" />
-                      </Stack>
+            <Stack spacing={3}>
+              {/* Voice Selection */}
+              <FormControl fullWidth>
+                <InputLabel>Voice Type</InputLabel>
+                <Select
+                  value={voice}
+                  label="Voice Type"
+                  onChange={(e) => setVoice(e.target.value)}
+                  startAdornment={
+                    <Person sx={{ mr: 1, color: "action.active" }} />
+                  }
+                >
+                  {VOICES.map((v) => (
+                    <MenuItem key={v.id} value={v.id}>
+                      {v.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
 
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{
-                          display: "-webkit-box",
-                          WebkitLineClamp: 3,
-                          WebkitBoxOrient: "vertical",
-                          overflow: "hidden",
-                        }}
-                      >
-                        {speech.excerpt}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
+              {/* Speed Control */}
+              <Box>
+                <Stack direction="row" justifyContent="space-between" mb={1}>
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <Speed sx={{ fontSize: 20, color: "primary.main" }} />
+                    <Typography variant="body2" fontWeight={600}>
+                      Speech Speed
+                    </Typography>
+                  </Stack>
+                  <Chip label={`${speed}x`} size="small" color="primary" />
+                </Stack>
+                <Slider
+                  value={speed}
+                  onChange={(e, newValue) => setSpeed(newValue)}
+                  min={0.5}
+                  max={2.0}
+                  step={0.1}
+                  marks={[
+                    { value: 0.5, label: "0.5x" },
+                    { value: 1.0, label: "1.0x" },
+                    { value: 2.0, label: "2.0x" },
+                  ]}
+                  valueLabelDisplay="auto"
+                />
+              </Box>
+            </Stack>
           </Box>
-        </Grid>
-      </Grid>
 
-      <Dialog
-        open={Boolean(selectedSpeech)}
-        onClose={() => setSelectedSpeech(null)}
-        maxWidth="md"
-        fullWidth
-      >
-        <DialogContent>
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-            mb={2}
-          >
-            <Typography fontWeight={700}>{selectedSpeech?.title}</Typography>
-            <IconButton onClick={() => setSelectedSpeech(null)}>
-              <Close />
-            </IconButton>
-          </Stack>
-
-          <Divider sx={{ mb: 2 }} />
-
-          <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
-            {selectedSpeech?.content}
-          </Typography>
-
-          <Stack direction="row" spacing={2} mt={3}>
-            <Button startIcon={<Download />} variant="contained">
-              Download
-            </Button>
-            <Button startIcon={<Delete />} color="error" variant="outlined">
-              Delete
-            </Button>
-          </Stack>
-        </DialogContent>
-      </Dialog>
+          {/* Generate Button */}
+          <CustomButton
+            fullWidth
+            title={isGenerating ? "Generating Audio..." : "Generate Audio"}
+            color="accent"
+            variant="filled"
+            onClick={handleGenerate}
+            disabled={!input.trim() || isGenerating}
+            endIcon={
+              isGenerating ? (
+                <CircularProgress size={20} color="inherit" />
+              ) : (
+                <Send />
+              )
+            }
+            sx={{
+              py: 1.5,
+              borderRadius: 2,
+              fontWeight: 600,
+              fontSize: "1rem",
+              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+              "&:hover": {
+                background: "linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%)",
+              },
+            }}
+          />
+        </CardContent>
+      </Card>
     </Box>
   );
 };

@@ -11,278 +11,216 @@ import {
   CircularProgress,
   IconButton,
   Grid,
+  Chip,
+  Divider,
 } from "@mui/material";
 import {
   Send,
   CloudUpload,
   Close,
   Image as ImageIcon,
+  AutoFixHigh,
+  AutoAwesome,
 } from "@mui/icons-material";
 import { useGenerateImageToImage } from "../../../../Hooks/Users/generate_images";
 import { showToast } from "../../../../utils/toast";
 
+const SUGGESTED_PROMPTS = [
+  "Convert this image background",
+  "Make this image look like a Pixar-style 3D render",
+  "Turn this into an anime illustration",
+  "Apply a futuristic neon lighting effect",
+  "Convert to a realistic oil painting",
+  "Make this image look like a vintage photograph",
+  "Apply a dark fantasy concept art style",
+];
+
 const ImageToImageInput = ({ onGeneratingChange }) => {
   const [prompt, setPrompt] = useState("");
-  const [uploadedImage, setUploadedImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState([]);
+  const [imageBase64, setImageBase64] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [imageMeta, setImageMeta] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
+
   const generateImage = useGenerateImageToImage();
 
-  /* notify parent whenever generating changes */
   useEffect(() => {
     onGeneratingChange?.(isGenerating);
   }, [isGenerating, onGeneratingChange]);
 
   const handleImageUpload = (event) => {
     const file = event.target.files?.[0];
-    if (file) {
-      // Validate file type
-      if (!file.type.startsWith("image/")) {
-        showToast.error("Please upload a valid image file");
-        return;
-      }
+    if (!file) return;
 
-      // Validate file size (max 10MB)
-      if (file.size > 10 * 1024 * 1024) {
-        showToast.error("Image size should be less than 10MB");
-        return;
-      }
-
-      setUploadedImage(file);
-
-      // Create preview
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
+    if (!file.type.startsWith("image/")) {
+      showToast.error("Please upload a valid image file");
+      return;
     }
+
+    if (file.size > 10 * 1024 * 1024) {
+      showToast.error("Image size must be less than 10MB");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImageBase64(reader.result); // ✅ BASE64 PAYLOAD
+      setImagePreview(reader.result);
+      setImageMeta({
+        name: file.name,
+        size: (file.size / 1024 / 1024).toFixed(2),
+      });
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleRemoveImage = () => {
-    setUploadedImage(null);
+    setImageBase64(null);
     setImagePreview(null);
+    setImageMeta(null);
   };
 
-  const handleGenerate = async (e) => {
-    e.preventDefault();
+  const handleSuggestionClick = (suggestion) => {
+    setPrompt(suggestion);
+  };
 
-    if (!uploadedImage) {
-      showToast.error("Please upload an image first");
+  const handleGenerate = async () => {
+    if (!imageBase64) {
+      showToast.error("Upload an image first");
       return;
     }
 
     if (!prompt.trim()) {
-      showToast.error("Please enter a prompt");
+      showToast.error("Enter a transformation prompt");
       return;
     }
 
     setIsGenerating(true);
 
     try {
-      const formData = new FormData();
-      formData.append("image", uploadedImage);
-      formData.append("prompt", prompt);
+      const payload = {
+        image: imageBase64,
+        prompt,
+      };
 
-      console.log("PayLoad:", { image: uploadedImage.name, prompt });
+      const response = await generateImage(payload);
 
-      const response = await generateImage(formData);
       if (response) {
+        showToast.success("Image generated successfully");
         setPrompt("");
-        setUploadedImage(null);
-        setImagePreview(null);
-        showToast.success("Image generated successfully!");
+        handleRemoveImage();
       }
     } catch (error) {
-      showToast.error(error || "Failed to generate image");
+      showToast.error(error || "Image generation failed");
     } finally {
       setIsGenerating(false);
     }
   };
 
   return (
-    <Box sx={{ mx: "auto" }}>
+    <Box maxWidth={900} mx="auto">
       <Grid container spacing={3}>
-        <Grid item size={{ xs: 12, md: 12 }}>
-          <Card
-            elevation={0}
-            sx={{
-              border: "1px solid #e0e0e0",
-              borderRadius: 2,
-              height: "100%",
-            }}
-          >
-            <CardContent sx={{ p: 2, height: "100%" }}>
-              <Typography
-                variant="subtitle2"
-                fontWeight={600}
-                color="text.secondary"
-                mb={2}
-              >
-                Upload Reference Image
+        {/* IMAGE UPLOAD */}
+        <Grid item size={{ xs: 12 }}>
+          <Card variant="outlined">
+            <CardContent>
+              <Typography fontWeight={600} mb={2}>
+                1. Upload Reference Image
               </Typography>
 
               {!imagePreview ? (
                 <Box
-                  sx={{
-                    border: "2px dashed #e0e0e0",
-                    borderRadius: 2,
-                    minHeight: 100,
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    bgcolor: "grey.50",
-                    cursor: "pointer",
-                    transition: "all 0.3s",
-                    p: 2,
-                    "&:hover": {
-                      borderColor: "primary.main",
-                      bgcolor: "primary.50",
-                    },
-                  }}
                   onClick={() =>
-                    document.getElementById("image-upload").click()
+                    document.getElementById("image-upload-input").click()
                   }
+                  sx={{
+                    border: "2px dashed",
+                    borderColor: "divider",
+                    borderRadius: 2,
+                    p: 5,
+                    textAlign: "center",
+                    cursor: "pointer",
+                    bgcolor: "grey.50",
+                    "&:hover": { borderColor: "primary.main" },
+                  }}
                 >
-                  <Box
-                    sx={{
-                      p: 2,
-                      bgcolor: "primary.50",
-                      borderRadius: "50%",
-                      mb: 2,
-                    }}
-                  >
-                    <CloudUpload sx={{ fontSize: 48, color: "primary.main" }} />
-                  </Box>
-                  <Typography variant="h6" fontWeight={600} mb={1}>
-                    Upload Image
+                  <CloudUpload sx={{ fontSize: 50, color: "primary.main" }} />
+                  <Typography fontWeight={600} mt={2}>
+                    Click to upload an image
                   </Typography>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    textAlign="center"
-                    mb={2}
-                  >
-                    Click to browse or drag and drop your image here
+                  <Typography variant="body2" color="text.secondary">
+                    JPG, PNG, WEBP • Max 10MB
                   </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    Supports: JPG, PNG, WEBP (Max 10MB)
-                  </Typography>
+
                   <input
-                    id="image-upload"
+                    id="image-upload-input"
                     type="file"
                     accept="image/*"
+                    hidden
                     onChange={handleImageUpload}
-                    style={{ display: "none" }}
                   />
                 </Box>
               ) : (
-                <Box
-                  sx={{
-                    position: "relative",
-                    borderRadius: 2,
-                    overflow: "hidden",
-                  }}
-                >
+                <Box sx={{ position: "relative" }}>
                   <Box
                     component="img"
                     src={imagePreview}
-                    alt="Uploaded preview"
                     sx={{
                       width: "100%",
-                      minHeight: 200,
-                      maxHeight: 200,
+                      maxHeight: 280,
                       objectFit: "contain",
                       borderRadius: 2,
                       bgcolor: "grey.100",
                     }}
                   />
+
                   <IconButton
                     onClick={handleRemoveImage}
                     sx={{
                       position: "absolute",
                       top: 12,
                       right: 12,
-                      bgcolor: "rgba(0, 0, 0, 0.6)",
-                      color: "white",
-                      "&:hover": {
-                        bgcolor: "rgba(0, 0, 0, 0.8)",
-                      },
+                      bgcolor: "rgba(0,0,0,0.6)",
+                      color: "#fff",
+                      "&:hover": { bgcolor: "rgba(0,0,0,0.8)" },
                     }}
                   >
                     <Close />
                   </IconButton>
 
-                  {/* Image Info */}
-                  <Box
-                    sx={{
-                      position: "absolute",
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      bgcolor: "rgba(0, 0, 0, 0.7)",
-                      backdropFilter: "blur(10px)",
-                      p: 2,
-                    }}
-                  >
-                    <Stack direction="row" alignItems="center" spacing={1}>
-                      <ImageIcon sx={{ color: "white", fontSize: 20 }} />
-                      <Typography
-                        variant="body2"
-                        color="white"
-                        fontWeight={500}
-                      >
-                        {uploadedImage?.name}
-                      </Typography>
-                      <Typography variant="caption" color="grey.300">
-                        ({(uploadedImage?.size / 1024 / 1024).toFixed(2)} MB)
-                      </Typography>
-                    </Stack>
-                  </Box>
+                  <Stack direction="row" spacing={1} alignItems="center" mt={1}>
+                    <ImageIcon fontSize="small" />
+                    <Typography variant="body2">
+                      {imageMeta?.name} ({imageMeta?.size} MB)
+                    </Typography>
+                  </Stack>
                 </Box>
               )}
             </CardContent>
           </Card>
         </Grid>
 
-        <Grid item size={{ xs: 12, md: 12 }}>
-          <Card
-            elevation={0}
-            sx={{
-              border: "1px solid #e0e0e0",
-              borderRadius: 2,
-              height: "100%",
-            }}
-          >
-            <CardContent sx={{ p: 2, height: "100%" }}>
-              <Typography
-                variant="subtitle2"
-                fontWeight={600}
-                color="text.secondary"
-                mb={2}
-              >
-                Transformation Prompt
+        {/* PROMPT */}
+        <Grid item size-={{ xs: 12 }}>
+          <Card variant="outlined">
+            <CardContent>
+              <Typography fontWeight={600} mb={2}>
+                2. Describe the Transformation
               </Typography>
 
-              <Box sx={{ position: "relative", height: "calc(100% - 40px)" }}>
+              <Box sx={{ position: "relative" }}>
                 <TextField
                   fullWidth
                   multiline
+                  rows={3}
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
-                  placeholder="Describe how you want to transform the image... e.g., 'Make it look like a watercolor painting' or 'Convert to anime style'"
+                  placeholder="Describe your ideas and images for reference"
                   sx={{
-                    height: "100%",
                     "& .MuiOutlinedInput-root": {
-                      height: "100%",
                       borderRadius: 2,
-                      alignItems: "flex-start",
-                      pb: 8,
-                    },
-                    "& textarea": {
-                      height: "100% !important",
-                      overflow: "auto !important",
+                      pr: 2,
+                      pb: 7,
                     },
                   }}
                 />
@@ -306,7 +244,7 @@ const ImageToImageInput = ({ onGeneratingChange }) => {
                       )
                     }
                     onClick={handleGenerate}
-                    disabled={!uploadedImage || !prompt.trim() || isGenerating}
+                    disabled={!prompt.trim() || isGenerating}
                     sx={{
                       textTransform: "none",
                       px: 4,
@@ -320,6 +258,50 @@ const ImageToImageInput = ({ onGeneratingChange }) => {
               </Box>
             </CardContent>
           </Card>
+
+          {/* Prompt Suggestions - Outside the main card */}
+          <Box sx={{ mt: 2 }}>
+            <Stack
+              direction="row"
+              spacing={1}
+              alignItems="center"
+              sx={{ mb: 1.5 }}
+            >
+              <AutoAwesome sx={{ fontSize: 18, color: "primary.main" }} />
+              <Typography
+                variant="caption"
+                fontWeight={600}
+                color="text.secondary"
+              >
+                Suggested Prompts
+              </Typography>
+            </Stack>
+
+            <Stack direction="row" flexWrap="wrap" gap={1}>
+              {SUGGESTED_PROMPTS.map((suggestion, index) => (
+                <Chip
+                  key={index}
+                  label={suggestion}
+                  onClick={() => handleSuggestionClick(suggestion)}
+                  size="small"
+                  sx={{
+                    cursor: "pointer",
+                    border: "1px solid",
+                    borderColor: "primary.light",
+                    bgcolor: "background.paper",
+                    transition: "all 0.2s",
+                    "&:hover": {
+                      bgcolor: "primary.main",
+                      color: "white",
+                      borderColor: "primary.main",
+                      transform: "translateY(-2px)",
+                      boxShadow: 2,
+                    },
+                  }}
+                />
+              ))}
+            </Stack>
+          </Box>
         </Grid>
       </Grid>
     </Box>

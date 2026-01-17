@@ -200,12 +200,7 @@ const UserGenerateImages = () => {
     setActiveTab(tab);
   }
 
-  console.log(" Images from API hook:", images);
-  console.log("generated Images rse:", generatedImages);
-
-  // Handle new image generation - Add to the front of the array
   const handleImageGenerated = async (newImage) => {
-    // Refetch all images to get the latest
     await refetch();
 
     // Or if the API returns the generated image, add it to the front

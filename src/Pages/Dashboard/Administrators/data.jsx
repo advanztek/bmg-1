@@ -2,7 +2,7 @@ export const countries = [
   { id: 1, country_name: "Nigeria" },
   { id: 2, country_name: "Ghana" },
   { id: 3, country_name: "Kenya" },
-  { id: 4, country_name: "South Africa" }
+  { id: 4, country_name: "South Africa" },
 ];
 
 export const headers = [
@@ -11,9 +11,9 @@ export const headers = [
   { key: "lastname", label: "Last Name" },
   { key: "email", label: "Email" },
   { key: "phone", label: "Phone" },
-  { key: "created_at", label: "Created At" },
+  { key: "created_at", label: "Date Created" },
   { key: "status", label: "Status" },
-  { key: "actions", label: "Action", width: "40px" }
+  { key: "actions", label: "Action", width: "40px" },
 ];
 
 export const admins = [
@@ -23,7 +23,7 @@ export const admins = [
     lastname: "Bond",
     email: "jamesbond@gmail.com",
     phone: "0908654231",
-    status: "inactive"
+    status: "inactive",
   },
   {
     id: "USR876",
@@ -31,7 +31,7 @@ export const admins = [
     lastname: "Adesuwa",
     email: "adesuwa99@gmail.com",
     phone: "09108765468",
-    status: "active"
+    status: "active",
   },
   {
     id: "USRDE6",
@@ -39,7 +39,7 @@ export const admins = [
     lastname: "Carter",
     email: "page123@yahoomail.com",
     phone: "07032122673",
-    status: "active"
+    status: "active",
   },
   {
     id: "USRD12",
@@ -47,7 +47,7 @@ export const admins = [
     lastname: "Precious",
     email: "presh@gmail.com",
     phone: "08122378904",
-    status: "active"
+    status: "active",
   },
   {
     id: "USRHJ6",
@@ -55,7 +55,7 @@ export const admins = [
     lastname: "Grace",
     email: "graceaudu22@gmail.com",
     phone: "07123790836",
-    status: "active"
+    status: "active",
   },
   {
     id: "USR512",
@@ -63,7 +63,7 @@ export const admins = [
     lastname: "Langala",
     email: "mobotho@gmail.com",
     phone: "090876747433",
-    status: "inactive"
+    status: "inactive",
   },
   {
     id: "USRD88",
@@ -71,7 +71,7 @@ export const admins = [
     lastname: "Tester",
     email: "testing@gmail.com",
     phone: "09089745623",
-    status: "active"
+    status: "active",
   },
   {
     id: "USRD678",
@@ -79,7 +79,7 @@ export const admins = [
     lastname: "Account",
     email: "testaccount@gmail.com",
     phone: "091764823378",
-    status: "inactive"
+    status: "inactive",
   },
   {
     id: "USRAS488",
@@ -87,7 +87,7 @@ export const admins = [
     lastname: "Onana",
     email: "onana@gmail.com",
     phone: "09080765598",
-    status: "inactive"
+    status: "inactive",
   },
   {
     id: "USRFG8",
@@ -95,7 +95,7 @@ export const admins = [
     lastname: "Oswald",
     email: "oswaldylada@gmail.com",
     phone: "08065321977",
-    status: "inactive"
+    status: "inactive",
   },
   {
     id: "USR8KD5",
@@ -103,6 +103,6 @@ export const admins = [
     lastname: "Euda",
     email: "Euda@gmail.com",
     phone: "070986353633",
-    status: "active"
-  }
+    status: "active",
+  },
 ];

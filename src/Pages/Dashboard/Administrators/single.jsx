@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -25,15 +25,24 @@ import {
   LocationOnOutlined,
   PersonOutlined,
   VerifiedOutlined,
-  BlockOutlined,
 } from "@mui/icons-material";
 import { formatDate } from "../../../utils/functions";
 import { useNavigate } from "react-router-dom";
-import { useGetAdmin } from "../../../Hooks/Dashboard/admins";
+import {
+  useGetAdmin,
+  useDeleteAdmin,
+  useFetchAdmins,
+} from "../../../Hooks/Dashboard/admins";
+import { ConfirmDeleteModal } from "../../../Component";
+import { showToast } from "../../../utils/toast";
 
 const SingleAdminModal = ({ open, onClose, userId }) => {
   const navigate = useNavigate();
-  const { adminData, loading, getAdmin } = useGetAdmin();
+  const { adminData, loading: dataLoading, getAdmin } = useGetAdmin();
+  const { refetch } = useFetchAdmins();
+  const deleteAdmin = useDeleteAdmin();
+  const [openDelete, setOpenDelete] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (open && userId) {
@@ -43,30 +52,37 @@ const SingleAdminModal = ({ open, onClose, userId }) => {
   }, [open, userId]);
 
   const handleEdit = () => {
-    console.log("Edit user:", userId);
-    navigate(`/dashboard/admin/edit/user/${userId}`);
+    navigate(`/dashboard/edit/admin`, {
+      state: { data: adminData },
+    });
+
     onClose();
   };
 
-  const handleDelete = () => {
-    if (
-      window.confirm(
-        `Are you sure you want to delete user "${adminData?.first_name} ${adminData?.last_name}"?`
-      )
-    ) {
-      console.log("Delete user:", userId);
-      // Add your delete logic here
-      onClose();
-    }
+  const handleConfirm = () => {
+    setOpenDelete(true);
   };
 
-  const handleToggleStatus = () => {
-    const action = adminData?.is_active ? "deactivate" : "activate";
-    if (
-      window.confirm(`Are you sure you want to ${action} this user account?`)
-    ) {
-      console.log(`${action} user:`, userId);
-      // Add your toggle status logic here
+  const handleDelete = async () => {
+    if (!adminData?.id) {
+      showToast.error("Invalid administrator ID");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await deleteAdmin(adminData.id);
+      if (res) {
+        setOpenDelete(false);
+        onClose();
+        await refetch();
+        showToast.success("Administrator deleted successfully.");
+      }
+    } catch (error) {
+      console.error(error);
+      showToast.error("Failed to delete Administrator.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -101,7 +117,7 @@ const SingleAdminModal = ({ open, onClose, userId }) => {
       </IconButton>
 
       <DialogContent sx={{ p: 0, overflow: "auto" }}>
-        {loading ? (
+        {dataLoading ? (
           <Box sx={{ p: 4 }}>
             <Stack direction="row" spacing={3} alignItems="center" mb={3}>
               <Skeleton variant="circular" width={120} height={120} />
@@ -233,7 +249,7 @@ const SingleAdminModal = ({ open, onClose, userId }) => {
 
                 <Grid container spacing={2}>
                   {adminData?.email && (
-                    <Grid item xs={12} md={6}>
+                    <Grid item size={{ xs: 12, md: 6 }}>
                       <Box
                         sx={{
                           display: "flex",
@@ -272,7 +288,7 @@ const SingleAdminModal = ({ open, onClose, userId }) => {
                   )}
 
                   {adminData?.phone && (
-                    <Grid item xs={12} md={6}>
+                    <Grid item size={{ xs: 12, md: 6 }}>
                       <Box
                         sx={{
                           display: "flex",
@@ -311,7 +327,7 @@ const SingleAdminModal = ({ open, onClose, userId }) => {
                   )}
 
                   {adminData?.address_one && (
-                    <Grid item xs={12}>
+                    <Grid item size={{ xs: 12 }}>
                       <Box
                         sx={{
                           display: "flex",
@@ -353,110 +369,7 @@ const SingleAdminModal = ({ open, onClose, userId }) => {
                 </Grid>
               </Box>
 
-              {/* Additional Information */}
-              {(adminData?.bio || adminData?.description) && (
-                <>
-                  <Divider sx={{ my: 3 }} />
-                  <Box sx={{ mb: 3 }}>
-                    <Typography
-                      variant="overline"
-                      color="text.secondary"
-                      fontWeight={600}
-                      sx={{ letterSpacing: 1.2 }}
-                    >
-                      About
-                    </Typography>
-                    <Divider sx={{ mt: 1, mb: 2 }} />
-                    <Typography
-                      variant="body1"
-                      color="text.secondary"
-                      sx={{
-                        lineHeight: 1.8,
-                        textAlign: "justify",
-                      }}
-                    >
-                      {adminData?.bio ||
-                        adminData?.description ||
-                        "No bio available."}
-                    </Typography>
-                  </Box>
-                </>
-              )}
-
               <Divider sx={{ my: 3 }} />
-
-              {/* Account Statistics */}
-              {(adminData?.total_orders || adminData?.total_spent) && (
-                <>
-                  <Box sx={{ mb: 3 }}>
-                    <Typography
-                      variant="overline"
-                      color="text.secondary"
-                      fontWeight={600}
-                      sx={{ letterSpacing: 1.2 }}
-                    >
-                      Account Statistics
-                    </Typography>
-                    <Divider sx={{ mt: 1, mb: 2 }} />
-
-                    <Grid container spacing={2}>
-                      {adminData?.total_orders && (
-                        <Grid item xs={6} md={3}>
-                          <Box
-                            sx={{
-                              textAlign: "center",
-                              p: 2,
-                              bgcolor: "grey.50",
-                              borderRadius: 2,
-                            }}
-                          >
-                            <Typography
-                              variant="h4"
-                              fontWeight={700}
-                              color="primary"
-                            >
-                              {adminData?.total_orders}
-                            </Typography>
-                            <Typography
-                              variant="caption"
-                              color="text.secondary"
-                            >
-                              Total Orders
-                            </Typography>
-                          </Box>
-                        </Grid>
-                      )}
-                      {adminData?.total_spent && (
-                        <Grid item xs={6} md={3}>
-                          <Box
-                            sx={{
-                              textAlign: "center",
-                              p: 2,
-                              bgcolor: "grey.50",
-                              borderRadius: 2,
-                            }}
-                          >
-                            <Typography
-                              variant="h4"
-                              fontWeight={700}
-                              color="success.main"
-                            >
-                              ${adminData?.total_spent}
-                            </Typography>
-                            <Typography
-                              variant="caption"
-                              color="text.secondary"
-                            >
-                              Total Spent
-                            </Typography>
-                          </Box>
-                        </Grid>
-                      )}
-                    </Grid>
-                  </Box>
-                  <Divider sx={{ my: 3 }} />
-                </>
-              )}
 
               {/* Timeline */}
               <Box sx={{ mb: 3 }}>
@@ -562,29 +475,15 @@ const SingleAdminModal = ({ open, onClose, userId }) => {
                 >
                   Close
                 </Button>
-                <Button
-                  variant="outlined"
-                  color={adminData?.is_active ? "warning" : "success"}
-                  startIcon={
-                    adminData?.is_active ? (
-                      <BlockOutlined />
-                    ) : (
-                      <VerifiedOutlined />
-                    )
-                  }
-                  onClick={handleToggleStatus}
-                  sx={{ textTransform: "none", px: 3 }}
-                >
-                  {adminData?.is_active ? "Deactivate" : "Activate"}
-                </Button>
+
                 <Button
                   variant="outlined"
                   color="error"
                   startIcon={<DeleteOutlined />}
-                  onClick={handleDelete}
+                  onClick={handleConfirm}
                   sx={{ textTransform: "none", px: 3 }}
                 >
-                  Delete
+                  Terminate
                 </Button>
                 <Button
                   variant="contained"
@@ -605,6 +504,15 @@ const SingleAdminModal = ({ open, onClose, userId }) => {
           </Box>
         )}
       </DialogContent>
+
+      <ConfirmDeleteModal
+        open={openDelete}
+        title="Delete Administrator"
+        itemName={`${adminData?.first_name} ${adminData?.last_name}`}
+        loading={loading}
+        onClose={() => setOpenDelete(false)}
+        onConfirm={handleDelete}
+      />
     </Dialog>
   );
 };

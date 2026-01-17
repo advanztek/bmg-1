@@ -1,9 +1,486 @@
-import React from 'react'
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect, useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  Box,
+  Typography,
+  IconButton,
+  Button,
+  Stack,
+  Chip,
+  Divider,
+  Avatar,
+  Skeleton,
+  Grid,
+  CircularProgress,
+} from "@mui/material";
+import {
+  CloseOutlined,
+  EditOutlined,
+  CalendarTodayOutlined,
+  UpdateOutlined,
+  EmailOutlined,
+  PhoneOutlined,
+  LocationOnOutlined,
+  PersonOutlined,
+  VerifiedOutlined,
+} from "@mui/icons-material";
+import { formatDate } from "../../../utils/functions";
+import {
+  useFetchExperts,
+  useGetExpert,
+  useUpdateExpertStatus,
+} from "../../../Hooks/Dashboard/experts";
+import { showToast } from "../../../utils/toast";
 
-const SingleExpertPage = () => {
+const SingleExpertModal = ({ open, onClose, userId }) => {
+  const { expertData, loading: dataLoading, getExpert } = useGetExpert();
+  const { refetch } = useFetchExperts();
+  const updateStatus = useUpdateExpertStatus();
+
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (open && userId) {
+      console.log("Fetching user with ID:", userId);
+      getExpert(userId);
+    }
+  }, [open, userId]);
+
+  const handleUserStatus = async () => {
+    if (!userId) return;
+
+    try {
+      setLoading(true);
+
+      const res = await updateStatus(userId, status);
+      if (res) {
+        showToast.success("Role updated successfully.");
+        await refetch();
+      }
+
+      onclose();
+    } catch (error) {
+      console.error(error);
+      showToast.error("User status update failed.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div>SingleExpertPage</div>
-  )
-}
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="md"
+      fullWidth
+      PaperProps={{
+        sx: {
+          borderRadius: 3,
+          maxHeight: "90vh",
+        },
+      }}
+    >
+      <IconButton
+        onClick={onClose}
+        sx={{
+          position: "absolute",
+          right: 16,
+          top: 16,
+          zIndex: 1,
+          bgcolor: "rgba(255, 255, 255, 0.9)",
+          boxShadow: 2,
+          "&:hover": {
+            bgcolor: "rgba(255, 255, 255, 1)",
+          },
+        }}
+      >
+        <CloseOutlined />
+      </IconButton>
 
-export default SingleExpertPage
+      <DialogContent sx={{ p: 0, overflow: "auto" }}>
+        {dataLoading ? (
+          <Box sx={{ p: 4 }}>
+            <Stack direction="row" spacing={3} alignItems="center" mb={3}>
+              <Skeleton variant="circular" width={120} height={120} />
+              <Box sx={{ flex: 1 }}>
+                <Skeleton variant="text" width="60%" height={40} />
+                <Skeleton variant="text" width="40%" height={30} />
+              </Box>
+            </Stack>
+            <Skeleton variant="rectangular" height={150} sx={{ mb: 2 }} />
+            <Skeleton variant="rectangular" height={100} />
+          </Box>
+        ) : expertData ? (
+          <>
+            {/* Header Section with Profile Picture */}
+            <Box
+              sx={{
+                bgcolor: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                p: 4,
+                pb: 6,
+              }}
+            >
+              <Stack direction="row" spacing={3} alignItems="center">
+                <Box sx={{ position: "relative" }}>
+                  <Avatar
+                    src={expertData?.profile_image || expertData?.avatar}
+                    alt={`${expertData?.first_name} ${expertData?.last_name}`}
+                    sx={{
+                      width: 120,
+                      height: 120,
+                      border: "4px solid white",
+                      boxShadow: 3,
+                    }}
+                  >
+                    <PersonOutlined sx={{ fontSize: 60 }} />
+                  </Avatar>
+                  {expertData?.is_verified && (
+                    <Box
+                      sx={{
+                        position: "absolute",
+                        bottom: 5,
+                        right: 5,
+                        bgcolor: "success.main",
+                        borderRadius: "50%",
+                        p: 0.5,
+                        border: "3px solid white",
+                      }}
+                    >
+                      <VerifiedOutlined sx={{ fontSize: 20, color: "white" }} />
+                    </Box>
+                  )}
+                </Box>
+
+                <Box sx={{ flex: 1 }}>
+                  <Typography
+                    variant="h4"
+                    fontWeight={700}
+                    color="white"
+                    sx={{ mb: 1 }}
+                  >
+                    {expertData?.first_name} {expertData?.last_name}
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    color="rgba(255,255,255,0.9)"
+                    mb={2}
+                  >
+                    @{expertData?.username || expertData?.email?.split("@")[0]}
+                  </Typography>
+                  <Stack direction="row" spacing={1}>
+                    <Chip
+                      label={expertData?.is_active ? "Active" : "Inactive"}
+                      size="small"
+                      color={expertData?.is_active ? "success" : "default"}
+                      sx={{
+                        fontWeight: 600,
+                        bgcolor: expertData?.is_active
+                          ? "success.main"
+                          : "grey.500",
+                        color: "white",
+                      }}
+                    />
+                    {expertData?.role && (
+                      <Chip
+                        label={expertData?.role}
+                        size="small"
+                        sx={{
+                          bgcolor: "rgba(255, 255, 255, 0.2)",
+                          color: "white",
+                          fontWeight: 600,
+                          backdropFilter: "blur(10px)",
+                        }}
+                      />
+                    )}
+                    {expertData?.is_verified && (
+                      <Chip
+                        label="Verified"
+                        size="small"
+                        icon={
+                          <VerifiedOutlined
+                            sx={{ fontSize: 16, color: "white !important" }}
+                          />
+                        }
+                        sx={{
+                          bgcolor: "rgba(76, 175, 80, 0.3)",
+                          color: "white",
+                          fontWeight: 600,
+                          backdropFilter: "blur(10px)",
+                        }}
+                      />
+                    )}
+                  </Stack>
+                </Box>
+              </Stack>
+            </Box>
+
+            <Box sx={{ p: 4 }}>
+              {/* Contact Information */}
+              <Box sx={{ mb: 3 }}>
+                <Typography
+                  variant="overline"
+                  color="text.secondary"
+                  fontWeight={600}
+                  sx={{ letterSpacing: 1.2 }}
+                >
+                  Contact Information
+                </Typography>
+                <Divider sx={{ mt: 1, mb: 2 }} />
+
+                <Grid container spacing={2}>
+                  {expertData?.email && (
+                    <Grid item size={{ xs: 12, md: 6 }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          p: 2,
+                          bgcolor: "grey.50",
+                          borderRadius: 2,
+                        }}
+                      >
+                        <Avatar
+                          sx={{
+                            bgcolor: "primary.light",
+                            width: 40,
+                            height: 40,
+                            mr: 2,
+                          }}
+                        >
+                          <EmailOutlined
+                            sx={{ fontSize: 20, color: "primary.main" }}
+                          />
+                        </Avatar>
+                        <Box sx={{ flexGrow: 1 }}>
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            fontWeight={600}
+                          >
+                            Email Address
+                          </Typography>
+                          <Typography variant="body2" fontWeight={500}>
+                            {expertData?.email}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </Grid>
+                  )}
+
+                  {expertData?.phone && (
+                    <Grid item size={{ xs: 12, md: 6 }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          p: 2,
+                          bgcolor: "grey.50",
+                          borderRadius: 2,
+                        }}
+                      >
+                        <Avatar
+                          sx={{
+                            bgcolor: "success.light",
+                            width: 40,
+                            height: 40,
+                            mr: 2,
+                          }}
+                        >
+                          <PhoneOutlined
+                            sx={{ fontSize: 20, color: "success.main" }}
+                          />
+                        </Avatar>
+                        <Box sx={{ flexGrow: 1 }}>
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            fontWeight={600}
+                          >
+                            Phone Number
+                          </Typography>
+                          <Typography variant="body2" fontWeight={500}>
+                            {expertData?.phone}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </Grid>
+                  )}
+
+                  {expertData?.address_one && (
+                    <Grid item size={{ xs: 12 }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          p: 2,
+                          bgcolor: "grey.50",
+                          borderRadius: 2,
+                        }}
+                      >
+                        <Avatar
+                          sx={{
+                            bgcolor: "warning.light",
+                            width: 40,
+                            height: 40,
+                            mr: 2,
+                          }}
+                        >
+                          <LocationOnOutlined
+                            sx={{ fontSize: 20, color: "warning.main" }}
+                          />
+                        </Avatar>
+                        <Box sx={{ flexGrow: 1 }}>
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            fontWeight={600}
+                          >
+                            Address
+                          </Typography>
+                          <Typography variant="body2" fontWeight={500}>
+                            {expertData?.address}
+                            {expertData?.city && `, ${expertData?.city}`}
+                            {expertData?.country && `, ${expertData?.country}`}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </Grid>
+                  )}
+                </Grid>
+              </Box>
+
+              <Divider sx={{ my: 3 }} />
+
+              {/* Timeline */}
+              <Box sx={{ mb: 3 }}>
+                <Typography
+                  variant="overline"
+                  color="text.secondary"
+                  fontWeight={600}
+                  sx={{ letterSpacing: 1.2 }}
+                >
+                  Account Timeline
+                </Typography>
+                <Divider sx={{ mt: 1, mb: 2 }} />
+
+                <Stack spacing={2}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      p: 2,
+                      bgcolor: "grey.50",
+                      borderRadius: 2,
+                      border: "1px solid",
+                      borderColor: "grey.200",
+                    }}
+                  >
+                    <Avatar
+                      sx={{
+                        bgcolor: "primary.main",
+                        width: 40,
+                        height: 40,
+                        mr: 2,
+                      }}
+                    >
+                      <CalendarTodayOutlined sx={{ fontSize: 20 }} />
+                    </Avatar>
+                    <Box sx={{ flexGrow: 1 }}>
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        fontWeight={600}
+                      >
+                        Joined Date
+                      </Typography>
+                      <Typography variant="body2" fontWeight={500}>
+                        {formatDate(expertData?.created_at)}
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      p: 2,
+                      bgcolor: "grey.50",
+                      borderRadius: 2,
+                      border: "1px solid",
+                      borderColor: "grey.200",
+                    }}
+                  >
+                    <Avatar
+                      sx={{
+                        bgcolor: "success.main",
+                        width: 40,
+                        height: 40,
+                        mr: 2,
+                      }}
+                    >
+                      <UpdateOutlined sx={{ fontSize: 20 }} />
+                    </Avatar>
+                    <Box sx={{ flexGrow: 1 }}>
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        fontWeight={600}
+                      >
+                        Last Activity
+                      </Typography>
+                      <Typography variant="body2" fontWeight={500}>
+                        {formatDate(
+                          expertData?.updated_at || expertData?.last_login
+                        )}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Stack>
+              </Box>
+
+              <Divider sx={{ my: 3 }} />
+
+              {/* Action Buttons */}
+              <Stack
+                direction="row"
+                spacing={2}
+                justifyContent="flex-end"
+                flexWrap="wrap"
+              >
+                <Button
+                  variant="outlined"
+                  color="inherit"
+                  onClick={onClose}
+                  sx={{ textTransform: "none", px: 3 }}
+                >
+                  Close
+                </Button>
+
+                <Button
+                  variant="contained"
+                  startIcon={loading ? <CircularProgress /> : <EditOutlined />}
+                  onClick={handleUserStatus}
+                  sx={{ textTransform: "none", px: 3 }}
+                  disabled={loading}
+                >
+                  Update Status
+                </Button>
+              </Stack>
+            </Box>
+          </>
+        ) : (
+          <Box sx={{ p: 4, textAlign: "center" }}>
+            <Typography variant="h6" color="text.secondary">
+              No user data found
+            </Typography>
+          </Box>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default SingleExpertModal;

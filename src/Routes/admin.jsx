@@ -12,6 +12,7 @@ import {
   AddExpertPage,
   OrdersPage,
   AddAdminPage,
+  EditAdminPage,
   AdminRoles,
   AddAdminRole,
   SubCategoriesPage,
@@ -68,6 +69,7 @@ const AdminRoutes = () => {
       <Route index element={<DashboardHome />} />
       <Route path="view/admins" element={<Administrators />} />
       <Route path="add/admin" element={<AddAdminPage />} />
+      <Route path="edit/admin" element={<EditAdminPage />} />
       <Route path="view/admin-roles" element={<AdminRoles />} />
       <Route path="add/admin-roles" element={<AddAdminRole />} />
       <Route path="admin/customers" element={<UsersPage />} />

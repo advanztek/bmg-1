@@ -28,7 +28,6 @@ import { useAddCategoryFaqs } from "../../../Hooks/Dashboard/category_faq";
 const AddCategoryFaqs = () => {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
-  const [status, setStatus] = useState("");
   const [categoryId, setCategoryId] = useState("");
 
   const [loading, setLoading] = useState(false);
@@ -39,8 +38,7 @@ const AddCategoryFaqs = () => {
   const formData = {
     question,
     answer,
-    categoryId,
-    status,
+    category_id: categoryId,
   };
 
   const handleSubmit = async () => {
@@ -60,7 +58,7 @@ const AddCategoryFaqs = () => {
         setQuestion("");
         setAnswer("");
         setCategoryId("");
-        navigate("/dashboard/category-faqs");
+        navigate("/dashboard/admin/category-faqs");
       }
     } catch (error) {
       showToast.error(error);
@@ -168,32 +166,6 @@ const AddCategoryFaqs = () => {
                         ))}
                       </Select>
                     </FormControl>
-                  </Grid>
-                  <Grid size={{ xs: 12 }}>
-                    <Box
-                      sx={{
-                        border: "1px solid #e0e0e0",
-                        borderRadius: 2,
-                        p: 3,
-                        bgcolor: "white",
-                        mt: 2,
-                      }}
-                    >
-                      <Typography variant="subtitle1" fontWeight={600} mb={2}>
-                        Category FAQ Status
-                      </Typography>
-                      <Stack direction="row" alignItems="center" spacing={2}>
-                        <Typography variant="body2" fontWeight={500}>
-                          {status ? "Active" : "Inactive"}
-                        </Typography>
-                        <Switch
-                          checked={status}
-                          onChange={(e) => setStatus(e.target.checked)}
-                          disabled={loading}
-                          color="warning"
-                        />
-                      </Stack>
-                    </Box>
                   </Grid>
                 </Grid>
               </Grid>

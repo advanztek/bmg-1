@@ -21,7 +21,7 @@ function useAddExpert() {
         return true;
       }
       if (result?.code !== 0) {
-        showToast.success(result.message);
+        showToast.error(result.message);
         return false;
       }
     } catch (error) {
@@ -70,4 +70,68 @@ const useFetchExperts = () => {
   return { experts, refetch: fetchData, loading };
 };
 
-export { useAddExpert, useFetchExperts };
+function useGetExpert() {
+  const [loading, setLoading] = useState(false);
+  const { config } = useUserContext();
+  const [expertData, setExpertData] = useState(null);
+
+  const getExpert = async (expertId) => {
+    if (!expertId) {
+      console.error("No ID provided");
+      return;
+    }
+
+    setLoading(true);
+    console.log("Fetching method with ID:", expertId);
+
+    try {
+      const response = await axios.get(
+        `${BASE_SERVER_URL}/admin/get-admin/${expertId}`,
+        config
+      );
+
+      const result = response.data;
+      console.log("single res:", result);
+
+      if (result?.code === 0) {
+        setExpertData(result?.result);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setExpertData(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { expertData, loading, getExpert };
+}
+
+const useUpdateExpertStatus = () => {
+  return async (data, id) => {
+    if (!id || typeof id === "object") {
+      console.error("Invalid expert ID:", id);
+      return;
+    }
+
+    try {
+      const response = await axios.put(
+        `${BASE_SERVER_URL}/admin/update/expert/status/${id}`,
+        data
+      );
+
+      const result = response.data;
+      console.log("Update Response:", result);
+
+      showToast.success(result.message);
+      return result;
+    } catch (error) {
+      console.error("Error:", error.response?.data || error.message);
+      showToast.error(
+        error?.response?.data?.message || "Error occurred while updating."
+      );
+    }
+  };
+};
+
+export { useAddExpert, useFetchExperts, useGetExpert, useUpdateExpertStatus };

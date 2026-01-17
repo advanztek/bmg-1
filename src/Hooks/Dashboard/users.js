@@ -14,12 +14,11 @@ const useFetchUsers = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `${BASE_SERVER_URL}/admin/users`,
+        `${BASE_SERVER_URL}/admin/all-customers`,
         config
       );
 
       const result = response.data;
-
       console.log(" Response:", result);
 
       if (result.code === 0) {
@@ -57,7 +56,9 @@ function useAddUser() {
         return true;
       }
       if (result?.code !== 0) {
-        showToast.error(result?.message?.message || "An error occured, please try again...");
+        showToast.error(
+          result?.message?.message || "An error occured, please try again..."
+        );
         return false;
       }
     } catch (error) {
@@ -72,4 +73,31 @@ function useAddUser() {
   };
 }
 
-export { useAddUser, useFetchUsers };
+const useUpdateUserStatus = () => {
+  return async (data, id) => {
+    if (!id || typeof id === "object") {
+      console.error("Invalid user ID:", id);
+      return;
+    }
+
+    try {
+      const response = await axios.put(
+        `${BASE_SERVER_URL}/admin/update/user/status/${id}`,
+        data
+      );
+
+      const result = response.data;
+      console.log("Update Response:", result);
+
+      showToast.success(result.message);
+      return result;
+    } catch (error) {
+      console.error("Error:", error.response?.data || error.message);
+      showToast.error(
+        error?.response?.data?.message || "Error occurred while updating."
+      );
+    }
+  };
+};
+
+export { useAddUser, useFetchUsers, useUpdateUserStatus };

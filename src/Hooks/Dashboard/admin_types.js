@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { BASE_SERVER_URL } from "../../Config/paths";
@@ -72,18 +73,21 @@ function useGetAdminTypes() {
   return { adminTypes, refetch: getTypes, loading };
 }
 
-function useDisableAdminType() {
+function useUpdateAdminType() {
   const [loading, setLoading] = useState(false);
 
   const updateStatus = async (id, data) => {
     setLoading(true);
     try {
       const response = await axios.post(
-        `${BASE_SERVER_URL}/admin/suspend/admin-type/${id}`,
+        `${BASE_SERVER_URL}/admin/update/admin-type/${id}`,
         data
       );
+
       const result = response.data;
-      if (result?.error === 0) {
+      console.log("result res:", result);
+
+      if (result?.code === 0) {
         showToast.success(result.message);
       }
     } catch (error) {
@@ -101,4 +105,4 @@ function useDisableAdminType() {
   return { updateStatus, loading };
 }
 
-export { useAddAdminRole, useGetAdminTypes, useDisableAdminType };
+export { useAddAdminRole, useGetAdminTypes, useUpdateAdminType };

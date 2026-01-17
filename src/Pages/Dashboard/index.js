@@ -1,6 +1,7 @@
 export { default as DashboardHome } from "./DashboardHome";
 export { default as Administrators } from "./Administrators";
-export { default as AddAdminPage } from "./Administrators/add-admin";
+export { default as AddAdminPage } from "./Administrators/add";
+export { default as EditAdminPage } from "./Administrators/edit";
 export { default as AdminRoles } from "./RolesPermissions/admin-roles";
 export { default as AddAdminRole } from "./RolesPermissions/add-admin-role";
 export { default as UsersPage } from "./Users";

@@ -14,12 +14,25 @@ import { headers } from "./data";
 import { VisibilityOutlined, AddOutlined } from "@mui/icons-material";
 import { useFetchUsers } from "../../../Hooks/Dashboard/users";
 import { useNavigate } from "react-router-dom";
+import SingleUserModal from "./single";
 
 const UsersPage = () => {
   const [search, setSearch] = useState();
   const { users, refetch, loading: userLoading } = useFetchUsers();
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
 
+  const handleOpen = (row) => {
+    setSelectedUser(row);
+    setOpen(true);
+  };
+
+  const handleClose = async () => {
+    setOpen(false);
+    await refetch();
+    setSelectedUser(null);
+  };
   return (
     <div>
       <PagesHeader
@@ -80,7 +93,7 @@ const UsersPage = () => {
                 </TableCell>
 
                 <TableCell>
-                  <IconButton size="small">
+                  <IconButton size="small" onClick={() => handleOpen(row)}>
                     <VisibilityOutlined fontSize="small" />
                   </IconButton>
                 </TableCell>
@@ -102,6 +115,8 @@ const UsersPage = () => {
           )}
         </CustomTable>
       </Box>
+
+      <SingleUserModal open={open} onClose={handleClose} user={selectedUser} />
     </div>
   );
 };
