@@ -9,6 +9,7 @@ export { default as ExpertsPage } from "./Experts";
 export { default as AddExpertPage } from "./Experts/add";
 export { default as CategoriesPage } from "./Categories";
 export { default as AddCategoriesPage } from "./Categories/add";
+export { default as EditCategoryPage } from "./Categories/edit";
 export { default as SubCategoriesPage } from "./SubCategories";
 export { default as AddSubCategoriesPage } from "./SubCategories/add";
 export { default as ServicesPage } from "./Services";

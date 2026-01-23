@@ -4,26 +4,29 @@ import {
   Box,
   Input,
   Stack,
-  Switch, 
+  Switch,
+  TextField,
   Typography,
   Chip,
   IconButton,
   FormControl,
   MenuItem,
-  Select, 
-  Collapse,
+  Select,
+  InputAdornment,
 } from "@mui/material";
 import {
   AddOutlined,
   DeleteOutlined,
   VisibilityOutlined,
-  ArrowBackOutlined, 
+  ArrowBackOutlined,
+  AttachMoneyOutlined,
   CloseOutlined,
 } from "@mui/icons-material";
 import {
   InputLabel,
   CustomButton,
-  PagesHeader, 
+  PagesHeader,
+  UploadMedia,
 } from "../../../Component";
 import { styles } from "../../../styles/dashboard";
 import { useNavigate } from "react-router-dom";
@@ -41,20 +44,15 @@ const AddServicePage = () => {
   const [attributes, setAttributes] = useState([]);
   const [currentAttribute, setCurrentFeature] = useState("");
 
-  // requirements - updated structure
+  // requirements
   const [requirements, setRequirements] = useState([]);
   const [currentRequirement, setCurrentRequirement] = useState({
     name: "",
     input_type: "",
     required: true,
-    min: "",
-    max: "",
-    options: [],
-    currentOption: "",
   });
-  const [detailsOne, setDetailsOne] = useState("");
-  const [detailsTwo, setDetailsTwo] = useState("");
-  const [detailsThree, setDetailsThree] = useState("");
+  const [details, setDetails] = useState([]);
+  const [currentDetail, setCurrentDetail] = useState("");
 
   const [loading, setLoading] = useState(false);
   const addService = useCreateServices();
@@ -75,90 +73,30 @@ const AddServicePage = () => {
     setAttributes(attributes.filter((_, i) => i !== index));
   };
 
+  const handleAddDetail = (e) => {
+    e.preventDefault();
+    if (currentDetail.trim()) {
+      setDetails([...details, currentDetail.trim()]);
+      setCurrentDetail("");
+    }
+  };
+
+  const handleRemoveDetail = (index) => {
+    setDetails(details.filter((_, i) => i !== index));
+  };
+
   // ===== REQUIREMENTS =====
-  const needsOptions = (type) => {
-    return type === "checkbox" || type === "radio";
-  };
-
-  const needsMinMax = (type) => {
-    return type === "text" || type === "number";
-  };
-
-  const addOptionToCurrentRequirement = (e) => {
-    if (e) e.preventDefault();
-
-    if (!currentRequirement.currentOption.trim()) return;
-
-    setCurrentRequirement({
-      ...currentRequirement,
-      options: [
-        ...currentRequirement.options,
-        currentRequirement.currentOption.trim(),
-      ],
-      currentOption: "",
-    });
-  };
-
-  const removeOptionFromCurrentRequirement = (index) => {
-    setCurrentRequirement({
-      ...currentRequirement,
-      options: currentRequirement.options.filter((_, i) => i !== index),
-    });
-  };
-
   const addRequirement = (e) => {
+    // Prevent form submission
     if (e) e.preventDefault();
 
-    if (!currentRequirement.name || !currentRequirement.input_type) {
-      showToast.warning("Please fill in requirement name and input type");
+    if (!currentRequirement.label || !currentRequirement.type) {
+      showToast.warning("Please fill in requirement label and type");
       return;
     }
 
-    // Validate options for checkbox/radio
-    if (
-      needsOptions(currentRequirement.input_type) &&
-      currentRequirement.options.length === 0
-    ) {
-      showToast.warning(
-        "Please add at least one option for checkbox/radio type",
-      );
-      return;
-    }
-
-    // Build the requirement object
-    const newRequirement = {
-      requirement: {
-        name: currentRequirement.name,
-        input_type: currentRequirement.input_type,
-      },
-      required: currentRequirement.required,
-    };
-
-    // Add options if checkbox or radio
-    if (needsOptions(currentRequirement.input_type)) {
-      newRequirement.requirement.options = currentRequirement.options;
-    }
-
-    // Add min/max if text or number
-    if (needsMinMax(currentRequirement.input_type)) {
-      if (currentRequirement.min) {
-        newRequirement.min = parseInt(currentRequirement.min);
-      }
-      if (currentRequirement.max) {
-        newRequirement.max = parseInt(currentRequirement.max);
-      }
-    }
-
-    setRequirements([...requirements, newRequirement]);
-    setCurrentRequirement({
-      name: "",
-      input_type: "",
-      required: true,
-      min: "",
-      max: "",
-      options: [],
-      currentOption: "",
-    });
+    setRequirements([...requirements, currentRequirement]);
+    setCurrentRequirement({ label: "", type: "", required: true });
   };
 
   const removeRequirement = (index) => {
@@ -190,13 +128,9 @@ const AddServicePage = () => {
         subcategory_id: subCatId,
         service_attributes: attributes,
         service_status: serviceStatus,
-        service_requirements:
-          requirements.length > 0 ? requirements : undefined,
-        service_details_1: detailsOne,
-        service_details_2: detailsTwo,
-        service_details_3: detailsThree,
+        service_requirements: requirements.length > 0 ? requirements : undefined,
+        service_details: details,
       };
-
       console.log("PayLoad:", payload);
 
       const response = await addService(payload);
@@ -214,22 +148,6 @@ const AddServicePage = () => {
       setLoading(false);
       hideLoader();
     }
-  };
-
-  const getRequirementDisplayText = (req) => {
-    let text = `${req.requirement.name} (${req.requirement.input_type})`;
-
-    if (req.requirement.options) {
-      text += ` - Options: ${req.requirement.options.join(", ")}`;
-    }
-
-    if (req.min || req.max) {
-      text += ` - Range: ${req.min || "∞"} to ${req.max || "∞"}`;
-    }
-
-    text += req.required ? " - Required" : " - Optional";
-
-    return text;
   };
 
   return (
@@ -425,6 +343,7 @@ const AddServicePage = () => {
               <Typography variant="h4" fontWeight={600} mt={3} mb={1}>
                 Service Details
               </Typography>
+
               <Box
                 sx={{
                   border: "1px solid #e0e0e0",
@@ -435,14 +354,19 @@ const AddServicePage = () => {
                 }}
               >
                 <Grid size={{ xs: 12 }}>
-                  <Grid size={{ xs: 12 }}>
-                    <InputLabel text="Service Detail one" />
+                  <InputLabel text="Add Service Details *" />
+                  <Stack direction="row" spacing={2}>
                     <Input
                       disableUnderline
                       fullWidth
-                      placeholder="Enter Service Detail one"
-                      value={detailsOne}
-                      onChange={(e) => setDetailsOne(e.target.value)}
+                      placeholder="Enter atleast three service details"
+                      value={currentDetail}
+                      onChange={(e) => setCurrentDetail(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          handleAddDetail(e);
+                        }
+                      }}
                       sx={{
                         border: "1px solid #e0e0e0",
                         borderRadius: 1,
@@ -451,41 +375,34 @@ const AddServicePage = () => {
                         fontSize: "14px",
                       }}
                     />
-                  </Grid>
-                  <Grid size={{ xs: 12 }} mt={2}>
-                    <InputLabel text="Service Detail Two" />
-                    <Input
-                      disableUnderline
-                      fullWidth
-                      placeholder="Enter Service Detail Two"
-                      value={detailsTwo}
-                      onChange={(e) => setDetailsTwo(e.target.value)}
+                    <IconButton
+                      onClick={handleAddDetail}
+                      type="button"
                       sx={{
-                        border: "1px solid #e0e0e0",
-                        borderRadius: 1,
-                        px: 2,
-                        py: 1.5,
-                        fontSize: "14px",
+                        bgcolor: "#1976d2",
+                        color: "white",
+                        "&:hover": { bgcolor: "#1565c0" },
                       }}
-                    />
-                  </Grid>
-                  <Grid size={{ xs: 12 }} mt={2}>
-                    <InputLabel text="Service Detail Three" />
-                    <Input
-                      disableUnderline
-                      fullWidth
-                      placeholder="Enter Service Detail Three"
-                      value={detailsThree}
-                      onChange={(e) => setDetailsThree(e.target.value)}
-                      sx={{
-                        border: "1px solid #e0e0e0",
-                        borderRadius: 1,
-                        px: 2,
-                        py: 1.5,
-                        fontSize: "14px",
-                      }}
-                    />
-                  </Grid>
+                    >
+                      <AddOutlined />
+                    </IconButton>
+                  </Stack>
+
+                  {details.length > 0 && (
+                    <Box mt={2}>
+                      <Stack direction="row" flexWrap="wrap" gap={1}>
+                        {details.map((feature, index) => (
+                          <Chip
+                            key={index}
+                            label={feature}
+                            onDelete={() => handleRemoveDetail(index)}
+                            deleteIcon={<CloseOutlined />}
+                            sx={{ bgcolor: "#e3f2fd" }}
+                          />
+                        ))}
+                      </Stack>
+                    </Box>
+                  )}
                 </Grid>
               </Box>
             </Grid>
@@ -506,177 +423,49 @@ const AddServicePage = () => {
                 }}
               >
                 <Stack spacing={2}>
-                  {/* Requirement Name */}
-                  <Box>
-                    <InputLabel text="Requirement Name" />
-                    <Input
-                      disableUnderline
-                      fullWidth
-                      placeholder="e.g., Instagram Username, Target Countries"
-                      value={currentRequirement.name}
-                      onChange={(e) =>
-                        setCurrentRequirement({
-                          ...currentRequirement,
-                          name: e.target.value,
-                        })
-                      }
-                      sx={{
-                        border: "1px solid #e0e0e0",
-                        borderRadius: 1,
-                        px: 2,
-                        py: 1.5,
-                        fontSize: "14px",
-                      }}
-                    />
-                  </Box>
+                  <Input
+                    disableUnderline
+                    placeholder="Requirement label (e.g. Upload logo)"
+                    value={currentRequirement.label}
+                    onChange={(e) =>
+                      setCurrentRequirement({
+                        ...currentRequirement,
+                        label: e.target.value,
+                      })
+                    }
+                    sx={{
+                      border: "1px solid #e0e0e0",
+                      borderRadius: 1,
+                      px: 2,
+                      py: 1.5,
+                      fontSize: "14px",
+                    }}
+                  />
 
-                  {/* Input Type */}
-                  <Box>
-                    <InputLabel text="Input Type" />
-                    <Select
-                      fullWidth
-                      value={currentRequirement.input_type}
-                      onChange={(e) =>
-                        setCurrentRequirement({
-                          ...currentRequirement,
-                          input_type: e.target.value,
-                          options: [], // Reset options when changing type
-                          currentOption: "",
-                        })
-                      }
-                      displayEmpty
-                      sx={{
-                        border: "1px solid #e0e0e0",
-                        borderRadius: 1,
-                      }}
-                    >
-                      <MenuItem value="" disabled>
-                        Select input type
-                      </MenuItem>
-                      <MenuItem value="text">Text</MenuItem>
-                      <MenuItem value="number">Number</MenuItem>
-                      <MenuItem value="file">File</MenuItem>
-                      <MenuItem value="url">URL</MenuItem>
-                      <MenuItem value="checkbox">Checkbox</MenuItem>
-                      <MenuItem value="radio">Radio</MenuItem>
-                    </Select>
-                  </Box>
+                  <Select
+                    value={currentRequirement.type}
+                    onChange={(e) =>
+                      setCurrentRequirement({
+                        ...currentRequirement,
+                        type: e.target.value,
+                      })
+                    }
+                    displayEmpty
+                    sx={{
+                      border: "1px solid #e0e0e0",
+                      borderRadius: 1,
+                    }}
+                  >
+                    <MenuItem value="" disabled>
+                      Select input type
+                    </MenuItem>
+                    <MenuItem value="text">Text</MenuItem>
+                    <MenuItem value="file">File</MenuItem>
+                    <MenuItem value="url">URL</MenuItem>
+                  </Select>
 
-                  {/* Min/Max for text and number */}
-                  <Collapse in={needsMinMax(currentRequirement.input_type)}>
-                    <Stack direction="row" spacing={2}>
-                      <Box flex={1}>
-                        <InputLabel text="Min Length/Value (Optional)" />
-                        <Input
-                          disableUnderline
-                          fullWidth
-                          type="number"
-                          placeholder="Min"
-                          value={currentRequirement.min}
-                          onChange={(e) =>
-                            setCurrentRequirement({
-                              ...currentRequirement,
-                              min: e.target.value,
-                            })
-                          }
-                          sx={{
-                            border: "1px solid #e0e0e0",
-                            borderRadius: 1,
-                            px: 2,
-                            py: 1.5,
-                            fontSize: "14px",
-                          }}
-                        />
-                      </Box>
-                      <Box flex={1}>
-                        <InputLabel text="Max Length/Value (Optional)" />
-                        <Input
-                          disableUnderline
-                          fullWidth
-                          type="number"
-                          placeholder="Max"
-                          value={currentRequirement.max}
-                          onChange={(e) =>
-                            setCurrentRequirement({
-                              ...currentRequirement,
-                              max: e.target.value,
-                            })
-                          }
-                          sx={{
-                            border: "1px solid #e0e0e0",
-                            borderRadius: 1,
-                            px: 2,
-                            py: 1.5,
-                            fontSize: "14px",
-                          }}
-                        />
-                      </Box>
-                    </Stack>
-                  </Collapse>
-
-                  {/* Options for checkbox/radio */}
-                  <Collapse in={needsOptions(currentRequirement.input_type)}>
-                    <Box>
-                      <InputLabel text="Options *" />
-                      <Stack direction="row" spacing={2}>
-                        <Input
-                          disableUnderline
-                          fullWidth
-                          placeholder="Enter an option"
-                          value={currentRequirement.currentOption}
-                          onChange={(e) =>
-                            setCurrentRequirement({
-                              ...currentRequirement,
-                              currentOption: e.target.value,
-                            })
-                          }
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") {
-                              addOptionToCurrentRequirement(e);
-                            }
-                          }}
-                          sx={{
-                            border: "1px solid #e0e0e0",
-                            borderRadius: 1,
-                            px: 2,
-                            py: 1.5,
-                            fontSize: "14px",
-                          }}
-                        />
-                        <IconButton
-                          onClick={addOptionToCurrentRequirement}
-                          type="button"
-                          sx={{
-                            bgcolor: "#1976d2",
-                            color: "white",
-                            "&:hover": { bgcolor: "#1565c0" },
-                          }}
-                        >
-                          <AddOutlined />
-                        </IconButton>
-                      </Stack>
-
-                      {currentRequirement.options.length > 0 && (
-                        <Stack direction="row" flexWrap="wrap" gap={1} mt={2}>
-                          {currentRequirement.options.map((option, i) => (
-                            <Chip
-                              key={i}
-                              label={option}
-                              onDelete={() =>
-                                removeOptionFromCurrentRequirement(i)
-                              }
-                              deleteIcon={<CloseOutlined />}
-                              sx={{ bgcolor: "#e3f2fd" }}
-                            />
-                          ))}
-                        </Stack>
-                      )}
-                    </Box>
-                  </Collapse>
-
-                  {/* Required Toggle */}
                   <Stack direction="row" alignItems="center" spacing={2}>
-                    <Typography>Required Field</Typography>
+                    <Typography>Required</Typography>
                     <Switch
                       checked={currentRequirement.required}
                       onChange={(e) =>
@@ -697,35 +486,20 @@ const AddServicePage = () => {
                   />
                 </Stack>
 
-                {/* Display added requirements */}
-                {requirements.length > 0 && (
-                  <Stack mt={3} gap={1}>
-                    <Typography variant="subtitle2" color="text.secondary">
-                      Added Requirements ({requirements.length})
-                    </Typography>
-                    {requirements.map((req, i) => (
-                      <Chip
-                        key={i}
-                        label={getRequirementDisplayText(req)}
-                        onDelete={() => removeRequirement(i)}
-                        deleteIcon={<CloseOutlined />}
-                        sx={{
-                          bgcolor: "#f5f5f5",
-                          height: "auto",
-                          py: 1,
-                          "& .MuiChip-label": {
-                            whiteSpace: "normal",
-                            wordBreak: "break-word",
-                          },
-                        }}
-                      />
-                    ))}
-                  </Stack>
-                )}
+                <Stack mt={2} gap={1}>
+                  {requirements.map((req, i) => (
+                    <Chip
+                      key={i}
+                      label={`${req.label} (${req.type}) ${req.required ? "- Required" : "- Optional"}`}
+                      onDelete={() => removeRequirement(i)}
+                      deleteIcon={<CloseOutlined />}
+                      sx={{ bgcolor: "#f5f5f5" }}
+                    />
+                  ))}
+                </Stack>
               </Box>
             </Grid>
           </Grid>
-
           <Grid container spacing={2} mt={5}>
             <Grid size={{ xs: 12 }}>
               <Stack

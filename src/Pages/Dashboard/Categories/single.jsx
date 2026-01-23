@@ -39,8 +39,10 @@ const SingleCategoryModal = ({ open, onClose, catId }) => {
   }, [open, catId]);
 
   const handleEdit = () => {
-    console.log("Edit category:", catId);
-    navigate(`/dashboard/admin/edit/sub-categories/${catId}`);
+    navigate(`/dashboard/admin/edit/categories`, {
+      state: { data: categoryData },
+    });
+
     onClose();
   };
 
