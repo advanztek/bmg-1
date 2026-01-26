@@ -42,7 +42,7 @@ const decodeServiceId = (hash) => {
     let decodedHash = decodeURIComponent(hash);
 
     // Replace URL-safe base64 characters if used
-    decodedHash = decodedHash.replace(/-/g, '+').replace(/_/g, '/');
+    decodedHash = decodedHash.replace(/-/g, "+").replace(/_/g, "/");
 
     // Decode base64
     const decoded = atob(decodedHash);
@@ -54,7 +54,7 @@ const decodeServiceId = (hash) => {
     console.error("Failed to decode service ID:", err);
     console.error("Hash received:", hash);
   }
-}
+};
 
 const fileToBase64 = (file) => {
   new Promise((resolve, reject) => {
@@ -93,6 +93,31 @@ const urlToBase64 = async (url) => {
   }
 };
 
+const encodeServiceId = (id) => {
+  try {
+    // Create the hash string
+    const hashString = `service_${id}_${Date.now() % 10000}`;
+
+    // Base64 encode
+    let encoded = btoa(hashString);
+
+    // Make URL-safe by replacing characters
+    encoded = encoded.replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
+
+    return encoded;
+  } catch (err) {
+    console.error("Failed to encode service ID:", err);
+    return id; // Fallback to plain ID
+  }
+};
+
+// Resolve AWS image URLs
+const resolveAwsImage = (image) => {
+  if (!image) return null;
+  if (image.startsWith("http")) return image;
+  return `${import.meta.env.VITE_AWS_BUCKET_URL}/${image}`;
+};
+
 const truncateText = (text = "", maxLength = 80) => {
   if (!text) return "-";
   return text.length > maxLength ? `${text.slice(0, maxLength)}…` : text;
@@ -125,31 +150,6 @@ const stripHtml = (html = "") => {
   const div = document.createElement("div");
   div.innerHTML = html;
   return div.textContent || div.innerText || "";
-};
-
-const encodeServiceId = (id) => {
-  try {
-    // Create the hash string
-    const hashString = `service_${id}_${Date.now() % 10000}`;
-
-    // Base64 encode
-    let encoded = btoa(hashString);
-
-    // Make URL-safe by replacing characters
-    encoded = encoded.replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
-
-    return encoded;
-  } catch (err) {
-    console.error("Failed to encode service ID:", err);
-    return id; // Fallback to plain ID
-  }
-};
-
-// Resolve AWS image URLs
-const resolveAwsImage = (image) => {
-  if (!image) return null;
-  if (image.startsWith("http")) return image;
-  return `${import.meta.env.VITE_AWS_BUCKET_URL}/${image}`;
 };
 
 export {
