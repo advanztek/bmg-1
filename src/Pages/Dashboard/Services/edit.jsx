@@ -1,42 +1,45 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Grid,
   Box,
   Input,
   Stack,
-  Switch,
-  TextField,
+  Switch, 
   Typography,
   Chip,
   IconButton,
   FormControl,
   MenuItem,
-  Select,
-  InputAdornment,
+  Select, 
+  Collapse,
 } from "@mui/material";
 import {
   AddOutlined,
-  DeleteOutlined,
+  
   VisibilityOutlined,
-  ArrowBackOutlined,
-  AttachMoneyOutlined,
+  ArrowBackOutlined, 
   CloseOutlined,
+  SaveOutlined,
 } from "@mui/icons-material";
 import {
   InputLabel,
   CustomButton,
-  PagesHeader,
-  UploadMedia,
+  PagesHeader, 
 } from "../../../Component";
 import { styles } from "../../../styles/dashboard";
-import { useNavigate } from "react-router-dom";
-import { useCreateServices } from "../../../Hooks/Dashboard/services";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useUpdateService, useGetService } from "../../../Hooks/Dashboard/services";
 import { useFetchCategories } from "../../../Hooks/Dashboard/categories";
 import { useFetchSubCategories } from "../../../Hooks/Dashboard/sub_categories";
 import { showToast } from "../../../utils/toast";
 import { useLoader } from "../../../Contexts/LoaderContext";
 
-const AddServicePage = () => {
+const EditServicePage = () => {
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const location = useLocation();
+  const { hideLoader, showLoader } = useLoader();
+  
   const [serviceName, setServiceName] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [subCatId, setSubCatId] = useState("");
@@ -44,22 +47,60 @@ const AddServicePage = () => {
   const [attributes, setAttributes] = useState([]);
   const [currentAttribute, setCurrentFeature] = useState("");
 
-  // requirements
+  // requirements - updated structure
   const [requirements, setRequirements] = useState([]);
   const [currentRequirement, setCurrentRequirement] = useState({
     name: "",
     input_type: "",
     required: true,
+    min: "",
+    max: "",
+    options: [],
+    currentOption: "",
   });
-  const [details, setDetails] = useState([]);
-  const [currentDetail, setCurrentDetail] = useState("");
+  const [detailsOne, setDetailsOne] = useState("");
+  const [detailsTwo, setDetailsTwo] = useState("");
+  const [detailsThree, setDetailsThree] = useState("");
 
   const [loading, setLoading] = useState(false);
-  const addService = useCreateServices();
-  const navigate = useNavigate();
-  const { hideLoader, showLoader } = useLoader();
+  const [dataLoaded, setDataLoaded] = useState(false);
+  
+  const updateService = useUpdateService();
+  const { serviceData, getService } = useGetService();
   const { categories } = useFetchCategories();
   const { subCat } = useFetchSubCategories();
+
+  // Load service data on mount
+  useEffect(() => {
+    if (id) {
+      showLoader("Loading service data...");
+      getService(id);
+    } else if (location.state?.data) {
+      // If data is passed via navigation state
+      prefillFormData(location.state.data);
+    }
+  }, [id]);
+
+  // Prefill form when service data is loaded
+  useEffect(() => {
+    if (serviceData && !dataLoaded) {
+      prefillFormData(serviceData);
+    }
+  }, [serviceData, dataLoaded]);
+
+  const prefillFormData = (data) => {
+    setServiceName(data.service_name || "");
+    setCategoryId(data.category_id || "");
+    setSubCatId(data.subcategory_id || "");
+    setServiceStatus(data.service_status ?? true);
+    setAttributes(data.service_attributes || []);
+    setRequirements(data.requirements || []);
+    setDetailsOne(data.service_details_1 || "");
+    setDetailsTwo(data.service_details_2 || "");
+    setDetailsThree(data.service_details_3 || "");
+    setDataLoaded(true);
+    hideLoader();
+  };
 
   const handleAddFeature = (e) => {
     e.preventDefault();
@@ -73,30 +114,90 @@ const AddServicePage = () => {
     setAttributes(attributes.filter((_, i) => i !== index));
   };
 
-  const handleAddDetail = (e) => {
-    e.preventDefault();
-    if (currentDetail.trim()) {
-      setDetails([...details, currentDetail.trim()]);
-      setCurrentDetail("");
-    }
-  };
-
-  const handleRemoveDetail = (index) => {
-    setDetails(details.filter((_, i) => i !== index));
-  };
-
   // ===== REQUIREMENTS =====
-  const addRequirement = (e) => {
-    // Prevent form submission
+  const needsOptions = (type) => {
+    return type === "checkbox" || type === "radio";
+  };
+
+  const needsMinMax = (type) => {
+    return type === "text" || type === "number";
+  };
+
+  const addOptionToCurrentRequirement = (e) => {
     if (e) e.preventDefault();
 
-    if (!currentRequirement.label || !currentRequirement.type) {
-      showToast.warning("Please fill in requirement label and type");
+    if (!currentRequirement.currentOption.trim()) return;
+
+    setCurrentRequirement({
+      ...currentRequirement,
+      options: [
+        ...currentRequirement.options,
+        currentRequirement.currentOption.trim(),
+      ],
+      currentOption: "",
+    });
+  };
+
+  const removeOptionFromCurrentRequirement = (index) => {
+    setCurrentRequirement({
+      ...currentRequirement,
+      options: currentRequirement.options.filter((_, i) => i !== index),
+    });
+  };
+
+  const addRequirement = (e) => {
+    if (e) e.preventDefault();
+
+    if (!currentRequirement.name || !currentRequirement.input_type) {
+      showToast.warning("Please fill in requirement name and input type");
       return;
     }
 
-    setRequirements([...requirements, currentRequirement]);
-    setCurrentRequirement({ label: "", type: "", required: true });
+    // Validate options for checkbox/radio
+    if (
+      needsOptions(currentRequirement.input_type) &&
+      currentRequirement.options.length === 0
+    ) {
+      showToast.warning(
+        "Please add at least one option for checkbox/radio type",
+      );
+      return;
+    }
+
+    // Build the requirement object
+    const newRequirement = {
+      requirement: {
+        name: currentRequirement.name,
+        input_type: currentRequirement.input_type,
+      },
+      required: currentRequirement.required,
+    };
+
+    // Add options if checkbox or radio
+    if (needsOptions(currentRequirement.input_type)) {
+      newRequirement.requirement.options = currentRequirement.options;
+    }
+
+    // Add min/max if text or number
+    if (needsMinMax(currentRequirement.input_type)) {
+      if (currentRequirement.min) {
+        newRequirement.min = parseInt(currentRequirement.min);
+      }
+      if (currentRequirement.max) {
+        newRequirement.max = parseInt(currentRequirement.max);
+      }
+    }
+
+    setRequirements([...requirements, newRequirement]);
+    setCurrentRequirement({
+      name: "",
+      input_type: "",
+      required: true,
+      min: "",
+      max: "",
+      options: [],
+      currentOption: "",
+    });
   };
 
   const removeRequirement = (index) => {
@@ -113,13 +214,13 @@ const AddServicePage = () => {
       attributes.length < 3
     ) {
       showToast.warning(
-        "Please fill in all required fields and add atleast three service features.",
+        "Please fill in all required fields and add at least three service features.",
       );
       return;
     }
 
     setLoading(true);
-    showLoader("Adding Service...");
+    showLoader("Updating Service...");
 
     try {
       const payload = {
@@ -128,35 +229,65 @@ const AddServicePage = () => {
         subcategory_id: subCatId,
         service_attributes: attributes,
         service_status: serviceStatus,
-        service_requirements: requirements.length > 0 ? requirements : undefined,
-        service_details: details,
+        service_requirements:
+          requirements.length > 0 ? requirements : undefined,
+        service_details_1: detailsOne,
+        service_details_2: detailsTwo,
+        service_details_3: detailsThree,
       };
-      console.log("PayLoad:", payload);
 
-      const response = await addService(payload);
+      console.log("Update PayLoad:", payload);
+
+      const response = await updateService(id, payload);
       if (response) {
-        showToast.success("Service added successfully!");
-        setServiceName("");
-        setAttributes([]);
-        setRequirements([]);
+        showToast.success("Service updated successfully!");
         navigate("/dashboard/admin/services");
       }
     } catch (error) {
-      console.error("Error adding service:", error);
-      showToast.error("Failed to create service");
+      console.error("Error updating service:", error);
+      showToast.error("Failed to update service");
     } finally {
       setLoading(false);
       hideLoader();
     }
   };
 
+  const handleCancel = () => {
+    if (window.confirm("Are you sure you want to discard changes?")) {
+      navigate("/dashboard/admin/services");
+    }
+  };
+
+  const getRequirementDisplayText = (req) => {
+    let text = `${req.requirement.name} (${req.requirement.input_type})`;
+
+    if (req.requirement.options) {
+      text += ` - Options: ${req.requirement.options.join(", ")}`;
+    }
+
+    if (req.min || req.max) {
+      text += ` - Range: ${req.min || "∞"} to ${req.max || "∞"}`;
+    }
+
+    text += req.required ? " - Required" : " - Optional";
+
+    return text;
+  };
+
+  if (!dataLoaded) {
+    return (
+      <Box sx={{ p: 3 }}>
+        <Typography>Loading service data...</Typography>
+      </Box>
+    );
+  }
+
   return (
     <>
       <PagesHeader
-        label="Add Service"
-        desc="Add services, select category and sub categories for services. Go to view services to manage services"
+        label="Edit Service"
+        desc="Update service information, attributes, requirements, and details"
         searchEnabled={false}
-        placeholder={"Search services..."}
         actions={[
           {
             label: "View Services",
@@ -164,9 +295,9 @@ const AddServicePage = () => {
             onClick: () => navigate("/dashboard/admin/services"),
           },
           {
-            label: "Add Cateogries",
-            icon: <AddOutlined />,
-            onClick: () => navigate("/dashboard/admin/add/categories"),
+            label: "Service Details",
+            icon: <VisibilityOutlined />,
+            onClick: () => navigate(`/dashboard/admin/services/${id}`),
           },
         ]}
       />
@@ -343,7 +474,6 @@ const AddServicePage = () => {
               <Typography variant="h4" fontWeight={600} mt={3} mb={1}>
                 Service Details
               </Typography>
-
               <Box
                 sx={{
                   border: "1px solid #e0e0e0",
@@ -354,19 +484,14 @@ const AddServicePage = () => {
                 }}
               >
                 <Grid size={{ xs: 12 }}>
-                  <InputLabel text="Add Service Details *" />
-                  <Stack direction="row" spacing={2}>
+                  <Grid size={{ xs: 12 }}>
+                    <InputLabel text="Service Detail One" />
                     <Input
                       disableUnderline
                       fullWidth
-                      placeholder="Enter atleast three service details"
-                      value={currentDetail}
-                      onChange={(e) => setCurrentDetail(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          handleAddDetail(e);
-                        }
-                      }}
+                      placeholder="Enter Service Detail One"
+                      value={detailsOne}
+                      onChange={(e) => setDetailsOne(e.target.value)}
                       sx={{
                         border: "1px solid #e0e0e0",
                         borderRadius: 1,
@@ -375,34 +500,41 @@ const AddServicePage = () => {
                         fontSize: "14px",
                       }}
                     />
-                    <IconButton
-                      onClick={handleAddDetail}
-                      type="button"
+                  </Grid>
+                  <Grid size={{ xs: 12 }} mt={2}>
+                    <InputLabel text="Service Detail Two" />
+                    <Input
+                      disableUnderline
+                      fullWidth
+                      placeholder="Enter Service Detail Two"
+                      value={detailsTwo}
+                      onChange={(e) => setDetailsTwo(e.target.value)}
                       sx={{
-                        bgcolor: "#1976d2",
-                        color: "white",
-                        "&:hover": { bgcolor: "#1565c0" },
+                        border: "1px solid #e0e0e0",
+                        borderRadius: 1,
+                        px: 2,
+                        py: 1.5,
+                        fontSize: "14px",
                       }}
-                    >
-                      <AddOutlined />
-                    </IconButton>
-                  </Stack>
-
-                  {details.length > 0 && (
-                    <Box mt={2}>
-                      <Stack direction="row" flexWrap="wrap" gap={1}>
-                        {details.map((feature, index) => (
-                          <Chip
-                            key={index}
-                            label={feature}
-                            onDelete={() => handleRemoveDetail(index)}
-                            deleteIcon={<CloseOutlined />}
-                            sx={{ bgcolor: "#e3f2fd" }}
-                          />
-                        ))}
-                      </Stack>
-                    </Box>
-                  )}
+                    />
+                  </Grid>
+                  <Grid size={{ xs: 12 }} mt={2}>
+                    <InputLabel text="Service Detail Three" />
+                    <Input
+                      disableUnderline
+                      fullWidth
+                      placeholder="Enter Service Detail Three"
+                      value={detailsThree}
+                      onChange={(e) => setDetailsThree(e.target.value)}
+                      sx={{
+                        border: "1px solid #e0e0e0",
+                        borderRadius: 1,
+                        px: 2,
+                        py: 1.5,
+                        fontSize: "14px",
+                      }}
+                    />
+                  </Grid>
                 </Grid>
               </Box>
             </Grid>
@@ -423,49 +555,177 @@ const AddServicePage = () => {
                 }}
               >
                 <Stack spacing={2}>
-                  <Input
-                    disableUnderline
-                    placeholder="Requirement label (e.g. Upload logo)"
-                    value={currentRequirement.label}
-                    onChange={(e) =>
-                      setCurrentRequirement({
-                        ...currentRequirement,
-                        label: e.target.value,
-                      })
-                    }
-                    sx={{
-                      border: "1px solid #e0e0e0",
-                      borderRadius: 1,
-                      px: 2,
-                      py: 1.5,
-                      fontSize: "14px",
-                    }}
-                  />
+                  {/* Requirement Name */}
+                  <Box>
+                    <InputLabel text="Requirement Name" />
+                    <Input
+                      disableUnderline
+                      fullWidth
+                      placeholder="e.g., Instagram Username, Target Countries"
+                      value={currentRequirement.name}
+                      onChange={(e) =>
+                        setCurrentRequirement({
+                          ...currentRequirement,
+                          name: e.target.value,
+                        })
+                      }
+                      sx={{
+                        border: "1px solid #e0e0e0",
+                        borderRadius: 1,
+                        px: 2,
+                        py: 1.5,
+                        fontSize: "14px",
+                      }}
+                    />
+                  </Box>
 
-                  <Select
-                    value={currentRequirement.type}
-                    onChange={(e) =>
-                      setCurrentRequirement({
-                        ...currentRequirement,
-                        type: e.target.value,
-                      })
-                    }
-                    displayEmpty
-                    sx={{
-                      border: "1px solid #e0e0e0",
-                      borderRadius: 1,
-                    }}
-                  >
-                    <MenuItem value="" disabled>
-                      Select input type
-                    </MenuItem>
-                    <MenuItem value="text">Text</MenuItem>
-                    <MenuItem value="file">File</MenuItem>
-                    <MenuItem value="url">URL</MenuItem>
-                  </Select>
+                  {/* Input Type */}
+                  <Box>
+                    <InputLabel text="Input Type" />
+                    <Select
+                      fullWidth
+                      value={currentRequirement.input_type}
+                      onChange={(e) =>
+                        setCurrentRequirement({
+                          ...currentRequirement,
+                          input_type: e.target.value,
+                          options: [], // Reset options when changing type
+                          currentOption: "",
+                        })
+                      }
+                      displayEmpty
+                      sx={{
+                        border: "1px solid #e0e0e0",
+                        borderRadius: 1,
+                      }}
+                    >
+                      <MenuItem value="" disabled>
+                        Select input type
+                      </MenuItem>
+                      <MenuItem value="text">Text</MenuItem>
+                      <MenuItem value="number">Number</MenuItem>
+                      <MenuItem value="file">File</MenuItem>
+                      <MenuItem value="url">URL</MenuItem>
+                      <MenuItem value="checkbox">Checkbox</MenuItem>
+                      <MenuItem value="radio">Radio</MenuItem>
+                    </Select>
+                  </Box>
 
+                  {/* Min/Max for text and number */}
+                  <Collapse in={needsMinMax(currentRequirement.input_type)}>
+                    <Stack direction="row" spacing={2}>
+                      <Box flex={1}>
+                        <InputLabel text="Min Length/Value (Optional)" />
+                        <Input
+                          disableUnderline
+                          fullWidth
+                          type="number"
+                          placeholder="Min"
+                          value={currentRequirement.min}
+                          onChange={(e) =>
+                            setCurrentRequirement({
+                              ...currentRequirement,
+                              min: e.target.value,
+                            })
+                          }
+                          sx={{
+                            border: "1px solid #e0e0e0",
+                            borderRadius: 1,
+                            px: 2,
+                            py: 1.5,
+                            fontSize: "14px",
+                          }}
+                        />
+                      </Box>
+                      <Box flex={1}>
+                        <InputLabel text="Max Length/Value (Optional)" />
+                        <Input
+                          disableUnderline
+                          fullWidth
+                          type="number"
+                          placeholder="Max"
+                          value={currentRequirement.max}
+                          onChange={(e) =>
+                            setCurrentRequirement({
+                              ...currentRequirement,
+                              max: e.target.value,
+                            })
+                          }
+                          sx={{
+                            border: "1px solid #e0e0e0",
+                            borderRadius: 1,
+                            px: 2,
+                            py: 1.5,
+                            fontSize: "14px",
+                          }}
+                        />
+                      </Box>
+                    </Stack>
+                  </Collapse>
+
+                  {/* Options for checkbox/radio */}
+                  <Collapse in={needsOptions(currentRequirement.input_type)}>
+                    <Box>
+                      <InputLabel text="Options *" />
+                      <Stack direction="row" spacing={2}>
+                        <Input
+                          disableUnderline
+                          fullWidth
+                          placeholder="Enter an option"
+                          value={currentRequirement.currentOption}
+                          onChange={(e) =>
+                            setCurrentRequirement({
+                              ...currentRequirement,
+                              currentOption: e.target.value,
+                            })
+                          }
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              addOptionToCurrentRequirement(e);
+                            }
+                          }}
+                          sx={{
+                            border: "1px solid #e0e0e0",
+                            borderRadius: 1,
+                            px: 2,
+                            py: 1.5,
+                            fontSize: "14px",
+                          }}
+                        />
+                        <IconButton
+                          onClick={addOptionToCurrentRequirement}
+                          type="button"
+                          sx={{
+                            bgcolor: "#1976d2",
+                            color: "white",
+                            "&:hover": { bgcolor: "#1565c0" },
+                          }}
+                        >
+                          <AddOutlined />
+                        </IconButton>
+                      </Stack>
+
+                      {currentRequirement.options.length > 0 && (
+                        <Stack direction="row" flexWrap="wrap" gap={1} mt={2}>
+                          {currentRequirement.options.map((option, i) => (
+                            <Chip
+                              key={i}
+                              label={option}
+                              onDelete={() =>
+                                removeOptionFromCurrentRequirement(i)
+                              }
+                              deleteIcon={<CloseOutlined />}
+                              sx={{ bgcolor: "#e3f2fd" }}
+                            />
+                          ))}
+                        </Stack>
+                      )}
+                    </Box>
+                  </Collapse>
+
+                  {/* Required Toggle */}
                   <Stack direction="row" alignItems="center" spacing={2}>
-                    <Typography>Required</Typography>
+                    <Typography>Required Field</Typography>
                     <Switch
                       checked={currentRequirement.required}
                       onChange={(e) =>
@@ -486,20 +746,35 @@ const AddServicePage = () => {
                   />
                 </Stack>
 
-                <Stack mt={2} gap={1}>
-                  {requirements.map((req, i) => (
-                    <Chip
-                      key={i}
-                      label={`${req.label} (${req.type}) ${req.required ? "- Required" : "- Optional"}`}
-                      onDelete={() => removeRequirement(i)}
-                      deleteIcon={<CloseOutlined />}
-                      sx={{ bgcolor: "#f5f5f5" }}
-                    />
-                  ))}
-                </Stack>
+                {/* Display added requirements */}
+                {requirements.length > 0 && (
+                  <Stack mt={3} gap={1}>
+                    <Typography variant="subtitle2" color="text.secondary">
+                      Added Requirements ({requirements.length})
+                    </Typography>
+                    {requirements.map((req, i) => (
+                      <Chip
+                        key={i}
+                        label={getRequirementDisplayText(req)}
+                        onDelete={() => removeRequirement(i)}
+                        deleteIcon={<CloseOutlined />}
+                        sx={{
+                          bgcolor: "#f5f5f5",
+                          height: "auto",
+                          py: 1,
+                          "& .MuiChip-label": {
+                            whiteSpace: "normal",
+                            wordBreak: "break-word",
+                          },
+                        }}
+                      />
+                    ))}
+                  </Stack>
+                )}
               </Box>
             </Grid>
           </Grid>
+
           <Grid container spacing={2} mt={5}>
             <Grid size={{ xs: 12 }}>
               <Stack
@@ -519,20 +794,21 @@ const AddServicePage = () => {
 
                 <Stack direction="row" gap={2}>
                   <CustomButton
-                    title="Delete"
-                    color="danger"
+                    title="Cancel"
+                    color="inherit"
                     variant="outlined"
-                    startIcon={<DeleteOutlined />}
-                    onClick={() => {}}
+                    startIcon={<CloseOutlined />}
+                    onClick={handleCancel}
                     type="button"
                     sx={{ textTransform: "none", px: 4 }}
                   />
                   <CustomButton
-                    title={loading ? "Adding..." : "Add Service"}
+                    title={loading ? "Updating..." : "Update Service"}
                     color="primary"
                     variant="filled"
                     disabled={loading}
                     type="submit"
+                    startIcon={<SaveOutlined />}
                     sx={{ textTransform: "none", px: 4 }}
                   />
                 </Stack>
@@ -545,4 +821,4 @@ const AddServicePage = () => {
   );
 };
 
-export default AddServicePage;
+export default EditServicePage;

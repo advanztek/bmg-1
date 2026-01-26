@@ -16,6 +16,7 @@ export { default as EditSubCategoryPage } from "./SubCategories/edit";
 export { default as ServicesPage } from "./Services";
 export { default as AddServicePage } from "./Services/add";
 export { default as ServiceDetailPage } from "./Services/single";
+export { default as EditServicePage } from "./Services/edit";
 export { default as ArtificialIntelligencePage } from "./AI";
 export { default as PortfoliosPage } from "./Portfolios";
 export { default as BlogsPage } from "./Blogs";

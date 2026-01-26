@@ -131,4 +131,42 @@ function useDeleteService() {
   };
 }
 
-export { useCreateServices, useFetchServices, useGetService, useDeleteService };
+function useUpdateService() {
+  const [loading, setLoading] = useState(false);
+
+  const updateStatus = async (id, data) => {
+    setLoading(true);
+    try {
+      const response = await axios.put(
+        `${BASE_SERVER_URL}/admin/update/service/${id}`,
+        data,
+      );
+
+      const result = response.data;
+      console.log("result res:", result);
+
+      if (result?.code === 0) {
+        showToast.success(result.message);
+      }
+    } catch (error) {
+      console.error("Error:", error.response.data);
+      if (error?.response?.data?.code !== 0) {
+        showToast.error(error.response.data.message);
+      } else {
+        showToast.error("An error occurred while updating service!");
+      }
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+  return { updateStatus, loading };
+}
+
+export {
+  useCreateServices,
+  useFetchServices,
+  useGetService,
+  useDeleteService,
+  useUpdateService,
+};

@@ -67,7 +67,7 @@ const ServiceDetailPage = () => {
   };
 
   const handleEdit = () => {
-    navigate(`/dashboard/admin/edit/service-type`, {
+    navigate(`/dashboard/admin/edit/service`, {
       state: { data: serviceData },
     });
   };

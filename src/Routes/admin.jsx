@@ -10,6 +10,7 @@ import {
   ServicesPage,
   AddServicePage,
   ServiceDetailPage,
+  EditServicePage,
   AddCategoriesPage,
   AddExpertPage,
   OrdersPage,
@@ -81,6 +82,7 @@ const AdminRoutes = () => {
       <Route path="admin/add/experts" element={<AddExpertPage />} />
       <Route path="admin/services" element={<ServicesPage />} />
       <Route path="admin/add/services" element={<AddServicePage />} />
+      <Route path="admin/edit/service" element={<EditServicePage />} />
       <Route path="admin/service/details" element={<ServiceDetailPage />} />
       <Route path="admin/categories" element={<CategoriesPage />} />
       <Route path="admin/add/categories" element={<AddCategoriesPage />} />
