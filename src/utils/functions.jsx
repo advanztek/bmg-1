@@ -42,7 +42,7 @@ const decodeServiceId = (hash) => {
     let decodedHash = decodeURIComponent(hash);
 
     // Replace URL-safe base64 characters if used
-    decodedHash = decodedHash.replace(/-/g, '+').replace(/_/g, '/');
+    decodedHash = decodedHash.replace(/-/g, "+").replace(/_/g, "/");
 
     // Decode base64
     const decoded = atob(decodedHash);
@@ -54,7 +54,7 @@ const decodeServiceId = (hash) => {
     console.error("Failed to decode service ID:", err);
     console.error("Hash received:", hash);
   }
-}
+};
 
 const fileToBase64 = (file) => {
   new Promise((resolve, reject) => {
@@ -102,7 +102,7 @@ const encodeServiceId = (id) => {
     let encoded = btoa(hashString);
 
     // Make URL-safe by replacing characters
-    encoded = encoded.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+    encoded = encoded.replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
 
     return encoded;
   } catch (err) {
@@ -114,7 +114,7 @@ const encodeServiceId = (id) => {
 // Resolve AWS image URLs
 const resolveAwsImage = (image) => {
   if (!image) return null;
-  if (image.startsWith('http')) return image;
+  if (image.startsWith("http")) return image;
   return `${import.meta.env.VITE_AWS_BUCKET_URL}/${image}`;
 };
 
