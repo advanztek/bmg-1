@@ -118,7 +118,6 @@ const resolveAwsImage = (image) => {
   return `${import.meta.env.VITE_AWS_BUCKET_URL}/${image}`;
 };
 
-
 const truncateText = (text = "", maxLength = 80) => {
   if (!text) return "-";
   return text.length > maxLength ? `${text.slice(0, maxLength)}…` : text;

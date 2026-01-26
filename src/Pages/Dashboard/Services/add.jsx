@@ -4,26 +4,27 @@ import {
   Box,
   Input,
   Stack,
-  Switch, 
+  Switch,
   Typography,
   Chip,
   IconButton,
   FormControl,
   MenuItem,
-  Select, 
+  Select,
   Collapse,
 } from "@mui/material";
 import {
   AddOutlined,
   DeleteOutlined,
   VisibilityOutlined,
-  ArrowBackOutlined, 
+  ArrowBackOutlined,
   CloseOutlined,
 } from "@mui/icons-material";
 import {
   InputLabel,
   CustomButton,
-  PagesHeader, 
+  PagesHeader,
+  RichTextEditor,
 } from "../../../Component";
 import { styles } from "../../../styles/dashboard";
 import { useNavigate } from "react-router-dom";
@@ -41,7 +42,6 @@ const AddServicePage = () => {
   const [attributes, setAttributes] = useState([]);
   const [currentAttribute, setCurrentFeature] = useState("");
 
-  // requirements - updated structure
   const [requirements, setRequirements] = useState([]);
   const [currentRequirement, setCurrentRequirement] = useState({
     name: "",
@@ -437,53 +437,32 @@ const AddServicePage = () => {
                 <Grid size={{ xs: 12 }}>
                   <Grid size={{ xs: 12 }}>
                     <InputLabel text="Service Detail one" />
-                    <Input
-                      disableUnderline
-                      fullWidth
-                      placeholder="Enter Service Detail one"
+                    <RichTextEditor
                       value={detailsOne}
                       onChange={(e) => setDetailsOne(e.target.value)}
-                      sx={{
-                        border: "1px solid #e0e0e0",
-                        borderRadius: 1,
-                        px: 2,
-                        py: 1.5,
-                        fontSize: "14px",
-                      }}
+                      placeholder="Enter service type description..."
+                      minHeight="100px"
+                      maxHeight="200px"
                     />
                   </Grid>
                   <Grid size={{ xs: 12 }} mt={2}>
                     <InputLabel text="Service Detail Two" />
-                    <Input
-                      disableUnderline
-                      fullWidth
-                      placeholder="Enter Service Detail Two"
+                    <RichTextEditor
                       value={detailsTwo}
                       onChange={(e) => setDetailsTwo(e.target.value)}
-                      sx={{
-                        border: "1px solid #e0e0e0",
-                        borderRadius: 1,
-                        px: 2,
-                        py: 1.5,
-                        fontSize: "14px",
-                      }}
+                      placeholder="Enter service type description..."
+                      minHeight="100px"
+                      maxHeight="200px"
                     />
                   </Grid>
                   <Grid size={{ xs: 12 }} mt={2}>
                     <InputLabel text="Service Detail Three" />
-                    <Input
-                      disableUnderline
-                      fullWidth
-                      placeholder="Enter Service Detail Three"
+                    <RichTextEditor
                       value={detailsThree}
                       onChange={(e) => setDetailsThree(e.target.value)}
-                      sx={{
-                        border: "1px solid #e0e0e0",
-                        borderRadius: 1,
-                        px: 2,
-                        py: 1.5,
-                        fontSize: "14px",
-                      }}
+                      placeholder="Enter service type description..."
+                      minHeight="100px"
+                      maxHeight="200px"
                     />
                   </Grid>
                 </Grid>
