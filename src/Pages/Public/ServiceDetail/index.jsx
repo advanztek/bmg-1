@@ -36,9 +36,10 @@ const ServiceDetailPage = () => {
     const { service, loading, error } = useGetService(serviceId);
     const { data: portfolio, loading: portfolioLoading } = useGetAllPortfolio({ service: serviceId })
     const serviceTypes = service?.service_types || [];
+    const faqs = service?.service_faqs
 
     const [selectedServiceType, setSelectedServiceType] = useState('');
-
+    console.log("service:", service)
     const serviceTypeOptions = serviceTypes.map(serviceType => ({
         value: serviceType.id.toString(),
         label: serviceType.service_type_name,
@@ -77,7 +78,7 @@ const ServiceDetailPage = () => {
             <TestimonialsSection />
             <ServicesGrid data={ServicesData} />
             <ConsultantForm />
-            <FAQSection />
+            <FAQSection data={faqs} loading={loading} label={`${service?.service_name} service.`} />
 
         </Box>
     );

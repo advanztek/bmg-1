@@ -10,21 +10,11 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import BrandLoader from "../BrandLoader";
-
-const galleryItems = [
-    { id: 1, image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=800&h=600&fit=crop", span: { md: 2, xs: 1 } },
-    { id: 2, image: "https://images.unsplash.com/photo-1600335895229-6e75511892c8?w=800&h=400&fit=crop", span: { md: 2, xs: 1 } },
-    { id: 3, image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=800&h=600&fit=crop", span: { md: 2, xs: 1 } },
-    { id: 4, image: "/Images/Img_4.jpg", span: { md: 2, xs: 1 } },
-    { id: 5, image: "/Images/Img_5.jpg", span: { md: 2, xs: 1 } },
-    { id: 6, image: "/Images/Img_4.jpg", span: { md: 2, xs: 1 } },
-    { id: 7, image: "https://images.unsplash.com/photo-1600335895229-6e75511892c8?w=800&h=600&fit=crop", span: { md: 2, xs: 1 } },
-    { id: 8, image: "/Images/Img_5.jpg", span: { md: 2, xs: 1 } },
-];
+import { resolveAwsImage } from "../../utils/functions";
 
 export default function Gallery({ data, loading }) {
     const [selectedImage, setSelectedImage] = useState(null);
-    console.log("data:", data)
+
     return (
         loading ? <BrandLoader /> :
             <Box sx={{ py: 10, px: 2, background: "linear-gradient(to bottom right, #f8fafc, #e2e8f0)" }}>
@@ -47,16 +37,16 @@ export default function Gallery({ data, loading }) {
 
                     {/* GRID */}
                     <Grid container spacing={1}>
-                        {galleryItems.map((item) => (
+                        {data?.length > 0 && data.map((item) => (
                             <Grid
                                 key={item.id}
                                 size={{ xs: 12, sm: 3, }}
-                                md={item.span.md === 2 ? 6 : 3}
+                                md={item?.span?.md === 2 ? 6 : 3}
                             >
                                 <Card
-                                    onClick={() => setSelectedImage(item.image)}
+                                    onClick={() => setSelectedImage(resolveAwsImage(item?.image))}
                                     sx={{
-                                        height: item.span.md === 2 ? 320 : 180,
+                                        height: item?.span?.md === 2 ? 320 : 180,
                                         position: "relative",
                                         borderRadius: 2,
                                         overflow: "hidden",
@@ -71,7 +61,7 @@ export default function Gallery({ data, loading }) {
                                 >
                                     <Box
                                         component="img"
-                                        src={item.image}
+                                        src={resolveAwsImage(item?.image)}
                                         alt=""
                                         sx={{
                                             width: "100%",
@@ -83,7 +73,7 @@ export default function Gallery({ data, loading }) {
                             </Grid>
                         ))}
                     </Grid>
-                    <Box
+                    {data?.length > 8 && <Box
                         sx={{
                             position: "relative",
                             display: "flex",
@@ -111,9 +101,7 @@ export default function Gallery({ data, loading }) {
                         >
                             View More
                         </Button>
-                    </Box>
-
-
+                    </Box>}
                     <Modal open={Boolean(selectedImage)} onClose={() => setSelectedImage(null)}>
                         <Box
                             onClick={() => setSelectedImage(null)}
