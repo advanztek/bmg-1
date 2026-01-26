@@ -21,9 +21,9 @@ import {
 } from "@mui/icons-material";
 import { InputLabel, CustomButton, PagesHeader } from "../../../Component";
 import { styles } from "../../../styles/dashboard";
-import { useAddCategories } from "../../../Hooks/categories";
 import { useNavigate } from "react-router-dom";
 import { discountTypes } from "./data";
+import { useCreateCoupon } from "../../../Hooks/Dashboard/coupons";
 
 const AddCoupon = () => {
   const [code, setCode] = useState("");
@@ -36,7 +36,7 @@ const AddCoupon = () => {
   const [type, setType] = useState("");
 
   const [loading, setLoading] = useState(false);
-  const addCategory = useAddCategories();
+  const createCoupon = useCreateCoupon();
   const navigate = useNavigate();
 
   const formData = {
@@ -60,7 +60,7 @@ const AddCoupon = () => {
 
     setLoading(true);
     try {
-      const response = await addCategory(formData);
+      const response = await createCoupon(formData);
 
       if (response) {
         toast.success("Category added successfully!");

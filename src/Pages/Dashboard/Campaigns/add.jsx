@@ -22,8 +22,8 @@ import {
   UploadMedia
 } from "../../../Component";
 import { styles } from "../../../styles/dashboard";
-import { useAddCategories } from "../../../Hooks/categories";
 import { useNavigate } from "react-router-dom";
+import { useCreateCampaign } from "../../../Hooks/Dashboard/campaigns";
 
 const AddCampaigns = () => {
   const [link, setLink] = useState("");
@@ -31,7 +31,7 @@ const AddCampaigns = () => {
   const [mode, setMode] = useState(true);
 
   const [loading, setLoading] = useState(false);
-  const addCategory = useAddCategories();
+  const createCampaign = useCreateCampaign();
   const navigate = useNavigate();
 
   const formData = {
@@ -52,7 +52,7 @@ const AddCampaigns = () => {
 
     setLoading(true);
     try {
-      const response = await addCategory(formData);
+      const response = await createCampaign(formData);
 
       if (response) {
         toast.success("Category added successfully!");

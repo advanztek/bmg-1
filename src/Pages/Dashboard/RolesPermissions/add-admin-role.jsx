@@ -3,7 +3,7 @@ import { Box, Stack, Input, Grid, Switch, Typography, CircularProgress } from "@
 import { PagesHeader, CustomButton, InputLabel } from "../../../Component";
 import { useNavigate } from "react-router-dom";
 import { styles } from "../../../styles/dashboard";
-import { useAddAdminRole } from "../../../Hooks/admin_types";
+import { useAddAdminRole } from "../../../Hooks/Dashboard/admin_types";
 import { VisibilityOutlined, DeleteOutlined } from "@mui/icons-material";
 import { showToast } from "../../../utils/toast";
 import { useLoader } from "../../../Contexts/LoaderContext";

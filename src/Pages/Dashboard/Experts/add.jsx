@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import {
   Grid,
   Box,
@@ -7,49 +7,38 @@ import {
   FormControl,
   MenuItem,
   CircularProgress,
-  Stack
+  Stack,
 } from "@mui/material";
 import {
   AddOutlined,
   DeleteOutlined,
-  VisibilityOutlined
+  VisibilityOutlined,
 } from "@mui/icons-material";
 import { InputLabel, CustomButton, PagesHeader } from "../../../Component";
-import { skills, experience } from "./data";
+import { level } from "./data";
 import { validateEmail } from "../../../utils/functions";
 import { styles } from "../../../styles/dashboard";
 import { useNavigate } from "react-router-dom";
-import { useAddExpert } from "../../../Hooks/experts";
+import { useAddExpert } from "../../../Hooks/Dashboard/experts";
 import { showToast } from "../../../utils/toast";
 import { useLoader } from "../../../Contexts/LoaderContext";
-
-const INITIAL_FORM_STATE = {
-  firstname: "",
-  lastname: "",
-  email: "",
-  phone: "",
-  skill: "",
-  experience: ""
-};
+import { useFetchServices } from "../../../Hooks/Dashboard/services";
 
 const AddExpertPage = () => {
-  const [form, setForm] = useState(INITIAL_FORM_STATE);
+  const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [skill, setSkill] = useState("");
+  const [experience, setExperience] = useState("");
   const [loading, setLoading] = useState(false);
-  const { hideLoader, showLoader } = useLoader();
 
   const addExpert = useAddExpert();
   const navigate = useNavigate();
-
-  const handleChange = useCallback(
-    (field) => (e) => {
-      setForm((prev) => ({ ...prev, [field]: e.target.value }));
-    },
-    []
-  );
+  const { hideLoader, showLoader } = useLoader();
+  const { services } = useFetchServices();
 
   const validateForm = () => {
-    const { firstname, lastname, email, phone, skill, experience } = form;
-
     if (
       !firstname.trim() ||
       !lastname.trim() ||
@@ -75,26 +64,39 @@ const AddExpertPage = () => {
 
     if (!validateForm()) return;
 
-    try {
-      setLoading(true);
-      showLoader();
-      const response = await addExpert(form);
+    setLoading(true);
+    showLoader("Adding Expert...");
 
+    try {
+      const payload = {
+        first_name: firstname,
+        last_name: lastname,
+        email: email,
+        skill,
+        phone,
+        experience,
+      };
+      console.log("PayLoad:", payload);
+
+      const response = await addExpert(payload);
       if (response) {
-        showToast.success("Expert added successfully");
-        setForm(INITIAL_FORM_STATE);
-        navigate("/dashboard/view/experts");
+        showToast.success("Expert added successfully!");
+        setFirstname("");
+        setEmail("");
+        setLastname("");
+        setPhone("");
+        navigate("/dashboard/admin/experts");
       }
     } catch (error) {
-      showToast.error(error.message || "Failed to add expert");
+      showToast.error(error || "Failed to add expert");
     } finally {
-      hideLoader();
       setLoading(false);
+      hideLoader();
     }
   };
 
   const handleCancel = () => {
-    navigate("/dashboard/view/experts");
+    navigate("/dashboard/admin/experts");
   };
 
   return (
@@ -107,14 +109,18 @@ const AddExpertPage = () => {
           {
             label: "View Experts",
             icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/view/experts")
-          }
+            onClick: () => navigate("/dashboard/admin/experts"),
+          },
+          {
+            label: "Add Customer",
+            icon: <AddOutlined />,
+            onClick: () => navigate("/dashboard/admin/add/customer"),
+          },
         ]}
       />
 
       <Box sx={styles.card}>
         <Box component="form" mt={3}>
-          {/* Names */}
           <Grid container spacing={2}>
             <Grid size={{ xs: 12, md: 6 }}>
               <InputLabel text="First Name" />
@@ -122,8 +128,8 @@ const AddExpertPage = () => {
                 disableUnderline
                 fullWidth
                 sx={styles.input}
-                value={form.firstname}
-                onChange={handleChange("firstname")}
+                value={firstname}
+                onChange={(e) => setFirstname(e.target.value)}
                 disabled={loading}
               />
             </Grid>
@@ -134,14 +140,13 @@ const AddExpertPage = () => {
                 disableUnderline
                 fullWidth
                 sx={styles.input}
-                value={form.lastname}
-                onChange={handleChange("lastname")}
+                value={lastname}
+                onChange={(e) => setLastname(e.target.value)}
                 disabled={loading}
               />
             </Grid>
           </Grid>
 
-          {/* Contact */}
           <Grid container spacing={2} mt={1.5}>
             <Grid size={{ xs: 12, md: 6 }}>
               <InputLabel text="Email Address" />
@@ -149,8 +154,8 @@ const AddExpertPage = () => {
                 disableUnderline
                 fullWidth
                 sx={styles.input}
-                value={form.email}
-                onChange={handleChange("email")}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 disabled={loading}
               />
             </Grid>
@@ -160,23 +165,22 @@ const AddExpertPage = () => {
               <Input
                 disableUnderline
                 fullWidth
-                type="number"
+                type="tel"
                 sx={styles.input}
-                value={form.phone}
-                onChange={handleChange("phone")}
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
                 disabled={loading}
               />
             </Grid>
           </Grid>
 
-          {/* Skill & Experience */}
           <Grid container spacing={2} mt={1.5}>
             <Grid size={{ xs: 12, md: 4 }}>
               <FormControl fullWidth>
                 <InputLabel text="Skill" />
                 <Select
-                  value={form.skill}
-                  onChange={handleChange("skill")}
+                  value={skill}
+                  onChange={(e) => setSkill(e.target.value)}
                   disableUnderline
                   sx={styles.input}
                   displayEmpty
@@ -185,9 +189,10 @@ const AddExpertPage = () => {
                   <MenuItem value="" disabled>
                     Select a skill
                   </MenuItem>
-                  {skills.map((item) => (
+
+                  {services?.map((item) => (
                     <MenuItem key={item.id} value={item.id}>
-                      {item.skill}
+                      {item.service_name}
                     </MenuItem>
                   ))}
                 </Select>
@@ -198,8 +203,8 @@ const AddExpertPage = () => {
               <FormControl fullWidth>
                 <InputLabel text="Experience" />
                 <Select
-                  value={form.experience}
-                  onChange={handleChange("experience")}
+                  value={experience}
+                  onChange={(e) => setExperience(e.target.value)}
                   disableUnderline
                   sx={styles.input}
                   displayEmpty
@@ -208,9 +213,9 @@ const AddExpertPage = () => {
                   <MenuItem value="" disabled>
                     Select experience level
                   </MenuItem>
-                  {experience.map((exp) => (
-                    <MenuItem key={exp.experience} value={exp.experience}>
-                      {exp.experience}
+                  {level.map((level) => (
+                    <MenuItem key={level.experience} value={level.experience}>
+                      {level.experience}
                     </MenuItem>
                   ))}
                 </Select>
@@ -218,10 +223,8 @@ const AddExpertPage = () => {
             </Grid>
           </Grid>
 
-          {/* Actions */}
           <Grid container spacing={2} mt={3}>
             <Grid size={{ xs: 12, md: 6 }} />
-
             <Grid size={{ xs: 12, md: 6 }}>
               <Stack direction="row" justifyContent="flex-end" gap={2}>
                 <CustomButton

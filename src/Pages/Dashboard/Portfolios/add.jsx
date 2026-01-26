@@ -8,76 +8,81 @@ import {
   Typography,
   FormControl,
   Select,
-  MenuItem
+  MenuItem,
 } from "@mui/material";
-import { toast } from "react-toastify";
 import {
   AddOutlined,
   DeleteOutlined,
   VisibilityOutlined,
-  ArrowBackOutlined
+  ArrowBackOutlined,
 } from "@mui/icons-material";
 import {
   InputLabel,
   CustomButton,
   PagesHeader,
-  UploadMedia
+  UploadMedia,
 } from "../../../Component";
 import { styles } from "../../../styles/dashboard";
-import { useAddCategories } from "../../../Hooks/categories";
 import { useNavigate } from "react-router-dom";
-import { categories, services } from "./data";
+import { useAddPortfolio } from "../../../Hooks/Dashboard/portfolios";
+import { showToast } from "../../../utils/toast";
+import { useLoader } from "../../../Contexts/LoaderContext";
+import { useFetchServices } from "../../../Hooks/Dashboard/services";
+import { useFetchCategories } from "../../../Hooks/Dashboard/categories";
 
 const AddPortfolios = () => {
-  const [category, setCategory] = useState("");
-  const [service, setService] = useState("");
-  const [categoryImg, setCategoryImg] = useState([]);
-  const [categoryStatus, setCategoryStatus] = useState(true);
-  const [categoryDesc, setCategoryDesc] = useState("");
+  const [categoryId, setCategoryId] = useState("");
+  const [serviceId, setServiceId] = useState("");
+  const [image, setImage] = useState("");
+  const [status, setStatus] = useState(true);
+  const [description, setDescription] = useState("");
 
   const [loading, setLoading] = useState(false);
-  const addCategory = useAddCategories();
+  const addPortfolio = useAddPortfolio();
   const navigate = useNavigate();
-
-  const handleFilesChange = (files) => {
-    setCategoryImg(files);
-  };
+  const { hideLoader, showLoader } = useLoader();
+  const { services } = useFetchServices();
+  const { categories } = useFetchCategories();
 
   const formData = {
-    service,
-    category,
-    categoryImg,
-    categoryStatus,
-    categoryDesc
+    service_id: serviceId,
+    cat_id: categoryId,
+    image,
+    status,
+    description,
   };
 
-  const handleSubmitAdmin = async () => {
-    if (
-      !service.trim() ||
-      !category.trim() ||
-      categoryImg.length === 0 ||
-      !categoryDesc
-    ) {
-      toast.error("Please fill in all required fields.");
+  const handleFilesChange = (files) => {
+    setImage(files);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!serviceId || !categoryId || !image || !description) {
+      showToast.warning("Please fill in all required fields.");
       return;
     }
+    console.log("payload:", formData);
 
     setLoading(true);
+    showLoader("Adding Portfolio");
     try {
-      const response = await addCategory(formData);
+      const response = await addPortfolio(formData);
 
       if (response) {
-        toast.success("Category added successfully!");
-        setService("");
-        setCategory("");
-        setCategoryImg([]);
-        setCategoryStatus(true);
-        setCategoryDesc("");
+        showToast.success("Portfolio added successfully!");
+        setServiceId("");
+        setCategoryId("");
+        setImage(null);
+        setStatus(true);
+        setDescription("");
+        navigate("/dashboard/admin/portfolios");
       }
     } catch (error) {
-      toast.error(error);
+      showToast.error(error);
     } finally {
       setLoading(false);
+      hideLoader();
     }
   };
 
@@ -85,20 +90,20 @@ const AddPortfolios = () => {
     <>
       <PagesHeader
         label="Add Porfolio"
-        desc="Add portfolios for services, categories and blogs. Go to view portfolios to manage portfolios"
+        desc="Add portfolios for serviceIds, categories and blogs. Go to view portfolios to manage portfolios"
         searchEnabled={false}
         placeholder={"Search categories..."}
         actions={[
           {
             label: "View Portfolios",
             icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/admin/portfolios")
+            onClick: () => navigate("/dashboard/admin/portfolios"),
           },
           {
-            label: "Add Service",
+            label: "Add serviceId",
             icon: <AddOutlined />,
-            onClick: () => navigate("/dashboard/admin/add/services")
-          }
+            onClick: () => navigate("/dashboard/admin/add/serviceIds"),
+          },
         ]}
       />
 
@@ -107,8 +112,9 @@ const AddPortfolios = () => {
           <Grid container spacing={3}>
             <Grid size={{ xs: 12, md: 5 }}>
               <UploadMedia
-                maxFiles={5}
-                maxSize={10}
+                mode="single"
+                maxFiles={1}
+                maxSize={2}
                 acceptedFormats={["jpg", "png", "jpeg", "svg", "zip"]}
                 onFilesChange={handleFilesChange}
                 title="Media Upload"
@@ -122,7 +128,7 @@ const AddPortfolios = () => {
                   border: "1px solid #e0e0e0",
                   borderRadius: 2,
                   p: 3,
-                  bgcolor: "white"
+                  bgcolor: "white",
                 }}
               >
                 <Grid container spacing={3}>
@@ -130,8 +136,8 @@ const AddPortfolios = () => {
                     <InputLabel text="Category" />
                     <FormControl fullWidth>
                       <Select
-                        value={category}
-                        onChange={(e) => setCategory(e.target.value)}
+                        value={categoryId}
+                        onChange={(e) => setCategoryId(e.target.value)}
                         disableUnderline
                         displayEmpty
                       >
@@ -140,30 +146,30 @@ const AddPortfolios = () => {
                         </MenuItem>
 
                         {categories.map((cat, i) => (
-                          <MenuItem key={i} value={cat.category}>
-                            {cat.category}
+                          <MenuItem key={i} value={cat.id}>
+                            {cat.name}
                           </MenuItem>
                         ))}
                       </Select>
                     </FormControl>
                   </Grid>
                   <Grid size={{ xs: 12 }}>
-                    <InputLabel text="Service" />
+                    <InputLabel text="Select Service" />
 
                     <FormControl fullWidth>
                       <Select
-                        value={service}
-                        onChange={(e) => setService(e.target.value)}
+                        value={serviceId}
+                        onChange={(e) => setServiceId(e.target.value)}
                         disableUnderline
                         displayEmpty
                       >
                         <MenuItem value="" disabled>
-                          <InputLabel text="Select Service" />
+                          <InputLabel text="Select service" />
                         </MenuItem>
 
-                        {services.map((cat, i) => (
-                          <MenuItem key={i} value={cat.category}>
-                            {cat.category}
+                        {services.map((service, i) => (
+                          <MenuItem key={i} value={service.id}>
+                            {service.service_name}
                           </MenuItem>
                         ))}
                       </Select>
@@ -176,24 +182,37 @@ const AddPortfolios = () => {
                         borderRadius: 2,
                         p: 3,
                         bgcolor: "white",
-                        mt: 3
+                        mt: 3,
                       }}
                     >
                       <Typography variant="subtitle1" fontWeight={600} mb={2}>
-                        Category Status
+                        Portfolio Status
                       </Typography>
                       <Stack direction="row" alignItems="center" spacing={2}>
                         <Typography variant="body2" fontWeight={500}>
-                          {categoryStatus ? "Active" : "Inactive"}
+                          {status ? "Active" : "Inactive"}
                         </Typography>
                         <Switch
-                          checked={categoryStatus}
-                          onChange={(e) => setCategoryStatus(e.target.checked)}
+                          checked={status}
+                          onChange={(e) => setStatus(e.target.checked)}
                           disabled={loading}
                           color="warning"
                         />
                       </Stack>
                     </Box>
+                  </Grid>
+                  <Grid size={{ xs: 12, md: 12 }}>
+                    <InputLabel text="Description" />
+                    <TextField
+                      id="content"
+                      multiline
+                      rows={5}
+                      disableUnderline
+                      fullWidth
+                      placeholder="Enter portfolio description here..."
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                    />
                   </Grid>
                 </Grid>
               </Box>
@@ -230,7 +249,7 @@ const AddPortfolios = () => {
                     color="primary"
                     variant="filled"
                     disabled={loading}
-                    onClick={handleSubmitAdmin}
+                    onClick={handleSubmit}
                     sx={{ textTransform: "none", px: 4 }}
                   />
                 </Stack>

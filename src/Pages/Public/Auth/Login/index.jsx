@@ -11,7 +11,7 @@ import {
   IconButton,
   InputAdornment,
   Link,
-  CircularProgress
+  CircularProgress,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { Eye24Regular, EyeOff24Regular } from "@fluentui/react-icons";
@@ -21,13 +21,14 @@ import { showToast } from "../../../../utils/toast";
 import { OTP_MODES } from "../../../../Config/auth/constants";
 import { signInWithGooglePopup } from "../../../../utils/googleAuth";
 import { useGoogleAuthLogin } from "../../../../Hooks/google_auth";
+import { useLoader } from "../../../../Contexts/LoaderContext";
 
 const LoginPage = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const loginUser = useLogin();
   const googleLogin = useGoogleAuthLogin();
-
+  const { hideLoader, showLoader } = useLoader(); 
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showOtpModal, setShowOtpModal] = useState(false);
@@ -36,7 +37,7 @@ const LoginPage = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    rememberMe: false
+    rememberMe: false,
   });
 
   const [errors, setErrors] = useState({});
@@ -52,13 +53,13 @@ const LoginPage = () => {
 
     setFormData({
       ...formData,
-      [field]: value
+      [field]: value,
     });
 
     if (errors[field]) {
       setErrors({
         ...errors,
-        [field]: ""
+        [field]: "",
       });
     }
   };
@@ -66,7 +67,7 @@ const LoginPage = () => {
   const handleBlur = (field) => () => {
     setTouched({
       ...touched,
-      [field]: true
+      [field]: true,
     });
     validateField(field, formData[field]);
   };
@@ -99,7 +100,7 @@ const LoginPage = () => {
 
     setErrors((prev) => ({
       ...prev,
-      [field]: error
+      [field]: error,
     }));
 
     return error;
@@ -135,6 +136,7 @@ const LoginPage = () => {
   const handleGoogleSignIn = async () => {
     try {
       setGoogleBtnLoading(true);
+      showLoader();
       const googleAccessToken = await signInWithGooglePopup();
 
       await googleLogin(googleAccessToken);
@@ -142,12 +144,14 @@ const LoginPage = () => {
       console.error("Google sign-in error:", error);
     } finally {
       setGoogleBtnLoading(false);
+      hideLoader();
     }
   };
 
   const handleOtpMethodSelect = async (otpMethod) => {
     setIsSubmitting(true);
     setShowOtpModal(false);
+    showLoader();
 
     try {
       const response = await loginUser({
@@ -177,6 +181,7 @@ const LoginPage = () => {
       });
     } finally {
       setIsSubmitting(false);
+      hideLoader();
     }
   };
 

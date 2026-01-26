@@ -39,7 +39,7 @@ function NavigationMenu() {
                 color:
                   openItemIndex == i
                     ? dbColors.main.primary
-                    : dbColors.main.default
+                    : dbColors.main.default,
               }}
             />
             {cell.label}
@@ -51,10 +51,8 @@ function NavigationMenu() {
                   key={i}
                   to={child.path}
                   isactive={child.path == currentPath}
-                  data-aos="fade-up"
-                  data-aos-delay={`${(i + 1) * 100}`}
-                  data-aos-once="true"
                 >
+                  <EmojiIcon name={child.icon} />
                   {child.label}
                 </InActiveLink>
               ))}

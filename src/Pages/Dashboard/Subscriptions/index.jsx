@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import {
   Grid,
   Box,
@@ -8,7 +8,7 @@ import {
   Button,
   Chip,
   Stack,
-  Divider
+  Divider,
 } from "@mui/material";
 import {
   AddOutlined,
@@ -18,73 +18,24 @@ import {
   CheckCircleOutlined,
   StarOutlined,
   PeopleOutlined,
-  WorkOutlineOutlined
 } from "@mui/icons-material";
 import { PagesHeader } from "../../../Component";
 import { useNavigate } from "react-router-dom";
+import { useFetchSubPlans } from "../../../Hooks/Dashboard/subscriptions";
+import { useLoader } from "../../../Contexts/LoaderContext";
 
 const SubscriptionsPage = () => {
   const navigate = useNavigate();
+  const { plans, loading: plansLoading, refetch } = useFetchSubPlans();
+  const { showLoader, hideLoader } = useLoader();
 
-  const [plans] = useState([
-    {
-      id: 1,
-      name: "Starter",
-      price: 9.99,
-      duration: "monthly",
-      description: "Perfect for individuals and small projects",
-      features: [
-        "5 Projects",
-        "10 GB Storage",
-        "Email Support",
-        "Basic Analytics"
-      ],
-      isActive: true,
-      isFeatured: false,
-      maxUsers: 1,
-      maxProjects: 5,
-      support: "email"
-    },
-    {
-      id: 2,
-      name: "Professional",
-      price: 29.99,
-      duration: "monthly",
-      description: "Ideal for growing teams and businesses",
-      features: [
-        "Unlimited Projects",
-        "100 GB Storage",
-        "Priority Support",
-        "Advanced Analytics",
-        "API Access"
-      ],
-      isActive: true,
-      isFeatured: true,
-      maxUsers: 10,
-      maxProjects: null,
-      support: "priority"
-    },
-    {
-      id: 3,
-      name: "Enterprise",
-      price: 99.99,
-      duration: "monthly",
-      description: "For large organizations with advanced needs",
-      features: [
-        "Unlimited Everything",
-        "1 TB Storage",
-        "Dedicated Support",
-        "Custom Integrations",
-        "SLA Guarantee",
-        "On-premise Option"
-      ],
-      isActive: true,
-      isFeatured: false,
-      maxUsers: null,
-      maxProjects: null,
-      support: "dedicated"
+  useEffect(() => {
+    if (plansLoading) {
+      showLoader("Fetching Plans...");
+    } else {
+      hideLoader();
     }
-  ]);
+  }, [plansLoading]);
 
   const handleEdit = (planId) => {
     console.log("Edit plan:", planId);
@@ -96,7 +47,6 @@ const SubscriptionsPage = () => {
       window.confirm("Are you sure you want to delete this subscription plan?")
     ) {
       console.log("Delete plan:", planId);
-      // Add your delete logic here
     }
   };
 
@@ -115,8 +65,13 @@ const SubscriptionsPage = () => {
           {
             label: "Add New Plan",
             icon: <AddOutlined />,
-            onClick: () => navigate("/dashboard/admin/add/subscription")
-          }
+            onClick: () => navigate("/dashboard/admin/add/subscription"),
+          },
+          {
+            label: "Add Service Types",
+            icon: <AddOutlined />,
+            onClick: () => navigate("/dashboard/admin/add/service-type"),
+          },
         ]}
       />
 
@@ -134,11 +89,10 @@ const SubscriptionsPage = () => {
                 transition: "all 0.3s ease",
                 "&:hover": {
                   boxShadow: 6,
-                  transform: "translateY(-4px)"
-                }
+                  transform: "translateY(-4px)",
+                },
               }}
             >
-              {/* Featured Badge */}
               {plan.isFeatured && (
                 <Box
                   sx={{
@@ -146,7 +100,7 @@ const SubscriptionsPage = () => {
                       "linear-gradient(90deg, #ff6b35 0%, #f7931e 100%)",
                     color: "white",
                     py: 1,
-                    textAlign: "center"
+                    textAlign: "center",
                   }}
                 >
                   <Stack
@@ -164,7 +118,6 @@ const SubscriptionsPage = () => {
               )}
 
               <CardContent sx={{ flexGrow: 1, p: 3 }}>
-                {/* Plan Header */}
                 <Box sx={{ textAlign: "center", mb: 3 }}>
                   <Typography variant="h5" fontWeight={700} gutterBottom>
                     {plan.name}
@@ -192,11 +145,9 @@ const SubscriptionsPage = () => {
                 </Box>
 
                 <Divider sx={{ my: 2 }} />
-
-                {/* Features List */}
-                <Box sx={{ mb: 3 }}>
+                {/* <Box sx={{ mb: 3 }}>
                   <Stack spacing={1.5}>
-                    {plan.features.map((feature, index) => (
+                    {plan?.plans?.map((feature, index) => (
                       <Stack
                         key={index}
                         direction="row"
@@ -212,19 +163,17 @@ const SubscriptionsPage = () => {
                       </Stack>
                     ))}
                   </Stack>
-                </Box>
-
+                </Box> */}
                 <Divider sx={{ my: 2 }} />
 
-                {/* Plan Stats */}
                 <Grid container spacing={2} sx={{ mb: 3 }}>
-                  <Grid size={{ xs: 6 }}>
+                  <Grid size={{ xs: 12 }}>
                     <Box
                       sx={{
                         textAlign: "center",
                         p: 2,
                         bgcolor: "grey.50",
-                        borderRadius: 2
+                        borderRadius: 2,
                       }}
                     >
                       <PeopleOutlined
@@ -242,33 +191,8 @@ const SubscriptionsPage = () => {
                       </Typography>
                     </Box>
                   </Grid>
-                  <Grid size={{ xs: 6 }}>
-                    <Box
-                      sx={{
-                        textAlign: "center",
-                        p: 2,
-                        bgcolor: "grey.50",
-                        borderRadius: 2
-                      }}
-                    >
-                      <WorkOutlineOutlined
-                        sx={{ fontSize: 24, color: "primary.main", mb: 1 }}
-                      />
-                      <Typography
-                        variant="caption"
-                        color="text.secondary"
-                        display="block"
-                      >
-                        Projects
-                      </Typography>
-                      <Typography variant="body2" fontWeight={600}>
-                        {plan.maxProjects || "Unlimited"}
-                      </Typography>
-                    </Box>
-                  </Grid>
                 </Grid>
 
-                {/* Action Buttons */}
                 <Stack spacing={1.5}>
                   <Button
                     variant="contained"
@@ -304,7 +228,6 @@ const SubscriptionsPage = () => {
                   </Stack>
                 </Stack>
 
-                {/* Status Badge */}
                 <Box sx={{ textAlign: "center", mt: 2 }}>
                   <Chip
                     label={plan.isActive ? "Active" : "Inactive"}
@@ -319,23 +242,24 @@ const SubscriptionsPage = () => {
         ))}
       </Grid>
 
-      {/* Empty State */}
-      {plans.length === 0 && (
+      {!plansLoading && plans.length === 0 && (
         <Box
           sx={{
             textAlign: "center",
             py: 8,
             bgcolor: "white",
             borderRadius: 2,
-            mt: 3
+            mt: 3,
           }}
         >
           <Typography variant="h6" color="text.secondary" gutterBottom>
             No subscription plans yet
           </Typography>
+
           <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
             Create your first subscription plan to get started
           </Typography>
+
           <Button
             variant="contained"
             startIcon={<AddOutlined />}

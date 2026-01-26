@@ -2,7 +2,7 @@ import React from "react";
 import {
   MoreVertOutlined,
   AddOutlined,
-  VisibilityOutlined
+  VisibilityOutlined,
 } from "@mui/icons-material";
 import { Box, TableRow, TableCell, Checkbox, IconButton } from "@mui/material";
 import Grid from "@mui/material/Grid";
@@ -17,16 +17,22 @@ import {
   AnalyticsOverview,
   CustomTable,
   StatusChip,
-  PagesHeader
+  PagesHeader,
 } from "../../../Component";
 import { headers, data } from "../../../Config/data";
 import { useNavigate } from "react-router-dom";
 import { EMOJI_ICONS } from "../../../Config/emojiIcons";
+import { useFetchUsers } from "../../../Hooks/Dashboard/users";
+import { useFetchBlogs } from "../../../Hooks/Dashboard/blogs";
+import { useFetchServices } from "../../../Hooks/Dashboard/services";
+import { useFetchCategories } from "../../../Hooks/Dashboard/categories";
+import { useFetchConsultations } from "../../../Hooks/Dashboard/consultations";
+import { useFetchOrders } from "../../../Hooks/Dashboard/orders";
 
 const DashboardHome = () => {
   const transactionsData = {
     successful: 15000,
-    unsuccessful: 5000
+    unsuccessful: 5000,
   };
 
   const revenueData = [
@@ -41,7 +47,7 @@ const DashboardHome = () => {
     { month: "Sep", value: 19, amount: "$19K" },
     { month: "Oct", value: 22, amount: "$22K" },
     { month: "Nov", value: 21, amount: "$21K" },
-    { month: "Dec", value: 24, amount: "$24K" }
+    { month: "Dec", value: 24, amount: "$24K" },
   ];
 
   const analyticsData = [
@@ -50,10 +56,16 @@ const DashboardHome = () => {
     { month: "Mar", value: 52000 },
     { month: "Apr", value: 78000 },
     { month: "May", value: 65000 },
-    { month: "Jun", value: 85000 }
+    { month: "Jun", value: 85000 },
   ];
 
   const navigate = useNavigate();
+  const { users } = useFetchUsers();
+  const { blogs } = useFetchBlogs();
+  const { services } = useFetchServices();
+  const { categories } = useFetchCategories();
+  const { consultations } = useFetchConsultations();
+  const { orders } = useFetchOrders();
 
   return (
     <Box>
@@ -67,18 +79,18 @@ const DashboardHome = () => {
           {
             label: "Add Expert",
             icon: <AddOutlined />,
-            onClick: () => navigate("/dashboard/admin/add/expert")
+            onClick: () => navigate("/dashboard/admin/add/expert"),
           },
           {
             label: "Add Admin",
             icon: <AddOutlined />,
-            onClick: () => navigate("/dashboard/admin/add/expert")
+            onClick: () => navigate("/dashboard/admin/add/expert"),
           },
           {
             label: "View Orders",
             icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/admin/add/expert")
-          }
+            onClick: () => navigate("/dashboard/admin/add/expert"),
+          },
         ]}
       />
 
@@ -87,7 +99,7 @@ const DashboardHome = () => {
           <InfoCard
             icon={EMOJI_ICONS.people}
             title="Users"
-            value="7000"
+            value={users.length}
             onAction={() => console.log("View Users")}
           />
         </Grid>
@@ -95,7 +107,7 @@ const DashboardHome = () => {
           <InfoCard
             icon={EMOJI_ICONS.shoppingCart}
             title="Orders"
-            value="5000"
+            value={orders.length}
             onAction={() => console.log("View Users")}
           />
         </Grid>
@@ -103,7 +115,7 @@ const DashboardHome = () => {
           <InfoCard
             icon={EMOJI_ICONS.category}
             title="Categories"
-            value="500"
+            value={categories.length}
             onAction={() => console.log("View Users")}
           />
         </Grid>
@@ -111,7 +123,7 @@ const DashboardHome = () => {
           <InfoCard
             icon={EMOJI_ICONS.shoppingBasket}
             title="Services"
-            value="7000"
+            value={services.length}
             onAction={() => console.log("View Users")}
           />
         </Grid>
@@ -119,7 +131,7 @@ const DashboardHome = () => {
           <InfoCard
             icon={EMOJI_ICONS.rss}
             title="Blogs"
-            value="3000"
+            value={blogs.length}
             onAction={() => console.log("View Users")}
           />
         </Grid>
@@ -127,7 +139,7 @@ const DashboardHome = () => {
           <InfoCard
             icon={EMOJI_ICONS.mail}
             title="Mails"
-            value="1000"
+            value="0"
             onAction={() => console.log("View Users")}
           />
         </Grid>
@@ -135,7 +147,7 @@ const DashboardHome = () => {
           <InfoCard
             icon={EMOJI_ICONS.contactPage}
             title="Testimonials"
-            value="7000"
+            value="0"
             onAction={() => console.log("View Users")}
           />
         </Grid>
@@ -143,7 +155,7 @@ const DashboardHome = () => {
           <InfoCard
             icon={EMOJI_ICONS.supportAgent}
             title="Consultations"
-            value="7000"
+            value={consultations.length}
             onAction={() => console.log("View Users")}
           />
         </Grid>
@@ -151,7 +163,7 @@ const DashboardHome = () => {
           <InfoCard
             icon={EMOJI_ICONS.campaign}
             title="Campaign"
-            value="7000"
+            value="0"
             onAction={() => console.log("View Users")}
           />
         </Grid>
@@ -159,7 +171,7 @@ const DashboardHome = () => {
           <InfoCard
             icon={EMOJI_ICONS.tips}
             title="AI"
-            value="7000"
+            value="0"
             onAction={() => console.log("View Users")}
           />
         </Grid>
@@ -178,7 +190,7 @@ const DashboardHome = () => {
               chartData={[
                 { name: "Completed", value: 65000, color: "#4CAF50" },
                 { name: "Pending", value: 25500, color: "#FF9800" },
-                { name: "Cancelled", value: 10000, color: "#F44336" }
+                { name: "Cancelled", value: 10000, color: "#F44336" },
               ]}
             />
           </Grid>

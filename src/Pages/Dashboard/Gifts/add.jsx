@@ -13,17 +13,17 @@ import {
   AddOutlined,
   DeleteOutlined,
   VisibilityOutlined,
-  ArrowBackOutlined
+  ArrowBackOutlined,
 } from "@mui/icons-material";
 import {
   InputLabel,
   CustomButton,
   PagesHeader,
-  UploadMedia
+  UploadMedia,
 } from "../../../Component";
 import { styles } from "../../../styles/dashboard";
-import { useAddCategories } from "../../../Hooks/categories";
 import { useNavigate } from "react-router-dom";
+import { useCreateGitfts } from "../../../Hooks/Dashboard/gifts";
 
 const AddGiftsPage = () => {
   const [tag, setTag] = useState("");
@@ -33,7 +33,7 @@ const AddGiftsPage = () => {
   const [image, setImage] = useState("");
 
   const [loading, setLoading] = useState(false);
-  const addCategory = useAddCategories();
+  const addGifts = useCreateGitfts();
   const navigate = useNavigate();
 
   const handleFilesChange = (files) => {
@@ -45,7 +45,7 @@ const AddGiftsPage = () => {
     price,
     description,
     image,
-    status
+    status,
   };
 
   const handleSubmitAdmin = async () => {
@@ -56,7 +56,7 @@ const AddGiftsPage = () => {
 
     setLoading(true);
     try {
-      const response = await addCategory(formData);
+      const response = await addGifts(formData);
 
       if (response) {
         toast.success("Category added successfully!");
@@ -84,13 +84,13 @@ const AddGiftsPage = () => {
           {
             label: "View Gifts",
             icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/admin/gifts")
+            onClick: () => navigate("/dashboard/admin/gifts"),
           },
           {
             label: "Add Coupons",
             icon: <AddOutlined />,
-            onClick: () => navigate("/dashboard/admin/add/coupons")
-          }
+            onClick: () => navigate("/dashboard/admin/add/coupons"),
+          },
         ]}
       />
 
@@ -113,7 +113,7 @@ const AddGiftsPage = () => {
                   borderRadius: 2,
                   p: 3,
                   bgcolor: "white",
-                  mt: 3
+                  mt: 3,
                 }}
               >
                 <Typography variant="subtitle1" fontWeight={600} mb={2}>
@@ -139,7 +139,7 @@ const AddGiftsPage = () => {
                   border: "1px solid #e0e0e0",
                   borderRadius: 2,
                   p: 3,
-                  bgcolor: "white"
+                  bgcolor: "white",
                 }}
               >
                 <Grid container spacing={3}>
@@ -156,7 +156,7 @@ const AddGiftsPage = () => {
                         borderRadius: 1,
                         px: 2,
                         py: 1.5,
-                        fontSize: "14px"
+                        fontSize: "14px",
                       }}
                     />
                   </Grid>
@@ -173,7 +173,7 @@ const AddGiftsPage = () => {
                         borderRadius: 1,
                         px: 2,
                         py: 1.5,
-                        fontSize: "14px"
+                        fontSize: "14px",
                       }}
                     />
                   </Grid>

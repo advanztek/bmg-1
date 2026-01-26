@@ -46,7 +46,7 @@ const useVerifyRegisteration = () => {
       const { data } = await axios.post(`${BASE_SERVER_URL}/auth/verify-user`, {
         email,
         otp,
-        otp_type
+        otp_type,
       });
 
       if (data?.error !== 0) {
@@ -185,7 +185,7 @@ const useVerifyForgotPwdOtp = () => {
       const { data } = await axios.post("/auth/", {
         email,
         otp,
-        otp_type
+        otp_type,
       });
 
       if (data?.error !== 0) {
@@ -217,7 +217,7 @@ const useResendOTP = () => {
     try {
       const response = await axios.post(`${BASE_SERVER_URL}/auth/resend-otp`, {
         otp_type,
-        email
+        email,
       });
 
       const result = response.data;
@@ -270,6 +270,36 @@ function useLogout() {
   };
 }
 
+function useForgotPassWord() {
+  return async (data) => {
+    try {
+      const response = await axios.post(
+        `${BASE_SERVER_URL}/auth/forgot-password`,
+        data
+      );
+
+      const result = response.data;
+      console.log("result res:", result);
+
+      if (result?.error === 0) {
+        toast.success(result.message);
+      }
+      if (result?.error) {
+        toast.error(result?.message);
+      }
+      return result;
+    } catch (error) {
+      console.error("Error:", error.response.data);
+      if (error.response.data?.error) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("An error occurred while resending otp.");
+      }
+      return false;
+    }
+  };
+}
+
 export {
   useRegister,
   useLogin,
@@ -278,5 +308,6 @@ export {
   useResendEmailVerificationOtp,
   useVerifyForgotPwdOtp,
   useResendOTP,
-  useLogout
+  useLogout,
+  useForgotPassWord,
 };

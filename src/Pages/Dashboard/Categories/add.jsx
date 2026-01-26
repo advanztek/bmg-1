@@ -7,38 +7,40 @@ import {
   Switch,
   TextField,
   Typography,
-  Chip
+  Chip,
 } from "@mui/material";
-import { toast } from "react-toastify";
 import {
   AddOutlined,
   DeleteOutlined,
   VisibilityOutlined,
-  ArrowBackOutlined
+  ArrowBackOutlined,
 } from "@mui/icons-material";
 import {
   InputLabel,
   CustomButton,
   PagesHeader,
-  UploadMedia
+  UploadMedia,
+  RichTextEditor,
 } from "../../../Component";
 import { styles } from "../../../styles/dashboard";
-import { useAddCategories } from "../../../Hooks/categories";
 import { useNavigate } from "react-router-dom";
+import { useLoader } from "../../../Contexts/LoaderContext";
+import { useCreateCategories } from "../../../Hooks/Dashboard/categories";
+import { showToast } from "../../../utils/toast";
 
 const AddCategoriePage = () => {
   const [categoryName, setCategoryName] = useState("");
-  const [categorySlug, setCategorySlug] = useState("");
-  const [categoryImg, setCategoryImg] = useState([]);
-  const [categoryStatus, setCategoryStatus] = useState(true);
+  const [categoryImg, setCategoryImg] = useState("");
+  const [categoryStatus, setCategoryStatus] = useState(false);
   const [categoryDesc, setCategoryDesc] = useState("");
   const [seoKeywords, setSeoKeywords] = useState([]);
   const [keywordInput, setKeywordInput] = useState("");
-  const [categoryContent, setCategoryContent] = useState("");
+  const [categoryBanner, setCategoryBanner] = useState("");
 
   const [loading, setLoading] = useState(false);
-  const addCategory = useAddCategories();
+  const addCategory = useCreateCategories();
   const navigate = useNavigate();
+  const { showLoader, hideLoader } = useLoader();
 
   const handleAddKeyword = () => {
     if (keywordInput.trim() && seoKeywords.length < 5) {
@@ -51,49 +53,47 @@ const AddCategoriePage = () => {
     setSeoKeywords(seoKeywords.filter((_, index) => index !== indexToDelete));
   };
 
-  const handleFilesChange = (files) => {
-    setCategoryImg(files);
-  };
+  const keywordsToObject = seoKeywords.reduce((acc, keyword) => {
+    acc[keyword] = keyword;
+    return acc;
+  }, {});
 
-  const formData = {
-    categoryName,
-    categorySlug,
-    categoryImg,
-    categoryStatus,
-    categoryDesc,
-    seoKeywords,
-    categoryContent
-  };
+  const handleCreateCategory = async (e) => {
+    e.preventDefault();
 
-  const handleSubmitAdmin = async () => {
-    if (
-      !categoryName.trim() ||
-      !categorySlug.trim() ||
-      categoryImg.length === 0 ||
-      !categoryDesc
-    ) {
-      toast.error("Please fill in all required fields.");
+    if (!categoryName.trim() || !categoryDesc.trim() || !categoryImg) {
+      showToast.warning("Please fill in all required fields.");
       return;
     }
 
     setLoading(true);
-    try {
-      const response = await addCategory(formData);
+    showLoader("Creating Category...");
 
+    try {
+      const payload = {
+        name: categoryName,
+        image: categoryImg,
+        banner: categoryBanner,
+        status: categoryStatus,
+        description: categoryDesc,
+        short_descriptions: keywordsToObject,
+      };
+      console.log("PayLoad:", payload);
+
+      const response = await addCategory(payload);
       if (response) {
-        toast.success("Category added successfully!");
+        showToast.success("Category added successfully!");
         setCategoryName("");
-        setCategorySlug("");
-        setCategoryImg([]);
-        setCategoryStatus(true);
+        setCategoryImg(null);
         setCategoryDesc("");
         setSeoKeywords([]);
-        setCategoryContent("");
+        navigate("/dashboard/admin/categories");
       }
     } catch (error) {
-      toast.error(error);
+      showToast.error(error || "Failed to create category");
     } finally {
       setLoading(false);
+      hideLoader();
     }
   };
 
@@ -108,71 +108,62 @@ const AddCategoriePage = () => {
           {
             label: "View Categories",
             icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/admin/categories")
+            onClick: () => navigate("/dashboard/admin/categories"),
           },
           {
             label: "Add Service",
             icon: <AddOutlined />,
-            onClick: () => navigate("/dashboard/admin/add/services")
-          }
+            onClick: () => navigate("/dashboard/admin/add/services"),
+          },
         ]}
       />
 
       <Box sx={styles.card}>
         <Box component="form" mt={3}>
           <Grid container spacing={3}>
-            <Grid size={{ xs: 12, md: 5 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <UploadMedia
-                maxFiles={5}
-                maxSize={10}
+                mode="single"
+                maxFiles={1}
+                maxSize={2}
+                onFilesChange={setCategoryImg}
                 acceptedFormats={["jpg", "png", "jpeg", "svg", "zip"]}
-                onFilesChange={handleFilesChange}
-                title="Media Upload"
-                description="Add your documents here, and you can upload up to 5 files max"
+                title="Category Image Upload"
+                description="Add your documents here, and you can upload max of 1 file only"
               />
-
-              <Box
-                sx={{
-                  border: "1px solid #e0e0e0",
-                  borderRadius: 2,
-                  p: 3,
-                  bgcolor: "white",
-                  mt: 3
-                }}
-              >
-                <Typography variant="subtitle1" fontWeight={600} mb={2}>
-                  Category Status
-                </Typography>
-                <Stack direction="row" alignItems="center" spacing={2}>
-                  <Typography variant="body2" fontWeight={500}>
-                    {categoryStatus ? "Active" : "Inactive"}
-                  </Typography>
-                  <Switch
-                    checked={categoryStatus}
-                    onChange={(e) => setCategoryStatus(e.target.checked)}
-                    disabled={loading}
-                    color="warning"
-                  />
-                </Stack>
-              </Box>
             </Grid>
 
-            <Grid size={{ xs: 12, md: 7 }}>
-              <Box
-                sx={{
-                  border: "1px solid #e0e0e0",
-                  borderRadius: 2,
-                  p: 3,
-                  bgcolor: "white"
-                }}
-              >
+            <Grid size={{ xs: 12, md: 6 }}>
+              <UploadMedia
+                mode="single"
+                maxFiles={1}
+                maxSize={2}
+                acceptedFormats={["jpg", "png", "jpeg", "svg", "zip"]}
+                onFilesChange={setCategoryBanner}
+                title="Category Banner Upload"
+                description="Add your documents here, and you can upload max of 1 files only"
+              />
+            </Grid>
+          </Grid>
+
+          <Box
+            sx={{
+              border: "1px solid #e0e0e0",
+              borderRadius: 2,
+              p: 3,
+              bgcolor: "white",
+              mt: 5,
+            }}
+          >
+            <Grid container spacing={3}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <Grid container spacing={3}>
                   <Grid size={{ xs: 12 }}>
                     <InputLabel text="Category Name" />
                     <Input
                       disableUnderline
                       fullWidth
-                      placeholder="Mayol Lupa"
+                      placeholder="Enter category name"
                       value={categoryName}
                       onChange={(e) => setCategoryName(e.target.value)}
                       sx={{
@@ -180,91 +171,99 @@ const AddCategoriePage = () => {
                         borderRadius: 1,
                         px: 2,
                         py: 1.5,
-                        fontSize: "14px"
-                      }}
-                    />
-                  </Grid>
-                  <Grid size={{ xs: 12 }}>
-                    <InputLabel text="Category Slug" />
-                    <Input
-                      disableUnderline
-                      fullWidth
-                      placeholder="Mayol Lupa"
-                      value={categorySlug}
-                      onChange={(e) => setCategorySlug(e.target.value)}
-                      sx={{
-                        border: "1px solid #e0e0e0",
-                        borderRadius: 1,
-                        px: 2,
-                        py: 1.5,
-                        fontSize: "14px"
+                        fontSize: "14px",
                       }}
                     />
                   </Grid>
                   <Grid size={{ xs: 12 }}>
                     <InputLabel text="Category Description " />
-                    <TextField
-                      id="outlined-textarea"
-                      multiline
-                      rows={5}
-                      disableUnderline
-                      fullWidth
-                      placeholder="Long description here"
+                    <RichTextEditor
                       value={categoryDesc}
-                      onChange={(e) => setCategoryDesc(e.target.value)}
+                      onChange={setCategoryDesc}
+                      placeholder="Enter description for category..."
+                      minHeight="150px"
                     />
                   </Grid>
                 </Grid>
-              </Box>
+              </Grid>
 
-              <Box
-                sx={{
-                  border: "1px solid #e0e0e0",
-                  borderRadius: 2,
-                  p: 2,
-                  bgcolor: "white",
-                  mt: 3
-                }}
-              >
-                <Typography variant="subtitle1" fontWeight={600} mb={2}>
-                  SEO keywords
-                </Typography>
-                <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", mb: 2 }}>
-                  {seoKeywords.map((keyword, index) => (
-                    <Chip
-                      key={index}
-                      label={keyword}
-                      onDelete={() => handleDeleteKeyword(index)}
-                      size="small"
-                      sx={{ bgcolor: "#f5f5f5" }}
+              <Grid size={{ xs: 12, md: 6 }}>
+                <Box
+                  sx={{
+                    border: "1px solid #e0e0e0",
+                    borderRadius: 2,
+                    p: 2,
+                    bgcolor: "white",
+                    mt: 3,
+                  }}
+                >
+                  <Typography variant="subtitle1" fontWeight={600} mb={2}>
+                    SEO keywords
+                  </Typography>
+                  <Box
+                    sx={{ display: "flex", gap: 1, flexWrap: "wrap", mb: 2 }}
+                  >
+                    {seoKeywords.map((keyword, index) => (
+                      <Chip
+                        key={index}
+                        label={keyword}
+                        onDelete={() => handleDeleteKeyword(index)}
+                        size="small"
+                        sx={{ bgcolor: "#f5f5f5" }}
+                      />
+                    ))}
+                  </Box>
+                  <Box sx={{ display: "flex", gap: 1 }}>
+                    <Input
+                      disableUnderline
+                      fullWidth
+                      placeholder="Add keyword"
+                      value={keywordInput}
+                      onChange={(e) => setKeywordInput(e.target.value)}
+                      onKeyPress={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleAddKeyword();
+                        }
+                      }}
+                      sx={{
+                        border: "1px solid #e0e0e0",
+                        borderRadius: 1,
+                        px: 2,
+                        py: 1,
+                        fontSize: "14px",
+                      }}
                     />
-                  ))}
+                  </Box>
                 </Box>
-                <Box sx={{ display: "flex", gap: 1 }}>
-                  <Input
-                    disableUnderline
-                    fullWidth
-                    placeholder="Add keyword"
-                    value={keywordInput}
-                    onChange={(e) => setKeywordInput(e.target.value)}
-                    onKeyPress={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        handleAddKeyword();
-                      }
-                    }}
-                    sx={{
-                      border: "1px solid #e0e0e0",
-                      borderRadius: 1,
-                      px: 2,
-                      py: 1,
-                      fontSize: "14px"
-                    }}
-                  />
+
+                <Box
+                  sx={{
+                    border: "1px solid #e0e0e0",
+                    borderRadius: 2,
+                    p: 3,
+                    bgcolor: "white",
+                    mt: 2,
+                  }}
+                >
+                  <Typography variant="subtitle1" fontWeight={600} mb={2}>
+                    Category Status
+                  </Typography>
+                  <Stack direction="row" alignItems="center" spacing={2}>
+                    <Typography variant="body2" fontWeight={500}>
+                      {categoryStatus ? "Active" : "Inactive"}
+                    </Typography>
+                    <Switch
+                      checked={categoryStatus}
+                      onChange={(e) => setCategoryStatus(e.target.checked)}
+                      disabled={loading}
+                      color="warning"
+                    />
+                  </Stack>
                 </Box>
-              </Box>
+              </Grid>
             </Grid>
-          </Grid>
+          </Box>
 
           <Grid container spacing={2} mt={3}>
             <Grid size={{ xs: 12 }}>
@@ -296,7 +295,7 @@ const AddCategoriePage = () => {
                     color="primary"
                     variant="filled"
                     disabled={loading}
-                    onClick={handleSubmitAdmin}
+                    onClick={handleCreateCategory}
                     sx={{ textTransform: "none", px: 4 }}
                   />
                 </Stack>

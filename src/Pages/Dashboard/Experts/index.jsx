@@ -6,25 +6,40 @@ import {
   Checkbox,
   IconButton,
   Grid,
-  CircularProgress
+  CircularProgress,
+  Stack,
+  Typography,
 } from "@mui/material";
 import {
   CustomTable,
   StatusChip,
   PagesHeader,
   InsightPieCard,
-  TopRankingExpertsCard
+  TopRankingExpertsCard,
 } from "../../../Component";
 import { headers } from "./data";
 import { AddOutlined, VisibilityOutlined } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { useFetchExperts } from "../../../Hooks/experts";
+import { useFetchExperts } from "../../../Hooks/Dashboard/experts";
+import SingleExpertModal from "./single";
 
 const ExpertsPage = () => {
   const [search, setSearch] = useState();
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+  const { experts, loading: expertsLoading, refetch } = useFetchExperts();
 
-  const { refetch, experts, loading } = useFetchExperts();
+  const handleOpen = (id) => {
+    setSelectedId(id);
+    setOpen(true);
+  };
+
+  const handleClose = async () => {
+    setOpen(false);
+    await refetch();
+    setSelectedId(null);
+  };
 
   return (
     <div>
@@ -38,8 +53,8 @@ const ExpertsPage = () => {
           {
             label: "Add Expert",
             icon: <AddOutlined />,
-            onClick: () => navigate("/dashboard/admin/add/expert")
-          }
+            onClick: () => navigate("/dashboard/admin/add/expert"),
+          },
         ]}
       />
 
@@ -56,7 +71,7 @@ const ExpertsPage = () => {
               chartData={[
                 { name: "Active Experts", value: 5000, color: "#4CAF50" },
                 { name: "Suspended Experts", value: 2500, color: "#FF9800" },
-                { name: "Terminated Experts", value: 1000, color: "#F44336" }
+                { name: "Terminated Experts", value: 1000, color: "#F44336" },
               ]}
             />
           </Grid>
@@ -68,7 +83,7 @@ const ExpertsPage = () => {
 
       <Box mt={3} mb={3}>
         <CustomTable title="Total Experts" headers={headers}>
-          {loading && (
+          {expertsLoading ? (
             <TableRow>
               <TableCell colSpan={6}>
                 <CircularProgress
@@ -77,33 +92,61 @@ const ExpertsPage = () => {
                 />
               </TableCell>
             </TableRow>
-          )}
+          ) : experts.length > 0 ? (
+            experts.map((row, index) => (
+              <TableRow hover key={index}>
+                <TableCell>
+                  <Checkbox />
+                </TableCell>
 
-          {experts.map((row) => (
-            <TableRow hover key={row.id}>
-              <TableCell>
-                <Checkbox />
-              </TableCell>
+                <TableCell>{row.first_name}</TableCell>
+                <TableCell>{row.last_name}</TableCell>
+                <TableCell>{row.email}</TableCell>
+                <TableCell>{row.phone}</TableCell>
 
-              <TableCell>{row.id}</TableCell>
-              <TableCell>{row.firstname}</TableCell>
-              <TableCell>{row.lastname}</TableCell>
-              <TableCell>{row.email}</TableCell>
-              <TableCell>{row.phone}</TableCell>
+                <TableCell>
+                  <StatusChip
+                    status={row.is_verified === true ? "active" : "inactive"}
+                    label={row.is_verified === true ? "Verified" : "Unverified"}
+                  />
+                </TableCell>
 
-              <TableCell>
-                <StatusChip status={row.status} label={row.status} />
-              </TableCell>
+                <TableCell>
+                  <StatusChip
+                    status={row.status === 1 ? "active" : "inactive"}
+                    label={row.status === 1 ? "Active" : "Disabled"}
+                  />
+                </TableCell>
 
-              <TableCell>
-                <IconButton size="small">
-                  <VisibilityOutlined fontSize="small" />
-                </IconButton>
+                <TableCell>
+                  <IconButton size="small" onClick={() => handleOpen(row.id)}>
+                    <VisibilityOutlined fontSize="small" />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={6}>
+                <Stack alignItems="center" spacing={2}>
+                  <Typography
+                    variant="body1"
+                    sx={{ color: "#2C3891", fontWeight: 600 }}
+                  >
+                    No Expert Found.
+                  </Typography>
+                </Stack>
               </TableCell>
             </TableRow>
-          ))}
+          )}
         </CustomTable>
       </Box>
+
+      <SingleExpertModal
+        open={open}
+        onClose={handleClose}
+        userId={selectedId}
+      />
     </div>
   );
 };
