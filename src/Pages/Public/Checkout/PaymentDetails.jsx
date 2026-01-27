@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Box,
     Typography,
@@ -14,17 +14,44 @@ import {
     LocalOffer as TagIcon,
 } from '@mui/icons-material';
 import { formatGHS } from '../../../utils/currency';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import useCheckout from '../../../Hooks/cart';
+import { useUserContext } from '../../../Contexts';
 
 const PaymentDetailsSection = ({ cartItems }) => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const { user } = useUserContext();
 
     const [couponCode, setCouponCode] = useState('');
     const [giftCardCode, setGiftCardCode] = useState('');
     const { loading, error, success, validationErrors, initiateCheckout, resetCheckout } = useCheckout();
 
+    // Check authentication and redirect if needed
+    useEffect(() => {
+        if (!user?.user) {
+            // Store the current checkout path to redirect back after login
+            navigate('/login', {
+                state: {
+                    from: location.pathname,
+                    returnTo: '/checkout'
+                }
+            });
+        }
+    }, [user, navigate, location]);
+
     const handleCheckout = async () => {
+        // Double-check authentication before checkout
+        if (!user?.user) {
+            navigate('/login', {
+                state: {
+                    from: location.pathname,
+                    returnTo: '/checkout'
+                }
+            });
+            return;
+        }
+
         const result = await initiateCheckout(cartItems, couponCode, giftCardCode);
 
         if (!result.success) {
@@ -41,12 +68,35 @@ const PaymentDetailsSection = ({ cartItems }) => {
         setCouponCode('');
         setGiftCardCode('');
         resetCheckout();
-        navigate('/')
+        navigate('/');
     };
 
     const subtotal = cartItems.reduce((sum, item) => sum + (item.finalPrice * item.quantity), 0);
     const totalDiscount = cartItems.reduce((sum, item) => sum + (item.discountAmount * item.quantity || 0), 0);
     const total = subtotal;
+
+    // Show loading state while checking authentication
+    if (!user?.user) {
+        return (
+            <Paper
+                elevation={0}
+                sx={{
+                    position: 'sticky',
+                    top: 20,
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    borderRadius: 3,
+                    overflow: 'hidden',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    p: 4,
+                }}
+            >
+                <CircularProgress />
+            </Paper>
+        );
+    }
 
     return (
         <Paper

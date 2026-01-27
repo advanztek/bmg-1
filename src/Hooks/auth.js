@@ -43,7 +43,6 @@ const useVerifyRegisteration = () => {
 
   const verifyEmailOtp = async ({ email, otp, otp_type }) => {
     try {
-      console.log("Verifying OTP for:", { email, otp, otp_type });
       const { data } = await axios.post(`${BASE_SERVER_URL}/auth/verify-user`, {
         email,
         otp,
@@ -97,19 +96,15 @@ function useResendEmailVerificationOtp() {
 
 function useLogin() {
   return async (data) => {
-    console.log("Login data:", data);
     try {
       const response = await axios.post(
         `${BASE_SERVER_URL}/auth/login-user`,
         data,
       );
-      const result = response.data;
+      const result = response?.data;
 
-      console.log("Login result:", result);
-
-      if (result?.error === 0) {
-        showToast.success(result.message);
-        return true;
+      if (result?.error === 0 || result?.code === 3) {
+        return result?.error === 0 ? true : result;
       }
 
       if (result?.error) {

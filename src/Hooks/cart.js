@@ -140,12 +140,12 @@ const useCheckout = () => {
         payload,
         config,
       );
-
+      console.log("response.data:", response.data);
       // Check if the response indicates success
       if (response.data.success) {
         setSuccess(true);
 
-        const { order, payment_link } = response.data.data;
+        const { order, payment_link } = response.data.result;
 
         // Redirect to payment link if available
         if (payment_link) {
