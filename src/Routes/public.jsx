@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import {
   CategoriesPage,
   AboutUsPage,
@@ -26,6 +26,7 @@ import {
   HowItWorksPage,
   PortfolioPage,
   PersonaliseOrderPage,
+  PaymentSuccessPage,
 } from "../Pages/Public";
 import PublicLayout from "../Layout/PublicLayout";
 import AIVideoGeneratorPage from "../Pages/Public/AIVideoGenerator";
@@ -77,6 +78,7 @@ const PublicRoutes = () => {
           <Route path="/video-editor" element={<AIVideoEditor />} />
           <Route path="/business-strategy" element={<AIBizStrategy />} />
           <Route path="/order/personalise" element={<PersonaliseOrderPage />} />
+          <Route path="/payment/success" element={<PaymentSuccessPage />} />
           {/* <Route path="/sample" element={<Sample />} /> */}
         </Route>
       </Routes>
