@@ -1,5 +1,5 @@
 export { default as HomePage } from "./Home";
-export { default as CategoriesPage } from "./categories";
+export { default as CategoriesPage } from "./Categories";
 export { default as ServicesPage } from "./Services";
 export { default as ServiceDetailPage } from "./ServiceDetail";
 export { default as ProcessOrderPage } from "./TrackOrder";
@@ -24,3 +24,6 @@ export { default as ResourcesPage } from "./Resources";
 export { default as HowItWorksPage } from "./HowItWorks";
 export { default as PortfolioPage } from "./Portfolio";
 export { default as PricingPage } from "./Pricing";
+export { default as PersonaliseOrderPage } from "./PersonaliseOrderPage";
+export { default as PaymentSuccessPage } from "./PaymentSuccessPage";
+export { default as PaymentFailPage } from "./PaymentFailPage";
