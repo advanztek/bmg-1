@@ -4,10 +4,11 @@ import {
     Typography,
     Paper,
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 
 const AuthSlider = () => {
-
+    const navigate = useNavigate()
     const [currentSlide, setCurrentSlide] = useState(0);
 
     const slides = [
@@ -28,14 +29,15 @@ const AuthSlider = () => {
     return (
         <>
 
-            <Box sx={{maxWidth: 500, width: '100%', textAlign: 'center' }}>
+            <Box sx={{ maxWidth: 500, width: '100%', textAlign: 'center' }}>
                 <Box
-                component='img'
-                src='/Logo/LogoLight.png'
+                    onClick={() => navigate("/")}
+                    component='img'
+                    src='/Logo/LogoLight.png'
                     sx={{
                         width: { xs: '100px', md: '100px' },
                     }}
-               />
+                />
                 <Typography
                     variant="h6"
                     sx={{
@@ -56,11 +58,11 @@ const AuthSlider = () => {
                     }}
                 >
                     <Box
-                     component='img'
+                        component='img'
                         src='/Images/auth.jpg'
                         sx={{
-                           width: '100%',
-                           borderRadius: 2,
+                            width: '100%',
+                            borderRadius: 2,
                         }}
                     />
                 </Paper>
