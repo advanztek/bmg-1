@@ -27,6 +27,7 @@ import {
   PortfolioPage,
   PersonaliseOrderPage,
   PaymentSuccessPage,
+  PaymentFailPage,
 } from "../Pages/Public";
 import PublicLayout from "../Layout/PublicLayout";
 import AIVideoGeneratorPage from "../Pages/Public/AIVideoGenerator";
@@ -79,6 +80,7 @@ const PublicRoutes = () => {
           <Route path="/business-strategy" element={<AIBizStrategy />} />
           <Route path="/order/personalise" element={<PersonaliseOrderPage />} />
           <Route path="/payment/success" element={<PaymentSuccessPage />} />
+          <Route path="/payment/fail" element={<PaymentFailPage />} />
           {/* <Route path="/sample" element={<Sample />} /> */}
         </Route>
       </Routes>

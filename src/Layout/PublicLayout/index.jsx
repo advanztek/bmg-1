@@ -14,6 +14,7 @@ function PublicLayout({ children }) {
     "/verify-email",
     "/otp-verify",
     "/payment/success",
+    "/payment/fail",
   ];
 
   const hideLayout = noLayoutRoutes.includes(location.pathname);

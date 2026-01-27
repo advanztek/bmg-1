@@ -26,3 +26,4 @@ export { default as PortfolioPage } from "./Portfolio";
 export { default as PricingPage } from "./Pricing";
 export { default as PersonaliseOrderPage } from "./PersonaliseOrderPage";
 export { default as PaymentSuccessPage } from "./PaymentSuccessPage";
+export { default as PaymentFailPage } from "./PaymentFailPage";
