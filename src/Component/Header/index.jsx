@@ -216,11 +216,12 @@ const Header = () => {
                     backdropFilter: 'blur(20px)',
                     borderRadius: 0,
                     boxShadow: `0 2px 12px ${theme.palette.mode === 'dark' ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0.08)'}`,
-                    borderBottom: `1px solid ${theme.palette.divider}`
+                    borderBottom: `1px solid ${theme.palette.divider}`,
+                    height: '70px !important',
                 }}
             >
                 <Container maxWidth="lg">
-                    <Toolbar sx={{ py: 1, display: "flex", justifyContent: "space-between" }}>
+                    <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
                         {/* Logo */}
                         <Box onClick={() => navigate('/')} sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
                             <Box
@@ -254,6 +255,7 @@ const Header = () => {
                                         to={!item.hasDropdown ? item.path : undefined}
                                         sx={{
                                             textDecoration: "none",
+                                            height: "70px",
                                             color: theme.palette.text.primary,
                                             fontWeight: 700,
                                             fontFamily: FONT_FAMILY.unique,
@@ -270,7 +272,7 @@ const Header = () => {
                                             '&::after': {
                                                 content: '""',
                                                 position: 'absolute',
-                                                bottom: -8,
+                                                bottom: 0,
                                                 left: 0,
                                                 width: activeDropdown === item.label || location.pathname === item.path ? '100%' : '0%',
                                                 height: '3px',

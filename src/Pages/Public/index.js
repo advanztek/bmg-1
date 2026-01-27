@@ -1,5 +1,5 @@
 export { default as HomePage } from "./Home";
-export { default as CategoriesPage } from "./categories";
+export { default as CategoriesPage } from "./Categories";
 export { default as ServicesPage } from "./Services";
 export { default as ServiceDetailPage } from "./ServiceDetail";
 export { default as ProcessOrderPage } from "./TrackOrder";
