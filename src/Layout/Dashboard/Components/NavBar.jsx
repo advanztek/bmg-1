@@ -19,15 +19,19 @@ import { useUserContext } from "../../../Contexts";
 import { getTimeGreeting, getFormattedDate } from "../../../utils/functions";
 import CreditBox from "./CreditBox";
 import { useLogout } from "../../../Hooks/auth";
+import { useDispatch } from "react-redux";
+import { logoutUser } from "../../../store/slices/userSlice";
 
 function NavBar({ sideNavWidth, layoutPadding, navHeight, onMenuClick }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [notificationsAnchorEl, setNotificationsAnchorEl] = useState(null);
+  const dispatch = useDispatch();
 
   const navigate = useNavigate();
   const { user } = useUserContext();
-  const handleUserLogout = useLogout()
   const userInfo = user?.user;
+
+  const logout = useLogout();
 
   const handleSettingsClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -45,10 +49,14 @@ function NavBar({ sideNavWidth, layoutPadding, navHeight, onMenuClick }) {
     setNotificationsAnchorEl(null);
   };
 
-  const handleLogout = async () => {
-    await handleUserLogout();
+  const handleLogout = async (e) => {
+    e.preventDefault();
+
+    await logout();
+
+    dispatch(logoutUser());
     handleMenuClose();
-    navigate("/login");
+    navigate("/login", { replace: true });
   };
 
   return (

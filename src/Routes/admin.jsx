@@ -15,6 +15,7 @@ import {
   AddExpertPage,
   OrdersPage,
   AddAdminPage,
+  SingleAdminPage,
   EditAdminPage,
   AdminRoles,
   AddAdminRole,
@@ -74,6 +75,7 @@ const AdminRoutes = () => {
       <Route index element={<DashboardHome />} />
       <Route path="view/admins" element={<Administrators />} />
       <Route path="add/admin" element={<AddAdminPage />} />
+      <Route path="single/admin" element={<SingleAdminPage />} />
       <Route path="edit/admin" element={<EditAdminPage />} />
       <Route path="view/admin-roles" element={<AdminRoles />} />
       <Route path="add/admin-roles" element={<AddAdminRole />} />
@@ -87,7 +89,6 @@ const AdminRoutes = () => {
       <Route path="admin/categories" element={<CategoriesPage />} />
       <Route path="admin/add/categories" element={<AddCategoriesPage />} />
       <Route path="admin/edit/categories" element={<EditCategoryPage />} />
-
       <Route path="admin/sub-categories" element={<SubCategoriesPage />} />
       <Route
         path="admin/add/sub-categories"
@@ -140,7 +141,6 @@ const AdminRoutes = () => {
       <Route path="admin/add/customer" element={<AddUsersPage />} />
       <Route path="admin/category-faqs" element={<CategoryFaqPage />} />
       <Route path="admin/add/category-faq" element={<AddCategoryFaqs />} />
-
       <Route path="admin/services-faqs" element={<ServiceFaqsPage />} />
       <Route path="admin/add/service-faq" element={<AddServiceFaqs />} />
       <Route path="admin/faqs" element={<FaqsPage />} />

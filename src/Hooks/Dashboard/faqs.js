@@ -12,7 +12,7 @@ function useAddFaqs() {
       const response = await axios.post(
         `${BASE_SERVER_URL}/admin/create/faqs`,
         data,
-        config
+        config,
       );
 
       const result = response.data;
@@ -73,7 +73,7 @@ function useGetFaq() {
   const { config } = useUserContext();
   const [faqData, setFaqData] = useState(null);
 
-  const getMethod = async (faqId) => {
+  const getFaqData = async (faqId) => {
     if (!faqId) {
       console.error("No faq ID provided");
       return;
@@ -84,7 +84,7 @@ function useGetFaq() {
     try {
       const response = await axios.get(
         `${BASE_SERVER_URL}/admin/faq/${faqId}`,
-        config
+        config,
       );
 
       const result = response.data;
@@ -101,7 +101,7 @@ function useGetFaq() {
     }
   };
 
-  return { faqData, loading, getMethod };
+  return { faqData, loading, getFaqData };
 }
 
 const useUpdateFaq = () => {
@@ -114,7 +114,7 @@ const useUpdateFaq = () => {
     try {
       const response = await axios.put(
         `${BASE_SERVER_URL}/admin/update/faq/${id}`,
-        data
+        data,
       );
 
       const result = response.data;
@@ -126,7 +126,7 @@ const useUpdateFaq = () => {
       console.error("Error:", error.response?.data || error.message);
       showToast.error(
         error?.response?.data?.message ||
-          "Error occurred while updating this FAQ."
+          "Error occurred while updating this FAQ.",
       );
     }
   };
@@ -137,7 +137,7 @@ const useDeleteFaq = () => {
     try {
       const response = await axios.delete(
         `${BASE_SERVER_URL}/admin/delete/faq/${id}`,
-        {}
+        {},
       );
 
       const result = response.data;

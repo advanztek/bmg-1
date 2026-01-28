@@ -3,13 +3,7 @@ import {
   Grid,
   Box,
   Input,
-  Stack,
-  TextField,
-  Switch,
-  Typography,
-  FormControl,
-  Select,
-  MenuItem,
+  Stack, 
 } from "@mui/material";
 import {
   AddOutlined,
@@ -17,7 +11,12 @@ import {
   VisibilityOutlined,
   ArrowBackOutlined,
 } from "@mui/icons-material";
-import { InputLabel, CustomButton, PagesHeader } from "../../../Component";
+import {
+  InputLabel,
+  CustomButton,
+  PagesHeader,
+  RichTextEditor,
+} from "../../../Component";
 import { styles } from "../../../styles/dashboard";
 import { useNavigate } from "react-router-dom";
 import { showToast } from "../../../utils/toast";
@@ -27,7 +26,6 @@ import { useAddFaqs } from "../../../Hooks/Dashboard/faqs";
 const AddFaq = () => {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
-  const [status, setStatus] = useState("");
 
   const [loading, setLoading] = useState(false);
   const addCategoryFaqs = useAddFaqs();
@@ -36,12 +34,11 @@ const AddFaq = () => {
   const formData = {
     question,
     answer,
-
-    status,
   };
 
-  const handleSubmit = async () => {
-    if (!question.trim() || !answer.trim() || !status) {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!question.trim() || !answer.trim()) {
       showToast.warning("Please fill in all required fields.");
       return;
     }
@@ -56,7 +53,7 @@ const AddFaq = () => {
         setAnswer("");
         setQuestion("");
         setAnswer("");
-        navigate("/dashboard/category-faqs");
+        navigate("/dashboard/admin/faqs");
       }
     } catch (error) {
       showToast.error(error);
@@ -107,9 +104,9 @@ const AddFaq = () => {
               rowSpacing={2}
               columnSpacing={{ xs: 1, sm: 2, md: 3 }}
             >
-              <Grid size={{ xs: 12, md: 6 }}>
+              <Grid size={{ xs: 12, md: 12 }}>
                 <Grid container spacing={2}>
-                  <Grid size={{ xs: 12 }}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <InputLabel text="Question" />
                     <Input
                       disableUnderline
@@ -126,49 +123,14 @@ const AddFaq = () => {
                       }}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, md: 12 }}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <InputLabel text="Answer" />
-                    <TextField
-                      id="content"
-                      multiline
-                      rows={7}
-                      disableUnderline
-                      fullWidth
-                      placeholder="Enter the answer to the question..."
+                    <RichTextEditor
                       value={answer}
-                      onChange={(e) => setAnswer(e.target.value)}
+                      onChange={setAnswer}
+                      placeholder="Enter the answer to the question..."
+                      minHeight="150px"
                     />
-                  </Grid>
-                </Grid>
-              </Grid>
-
-              <Grid size={{ xs: 12, md: 6 }}>
-                <Grid container spacing={2}>
-                  <Grid size={{ xs: 12 }}>
-                    <Box
-                      sx={{
-                        border: "1px solid #e0e0e0",
-                        borderRadius: 2,
-                        p: 3,
-                        bgcolor: "white",
-                        mt: 2,
-                      }}
-                    >
-                      <Typography variant="subtitle1" fontWeight={600} mb={2}>
-                        Category FAQ Status
-                      </Typography>
-                      <Stack direction="row" alignItems="center" spacing={2}>
-                        <Typography variant="body2" fontWeight={500}>
-                          {status ? "Active" : "Inactive"}
-                        </Typography>
-                        <Switch
-                          checked={status}
-                          onChange={(e) => setStatus(e.target.checked)}
-                          disabled={loading}
-                          color="warning"
-                        />
-                      </Stack>
-                    </Box>
                   </Grid>
                 </Grid>
               </Grid>

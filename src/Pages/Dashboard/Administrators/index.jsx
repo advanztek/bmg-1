@@ -15,26 +15,16 @@ import { AddOutlined, VisibilityOutlined } from "@mui/icons-material";
 import { useFetchAdmins } from "../../../Hooks/Dashboard/admins";
 import { formatDate } from "../../../utils/functions";
 import { useNavigate } from "react-router-dom";
-import SingleAdminModal from "./single";
 
 const Administrators = () => {
   const [search, setSearch] = useState();
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
-  const [selectedId, setSelectedId] = useState(null);
 
-  const handleOpen = (id) => {
-    setSelectedId(id);
-    setOpen(true);
+  const handleOpen = (adminId) => {
+    navigate(`/dashboard/single/admin`, { state: { adminId } });
   };
 
-  const handleClose = async () => {
-    setOpen(false);
-    await refetch();
-    setSelectedId(null);
-  };
-
-  const { refetch, admins, loading: adminsLoading } = useFetchAdmins();
+  const { admins, loading: adminsLoading } = useFetchAdmins();
 
   return (
     <div>
@@ -111,8 +101,6 @@ const Administrators = () => {
           )}
         </CustomTable>
       </Box>
-
-      <SingleAdminModal open={open} onClose={handleClose} userId={selectedId} />
     </div>
   );
 };

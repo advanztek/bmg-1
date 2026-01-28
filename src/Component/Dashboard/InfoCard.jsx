@@ -24,7 +24,6 @@ const InfoCard = ({
         overflow: "hidden",
       }}
     >
-      {/* Left colored bar */}
       <Box
         sx={{
           width: "8px",
@@ -44,14 +43,6 @@ const InfoCard = ({
         >
           {icon && (
             <Box sx={styles.iconCon}>
-              {/* <Icon
-                style={styles.icon}
-                sx={{
-                  fontSize: { xs: 30, md: 35 },
-                  color: dbColors.main.default
-                }}
-              /> */}
-
               <EmojiIcon name={icon} style={styles.icon} size={24} />
             </Box>
           )}

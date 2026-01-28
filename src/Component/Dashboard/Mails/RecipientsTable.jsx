@@ -8,7 +8,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  IconButton
+  IconButton,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
@@ -19,6 +19,9 @@ const RecipientsTable = ({ recipients, onRemove }) => {
         <TableHead>
           <TableRow>
             <TableCell>
+              <strong>User</strong>
+            </TableCell>
+            <TableCell>
               <strong>Email</strong>
             </TableCell>
             <TableCell align="right">
@@ -26,24 +29,28 @@ const RecipientsTable = ({ recipients, onRemove }) => {
             </TableCell>
           </TableRow>
         </TableHead>
+
         <TableBody>
           {recipients.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={2} align="center">
+              <TableCell colSpan={3} align="center">
                 <Typography color="text.secondary">
                   No recipients selected
                 </Typography>
               </TableCell>
             </TableRow>
           ) : (
-            recipients.map((email, index) => (
-              <TableRow key={index} hover>
-                <TableCell>{email}</TableCell>
+            recipients.map((user) => (
+              <TableRow key={user.id} hover>
+                <TableCell>
+                  {user.first_name} {user.last_name}
+                </TableCell>
+                <TableCell>{user.email}</TableCell>
                 <TableCell align="right">
                   <IconButton
                     size="small"
                     color="error"
-                    onClick={() => onRemove(email)}
+                    onClick={() => onRemove(user.id)}
                   >
                     <DeleteIcon />
                   </IconButton>

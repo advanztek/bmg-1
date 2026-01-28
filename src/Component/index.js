@@ -64,3 +64,8 @@ export { default as CustomTab } from "./Dashboard/CustomTab";
 export { default as GeneratingLoader } from "./GeneratingLoader";
 export { default as ConfirmDeleteModal } from "./Dashboard/ConfirmDeleteModal";
 export { default as RichTextEditor } from "./Dashboard/RichTextEditor";
+export { default as TimelineCard } from "./Dashboard/TimelineCard";
+export { default as InfoItem } from "./Dashboard/InfoItem";
+export { default as InboxList } from "./Dashboard/Mails/InboxList";
+export { default as RecipientsSelectTable } from "./Dashboard/Mails/RecipientsSelectTable";
+export { default as ConfirmCloseModal } from "./Dashboard/ConfirmCloseModal";

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -297,6 +297,45 @@ function useForgotPassWord() {
   };
 }
 
+function useGetUserSessions() {
+  const { config } = useUserContext();
+  const [loading, setLoading] = useState(false);
+  const [sessions, setSessions] = useState([]);
+
+  const getUserSessions = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `${BASE_SERVER_URL}/auth/active-sessions`,
+        config,
+      );
+
+      const result = response.data;
+      console.log("User Sessions:", result);
+
+      if (result?.code === 0) {
+        setSessions(result.sessions);
+      }
+      return;
+    } catch (error) {
+      console.error("Error:", error.response.data);
+      if (error?.response?.data) {
+        showToast.error(error?.response?.message);
+        return error.response.data;
+      }
+      return;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getUserSessions();
+  }, [config]);
+
+  return { getUserSessions, sessions, loading };
+}
+
 export {
   useRegister,
   useLogin,
@@ -307,4 +346,5 @@ export {
   useResendOTP,
   useLogout,
   useForgotPassWord,
+  useGetUserSessions,
 };

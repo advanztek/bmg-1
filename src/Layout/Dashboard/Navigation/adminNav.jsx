@@ -10,7 +10,7 @@ export const ADMIN_NAV = [
     children: [],
   },
   {
-    label: "Administrators",
+    label: "Administrators and Permissions",
     path: "#",
     icon: EMOJI_ICONS.adminPanel,
     children: [
@@ -19,7 +19,7 @@ export const ADMIN_NAV = [
     ],
   },
   {
-    label: "Manage Roles and Permissions",
+    label: "Manage Admin Roles",
     path: "/dashboard/view/admin-roles",
     icon: EMOJI_ICONS.permissions,
     children: [],
