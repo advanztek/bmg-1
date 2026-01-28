@@ -11,11 +11,16 @@ import {
 } from "@mui/material";
 import { CustomTable, StatusChip, PagesHeader } from "../../../Component";
 import { headers } from "./data";
-import { AddOutlined, VisibilityOutlined } from "@mui/icons-material";
+import {
+  AddOutlined,
+  VisibilityOutlined,
+  EditOutlined,
+} from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { formatDate, truncateText } from "../../../utils/functions";
+import { formatDate, truncateText, stripHtml } from "../../../utils/functions";
 import SingleFaqModal from "./single";
 import { useFetchFaqs } from "../../../Hooks/Dashboard/faqs";
+import EditFaqModal from "./edit";
 
 const FaqsPage = () => {
   const [search, setSearch] = useState();
@@ -23,6 +28,8 @@ const FaqsPage = () => {
 
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
+  const [editModal, setEditModal] = useState(false);
+  const [selectedFaq, setSelectedFaq] = useState(null);
 
   const handleOpen = (id) => {
     setSelectedId(id);
@@ -33,6 +40,17 @@ const FaqsPage = () => {
     setOpen(false);
     await refetch();
     setSelectedId(null);
+  };
+
+  const handleOpenEdit = (id) => {
+    setSelectedFaq(id);
+    setEditModal(true);
+  };
+
+  const handleCloseEdit = async () => {
+    setEditModal(false);
+    await refetch();
+    setSelectedFaq(null);
   };
 
   const { refetch, faqs, loading: faqsLoading } = useFetchFaqs();
@@ -90,7 +108,7 @@ const FaqsPage = () => {
                   }}
                 >
                   <Typography variant="body2" title={row.answer}>
-                    {truncateText(row.question, 80)}
+                    {truncateText(row.question, 30)}
                   </Typography>
                 </TableCell>
                 <TableCell
@@ -102,7 +120,7 @@ const FaqsPage = () => {
                   }}
                 >
                   <Typography variant="body2" title={row.answer}>
-                    {truncateText(row.answer, 80)}
+                    {truncateText(stripHtml(row.answer), 50)}
                   </Typography>
                 </TableCell>
 
@@ -117,9 +135,22 @@ const FaqsPage = () => {
                 </TableCell>
 
                 <TableCell>
-                  <IconButton size="small" onClick={() => handleOpen(row.id)}>
-                    <VisibilityOutlined fontSize="small" />
-                  </IconButton>
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="end"
+                    gap={0.5}
+                  >
+                    <IconButton size="small" onClick={() => handleOpen(row.id)}>
+                      <VisibilityOutlined fontSize="small" />
+                    </IconButton>
+                    <IconButton
+                      size="small"
+                      onClick={() => handleOpenEdit(row.id)}
+                    >
+                      <EditOutlined fontSize="small" />
+                    </IconButton>
+                  </Stack>
                 </TableCell>
               </TableRow>
             ))
@@ -141,6 +172,12 @@ const FaqsPage = () => {
       </Box>
 
       <SingleFaqModal open={open} onClose={handleClose} faqId={selectedId} />
+
+      <EditFaqModal
+        open={editModal}
+        onClose={handleCloseEdit}
+        faqId={selectedFaq}
+      />
     </div>
   );
 };

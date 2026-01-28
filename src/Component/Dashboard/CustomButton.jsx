@@ -29,38 +29,43 @@ const COLORS = {
   },
 };
 
-const StyledButton = styled("button")(
-  ({ colorMode, variant, radius, fullWidth, boxShadow, disabled }) => {
-    const styles = COLORS[colorMode]?.[variant] || {};
+const StyledButton = styled("button")(({
+  colorMode,
+  variant,
+  radius,
+  fullWidth,
+  boxShadow,
+  disabled,
+}) => {
+  const styles = COLORS[colorMode]?.[variant] || {};
 
-    return {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      gap: "0.5rem",
-      padding: "7px 10px",
-      borderRadius: radius || "7px",
-      fontSize: "15px",
-      fontFamily: "Comfortaa",
-      fontWeight: 700,
-      border: `1px solid ${styles.border || "transparent"}`,
-      backgroundColor: styles.bg || "transparent",
-      color: styles.color || "#000",
-      width: fullWidth ? "100%" : "fit-content",
-      boxShadow: boxShadow || "0px 2px 8px rgba(0,0,0,0.1)",
-      cursor: disabled ? "not-allowed" : "pointer",
-      opacity: disabled ? 0.55 : 1,
-      pointerEvents: disabled ? "none" : "auto",
-      transition: "0.25s ease-in-out",
-      "&:hover": disabled
-        ? {}
-        : {
-            opacity: 0.85,
-            transform: "scale(0.98)",
-          },
-    };
-  }
-);
+  return {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "0.5rem",
+    padding: "7px 10px",
+    borderRadius: radius || "7px",
+    fontSize: "15px",
+    fontFamily: "Comfortaa",
+    fontWeight: 700,
+    border: `1px solid ${styles.border || "transparent"}`,
+    backgroundColor: styles.bg || "transparent",
+    color: styles.color || "#000",
+    width: fullWidth ? "100%" : "fit-content",
+    boxShadow: boxShadow || "0px 2px 8px rgba(0,0,0,0.1)",
+    cursor: disabled ? "not-allowed" : "pointer",
+    opacity: disabled ? 0.55 : 1,
+    pointerEvents: disabled ? "none" : "auto",
+    transition: "0.25s ease-in-out",
+    "&:hover": disabled
+      ? {}
+      : {
+          opacity: 0.85,
+          transform: "scale(0.98)",
+        },
+  };
+});
 
 const CustomButton = ({
   title,

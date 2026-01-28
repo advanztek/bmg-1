@@ -108,12 +108,10 @@ function useGetExpert() {
 }
 
 const useUpdateExpertStatus = () => {
-  return async (data, id) => {
-    if (!id || typeof id === "object") {
-      console.error("Invalid expert ID:", id);
-      return;
-    }
+  const [loading, setLoading] = useState(false);
 
+  const updateStatus = async (id, data) => {
+    setLoading(true);
     try {
       const response = await axios.put(
         `${BASE_SERVER_URL}/admin/update/expert/status/${id}`,
@@ -121,17 +119,24 @@ const useUpdateExpertStatus = () => {
       );
 
       const result = response.data;
-      console.log("Update Response:", result);
+      console.log("result res:", result);
 
-      showToast.success(result.message);
-      return result;
+      if (result?.code === 0) {
+        showToast.success(result.message);
+      }
     } catch (error) {
-      console.error("Error:", error.response?.data || error.message);
-      showToast.error(
-        error?.response?.data?.message || "Error occurred while updating.",
-      );
+      console.error("Error:", error.response.data);
+      if (error?.response?.data?.code !== 0) {
+        showToast.error(error.response.data.message);
+      } else {
+        showToast.error("An error occurred while updating service type!");
+      }
+      return false;
+    } finally {
+      setLoading(false);
     }
   };
+  return { updateStatus, loading };
 };
 
 export { useAddExpert, useFetchExperts, useGetExpert, useUpdateExpertStatus };

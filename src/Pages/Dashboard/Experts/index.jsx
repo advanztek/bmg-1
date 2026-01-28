@@ -16,19 +16,31 @@ import {
   PagesHeader,
   InsightPieCard,
   TopRankingExpertsCard,
+  CustomButton,
 } from "../../../Component";
 import { headers } from "./data";
-import { AddOutlined, VisibilityOutlined } from "@mui/icons-material";
+import {
+  AddOutlined,
+  VisibilityOutlined,
+  DoneOutlined,
+  DisabledByDefaultOutlined,
+} from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { useFetchExperts } from "../../../Hooks/Dashboard/experts";
+import {
+  useFetchExperts,
+  useUpdateExpertStatus,
+} from "../../../Hooks/Dashboard/experts";
 import SingleExpertModal from "./single";
+import { showToast } from "../../../utils/toast";
 
 const ExpertsPage = () => {
   const [search, setSearch] = useState();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const [selectedId, setSelectedId] = useState(null);
   const { experts, loading: expertsLoading, refetch } = useFetchExperts();
+  const [selectedId, setSelectedId] = useState(null);
+  const [loadingId, setLoadingId] = useState(null);
+  const { updateStatus, loading: disableLoading } = useUpdateExpertStatus();
 
   const handleOpen = (id) => {
     setSelectedId(id);
@@ -39,6 +51,20 @@ const ExpertsPage = () => {
     setOpen(false);
     await refetch();
     setSelectedId(null);
+  };
+
+  const handleUpdateStatus = (id, status) => async (e) => {
+    e.preventDefault();
+
+    try {
+      setLoadingId(id);
+      await updateStatus(id, { status });
+      await refetch();
+    } catch (error) {
+      showToast.error(error || "Failed to update role");
+    } finally {
+      setLoadingId(null);
+    }
   };
 
   return (
@@ -119,9 +145,50 @@ const ExpertsPage = () => {
                 </TableCell>
 
                 <TableCell>
-                  <IconButton size="small" onClick={() => handleOpen(row.id)}>
-                    <VisibilityOutlined fontSize="small" />
-                  </IconButton>
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="end"
+                    gap={0.5}
+                  >
+                    <IconButton size="small" onClick={() => handleOpen(row.id)}>
+                      <VisibilityOutlined fontSize="small" />
+                    </IconButton>
+
+                    {row.status === 1 ? (
+                      <CustomButton
+                        title={
+                          disableLoading && loadingId === row.id ? (
+                            <CircularProgress size={15} color="inherit" />
+                          ) : (
+                            "Disable"
+                          )
+                        }
+                        color="danger"
+                        variant="filled"
+                        startIcon={<DisabledByDefaultOutlined />}
+                        sx={{ textTransform: "none", px: 1 }}
+                        onClick={handleUpdateStatus(row.id, false)}
+                        disabled={disableLoading && loadingId === row.id}
+                      />
+                    ) : (
+                      <CustomButton
+                        title={
+                          disableLoading && loadingId === row.id ? (
+                            <CircularProgress size={15} color="inherit" />
+                          ) : (
+                            "Enable"
+                          )
+                        }
+                        startIcon={<DoneOutlined />}
+                        color="success"
+                        variant="filled"
+                        sx={{ textTransform: "none", px: 1 }}
+                        onClick={handleUpdateStatus(row.id, true)}
+                        disabled={disableLoading && loadingId === row.id}
+                      />
+                    )}
+                  </Stack>
                 </TableCell>
               </TableRow>
             ))

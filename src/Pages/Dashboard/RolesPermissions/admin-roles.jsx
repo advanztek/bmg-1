@@ -98,9 +98,9 @@ const AdminRoles = () => {
             onClick: () => navigate("/dashboard/add/admin-roles"),
           },
           {
-            label: "Manage Permissions",
+            label: "Manage Administrators",
             icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/manage/admin-permissions"),
+            onClick: () => navigate("/dashboard/view/admins"),
           },
         ]}
       />

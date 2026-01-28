@@ -9,7 +9,12 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { CustomTable, StatusChip, PagesHeader, CustomButton } from "../../../Component";
+import {
+  CustomTable,
+  StatusChip,
+  PagesHeader,
+  CustomButton,
+} from "../../../Component";
 import { headers } from "./data";
 import {
   AddOutlined,
@@ -19,11 +24,13 @@ import {
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { formatDate } from "../../../utils/functions";
-import { useFetchServiceTypes, useUpdateServiceType } from "../../../Hooks/Dashboard/service_types";
+import {
+  useFetchServiceTypes,
+  useUpdateServiceType,
+} from "../../../Hooks/Dashboard/service_types";
 import { truncateText, stripHtml } from "../../../utils/functions";
 import ServiceTypeModal from "./single";
 import { showToast } from "../../../utils/toast";
-
 
 const ServiceTypesPage = () => {
   const [search, setSearch] = useState();
@@ -50,20 +57,19 @@ const ServiceTypesPage = () => {
     setSelectedId(null);
   };
 
-   const handleDisableType = (id, status) => async (e) => {
-      e.preventDefault();
-  
-      try {
-        setLoadingId(id);
-        await updateStatus(id, { status });
-        await refetch();
-      } catch (error) {
-        showToast.error(error || "Failed to update role");
-      } finally {
-        setLoadingId(null);
-      }
-    };
-  
+  const handleDisableType = (id, status) => async (e) => {
+    e.preventDefault();
+
+    try {
+      setLoadingId(id);
+      await updateStatus(id, { status });
+      await refetch();
+    } catch (error) {
+      showToast.error(error || "Failed to update role");
+    } finally {
+      setLoadingId(null);
+    }
+  };
 
   return (
     <div>

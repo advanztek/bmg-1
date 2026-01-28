@@ -8,7 +8,7 @@ import {
   ListItemText,
   IconButton,
   Badge,
-  Collapse
+  Collapse,
 } from "@mui/material";
 import MailIcon from "@mui/icons-material/Mail";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
@@ -18,15 +18,19 @@ const SideBar = ({ mailCount = 0 }) => {
   const [open, setOpen] = useState(true);
 
   return (
-    <Card sx={{ height: "100vh", }}>
+    <Card sx={{ height: "100vh" }}>
       <CardHeader
         title="Folders"
         action={
           <IconButton onClick={() => setOpen(!open)} size="small">
-            {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            {open ? (
+              <ExpandLessIcon sx={{ color: "#fff" }} />
+            ) : (
+              <ExpandMoreIcon sx={{ color: "#fff" }} />
+            )}
           </IconButton>
         }
-        sx={{ bgcolor: "grey.100" }}
+        sx={{ bgcolor: "primary.main", color: "primary.contrastText" }}
       />
       <Collapse in={open}>
         <List sx={{ p: 0 }}>
