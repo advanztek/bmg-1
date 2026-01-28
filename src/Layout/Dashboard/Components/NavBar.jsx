@@ -19,8 +19,8 @@ import { useUserContext } from "../../../Contexts";
 import { getTimeGreeting, getFormattedDate } from "../../../utils/functions";
 import CreditBox from "./CreditBox";
 import { useLogout } from "../../../Hooks/auth";
-import { logoutUser } from "../../../store/slices/userSlice";
 import { useDispatch } from "react-redux";
+import { logoutUser } from "../../../store/slices/userSlice";
 
 function NavBar({ sideNavWidth, layoutPadding, navHeight, onMenuClick }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -96,7 +96,7 @@ function NavBar({ sideNavWidth, layoutPadding, navHeight, onMenuClick }) {
               color="#000"
               textTransform={"capitalize"}
             >
-              {getTimeGreeting()}, {userInfo.last_name}
+              {getTimeGreeting()}, {userInfo?.last_name}
             </Typography>
             <WavingHandOutlined
               sx={{
@@ -113,7 +113,7 @@ function NavBar({ sideNavWidth, layoutPadding, navHeight, onMenuClick }) {
       </Stack>
 
       <Stack direction="row" alignItems="center" gap={{ xs: 2, md: 4 }}>
-        {userInfo.role === 3 && <CreditBox />}
+        {userInfo?.role === 3 && <CreditBox />}
         <Box onClick={handleNotificationsClick}>
           <MenuBox icon={<Notifications />} count={3} />
         </Box>

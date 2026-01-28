@@ -4,9 +4,10 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { BASE_SERVER_URL } from "../Config/paths";
 import { useDispatch } from "react-redux";
-import { setUser } from "../store/slices/userSlice";
+import { setUser } from "../Store/slices/userSlice";
 import { showToast } from "../utils/toast";
 import { useUserContext } from "../Contexts";
+import { logoutUser } from "../Store/slices/userSlice";
 
 function useRegister() {
   return async (data) => {
@@ -42,7 +43,6 @@ const useVerifyRegisteration = () => {
 
   const verifyEmailOtp = async ({ email, otp, otp_type }) => {
     try {
-      console.log("Verifying OTP for:", { email, otp, otp_type });
       const { data } = await axios.post(`${BASE_SERVER_URL}/auth/verify-user`, {
         email,
         otp,
@@ -96,19 +96,15 @@ function useResendEmailVerificationOtp() {
 
 function useLogin() {
   return async (data) => {
-    console.log("Login data:", data);
     try {
       const response = await axios.post(
         `${BASE_SERVER_URL}/auth/login-user`,
         data,
       );
-      const result = response.data;
+      const result = response?.data;
 
-      console.log("Login result:", result);
-
-      if (result?.error === 0) {
-        showToast.success(result.message);
-        return true;
+      if (result?.error === 0 || result?.code === 3) {
+        return result?.error === 0 ? true : result;
       }
 
       if (result?.error) {
@@ -242,6 +238,7 @@ const useResendOTP = () => {
 
 function useLogout() {
   const { config } = useUserContext();
+  const dispatch = useDispatch();
 
   return async () => {
     try {
@@ -252,13 +249,13 @@ function useLogout() {
       );
 
       const result = response?.data;
-      console.log("Logout Response:", result);
-
+      dispatch(logoutUser());
       if (result.code === 0) {
         return true;
       }
       return false;
     } catch (error) {
+      dispatch(logoutUser());
       const errorMessage =
         error?.response?.data?.message || "Logout failed, please try again.";
 

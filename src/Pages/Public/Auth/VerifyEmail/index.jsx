@@ -6,6 +6,7 @@ import {
   Typography,
   Link,
   CircularProgress,
+  Alert,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { AuthSlider } from "../../../../Component";
@@ -19,12 +20,14 @@ import { showToast } from "../../../../utils/toast";
 import { useLocation, useNavigate } from "react-router-dom";
 import { OTP_MODES } from "../../../../Config/auth/constants";
 import { useLoader } from "../../../../Contexts/LoaderContext";
+import { useUserContext } from "../../../../Contexts";
 
 const VerifyEmailPage = () => {
   const theme = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
   const { showLoader, hideLoader } = useLoader();
+  const { user } = useUserContext();
 
   const { verifyLogin } = useVerifyLogin();
   const { verifyEmailOtp } = useVerifyRegisteration();
@@ -35,6 +38,7 @@ const VerifyEmailPage = () => {
     mode = OTP_MODES.VERIFY_EMAIL,
     email,
     otpMethod,
+    returnTo = '/dashboard', // Get the return path from location state
   } = location.state || {};
 
   const [verificationCode, setVerificationCode] = useState([
@@ -48,6 +52,17 @@ const VerifyEmailPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const [countdown, setCountdown] = useState(0);
+
+  // Redirect after successful authentication
+  useEffect(() => {
+    if (user?.user && mode === OTP_MODES.LOGIN) {
+      // Small delay to ensure authentication state is fully set
+      const timer = setTimeout(() => {
+        navigate(returnTo, { replace: true });
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [user, mode, navigate, returnTo]);
 
   useEffect(() => {
     let timer;
@@ -94,6 +109,8 @@ const VerifyEmailPage = () => {
     setIsSubmitting(true);
     showLoader();
     if (otp.length !== 6) {
+      hideLoader();
+      setIsSubmitting(false);
       return showToast.error("Invalid OTP, Please enter a 6-digit OTP.");
     }
     try {
@@ -103,14 +120,17 @@ const VerifyEmailPage = () => {
           otp: otp,
           otp_type: "login",
         });
+        // After successful login verification, the useEffect hook will handle redirect
+        showToast.success("Login successful! Redirecting...");
       } else if (mode === OTP_MODES.FORGOT_PASSWORD) {
         const success = await verifyOtp(otp, email);
         if (success) {
           setIsSubmitting(false);
-          navigate({
-            pathname: "/(auth)/reset-password",
+          hideLoader();
+          navigate("/reset-password", {
             state: { otp, email },
           });
+          return;
         }
       } else if (mode === OTP_MODES.VERIFY_EMAIL) {
         await verifyEmailOtp({
@@ -118,6 +138,8 @@ const VerifyEmailPage = () => {
           otp: otp,
           otp_type: "registration",
         });
+
+        navigate(returnTo || '/login');
       }
     } catch (error) {
       showToast.error(error || "OTP Verification Failed");
@@ -142,8 +164,9 @@ const VerifyEmailPage = () => {
       }
 
       setCountdown(60);
+      showToast.success("OTP resent successfully!");
     } catch (error) {
-      showToast.show(error || "OTP Resend Failed");
+      showToast.error(error || "OTP Resend Failed");
     }
     setIsResending(false);
   };
@@ -191,6 +214,13 @@ const VerifyEmailPage = () => {
           }}
         >
           <Box sx={{ maxWidth: 450, width: "100%", textAlign: "center" }}>
+            {/* Show message if redirected from checkout */}
+            {returnTo === '/checkout' && mode === OTP_MODES.LOGIN && (
+              <Alert severity="info" sx={{ mb: 2, textAlign: 'left' }}>
+                After verification, you'll be redirected back to checkout.
+              </Alert>
+            )}
+
             <Typography
               variant="h5"
               sx={{
@@ -243,9 +273,8 @@ const VerifyEmailPage = () => {
                     fontSize: { xs: "1.25rem", sm: "1.5rem" },
                     fontWeight: 600,
                     textAlign: "center",
-                    border: `2px solid ${
-                      digit ? theme.palette.primary.main : theme.palette.divider
-                    }`,
+                    border: `2px solid ${digit ? theme.palette.primary.main : theme.palette.divider
+                      }`,
                     borderRadius: 2,
                     outline: "none",
                     transition: "all 0.2s ease",
@@ -276,21 +305,22 @@ const VerifyEmailPage = () => {
               <Link
                 component="button"
                 onClick={handleResendOTP}
+                disabled={countdown > 0 || isResending}
                 sx={{
                   color: theme.palette.primary.main,
                   fontWeight: 600,
                   textDecoration: "none",
-                  cursor: "pointer",
-                  "&:hover": { textDecoration: "underline" },
+                  cursor: countdown > 0 ? "not-allowed" : "pointer",
+                  "&:hover": { textDecoration: countdown > 0 ? "none" : "underline" },
                 }}
               >
                 {isResending ? (
-                  <CircularProgress size={20} color={"#ed6c02"} />
+                  <CircularProgress size={20} color="primary" />
                 ) : (
                   <Typography
                     variant="body2"
                     sx={{
-                      color: countdown > 0 ? "gray" : "#2C3891",
+                      color: countdown > 0 ? "gray" : theme.palette.primary.main,
                       fontSize: "0.875rem",
                       fontWeight: 600,
                     }}
@@ -318,7 +348,7 @@ const VerifyEmailPage = () => {
                 backgroundColor: theme.palette.primary.main,
                 color: theme.palette.primary.contrastText,
                 "&:hover": {
-                  backgroundColor: theme.palette.primary.bg,
+                  backgroundColor: theme.palette.primary.dark,
                 },
                 "&:disabled": {
                   backgroundColor: theme.palette.action.disabledBackground,
@@ -326,7 +356,14 @@ const VerifyEmailPage = () => {
                 },
               }}
             >
-              {isSubmitting ? "VERIFYING..." : "VERIFY EMAIL"}
+              {isSubmitting ? (
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <CircularProgress size={20} color="inherit" />
+                  <span>VERIFYING...</span>
+                </Box>
+              ) : (
+                "VERIFY EMAIL"
+              )}
             </Button>
 
             {/* Back to Login */}

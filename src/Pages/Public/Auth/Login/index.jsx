@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Box,
   Grid,
@@ -12,6 +12,7 @@ import {
   InputAdornment,
   Link,
   CircularProgress,
+  Alert,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { Eye24Regular, EyeOff24Regular } from "@fluentui/react-icons";
@@ -23,10 +24,12 @@ import { signInWithGooglePopup } from "../../../../utils/googleAuth";
 import { useGoogleAuthLogin } from "../../../../Hooks/google_auth";
 import { useLoader } from "../../../../Contexts/LoaderContext";
 import { useUserContext } from "../../../../Contexts";
+import { toast } from "react-toastify";
 
 const LoginPage = () => {
   const theme = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
   const loginUser = useLogin();
   const googleLogin = useGoogleAuthLogin();
   const { hideLoader, showLoader } = useLoader();
@@ -34,6 +37,9 @@ const LoginPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [googleBtnLoading, setGoogleBtnLoading] = useState(false);
+
+  // Get the return path from location state
+  const returnTo = location.state?.returnTo || location.state?.from || '/dashboard';
 
   const [formData, setFormData] = useState({
     email: "",
@@ -48,10 +54,12 @@ const LoginPage = () => {
   const { user } = useUserContext();
 
   useEffect(() => {
+    location.state?.returnTo === '/checkout' && toast.info("Please log in to continue with your checkout.")
     if (user?.user) {
-      navigate('/dashboard');
+      // Redirect to the return path if user is already authenticated
+      navigate(returnTo);
     }
-  }, [user, navigate])
+  }, [user, navigate, returnTo, location.state?.returnTo]);
 
   const handleChange = (field) => (event) => {
     const value =
@@ -148,6 +156,9 @@ const LoginPage = () => {
       const googleAccessToken = await signInWithGooglePopup();
 
       await googleLogin(googleAccessToken);
+
+      // After successful Google login, redirect to return path
+      // Note: The useEffect hook will handle the redirect when user context updates
     } catch (error) {
       console.error("Google sign-in error:", error);
     } finally {
@@ -176,8 +187,9 @@ const LoginPage = () => {
         navigate("/verify-email", {
           state: {
             email: formData.email,
-            otpMethod: "login",
-            mode: OTP_MODES.LOGIN
+            otpMethod: response?.code ? "verify-email" : "login",
+            mode: response?.code ? OTP_MODES.VERIFY_EMAIL : OTP_MODES.LOGIN,
+            returnTo: returnTo // Pass the return path to the OTP verification page
           }
         });
       }
@@ -255,6 +267,13 @@ const LoginPage = () => {
           }}
         >
           <Box sx={{ maxWidth: 450, width: "100%" }}>
+            {/* Show message if redirected from checkout */}
+            {location.state?.returnTo === '/checkout' && (
+              <Alert severity="info" sx={{ mb: 2 }}>
+                Please log in to continue with your checkout.
+              </Alert>
+            )}
+
             <Typography
               variant="h5"
               sx={{
