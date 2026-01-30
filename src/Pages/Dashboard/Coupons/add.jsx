@@ -4,78 +4,72 @@ import {
   Box,
   Input,
   Stack,
-  Switch,
-  TextField,
-  Typography,
-  Chip,
   MenuItem,
   Select,
-  FormControl
+  FormControl,
 } from "@mui/material";
-import { toast } from "react-toastify";
 import {
   AddOutlined,
   DeleteOutlined,
   VisibilityOutlined,
-  ArrowBackOutlined
+  ArrowBackOutlined,
 } from "@mui/icons-material";
 import { InputLabel, CustomButton, PagesHeader } from "../../../Component";
 import { styles } from "../../../styles/dashboard";
 import { useNavigate } from "react-router-dom";
 import { discountTypes } from "./data";
 import { useCreateCoupon } from "../../../Hooks/Dashboard/coupons";
+import { useLoader } from "../../../Contexts/LoaderContext";
+import { showToast } from "../../../utils/toast";
 
 const AddCoupon = () => {
-  const [code, setCode] = useState("");
   const [validFrom, setValidFrom] = useState("");
-  const [validTo, setValidTo] = useState([]);
+  const [validTo, setValidTo] = useState("");
   const [discount, setDiscount] = useState("");
   const [maxDiscount, setMaxDiscount] = useState("");
-  const [mode, setMode] = useState(true);
-  const [reusability, setReusability] = useState("");
   const [type, setType] = useState("");
 
   const [loading, setLoading] = useState(false);
   const createCoupon = useCreateCoupon();
   const navigate = useNavigate();
+  const { showLoader, hideLoader } = useLoader();
 
   const formData = {
-    code,
-    validFrom,
-    validTo,
-    reusability,
-    discount
+    start_date: validFrom,
+    end_date: validTo,
+    discount_max_amount: maxDiscount,
+    discount_value: discount,
+    discount_type: type,
   };
 
-  const handleSubmitAdmin = async () => {
-    if (
-      !code.trim() ||
-      !validFrom.trim() ||
-      reusability.length === 0 ||
-      !validTo
-    ) {
-      toast.error("Please fill in all required fields.");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validTo.trim() || !validFrom.trim() || !discount || !type) {
+      showToast.warning("Please fill in all required fields.");
       return;
     }
+    console.log("sending data:", formData);
 
     setLoading(true);
+    showLoader("Creating Coupon...");
     try {
       const response = await createCoupon(formData);
 
       if (response) {
-        toast.success("Category added successfully!");
-        setCode("");
+        showToast.success("Coupon created successfully!");
         setValidFrom("");
-        setValidTo([]);
-        setReusability(true);
+        setValidTo("");
         setType("");
         setDiscount("");
         setMaxDiscount("");
+        navigate("/dashboard/admin/coupons");
       }
     } catch (error) {
-      toast.error(error);
+      console.error("Coupon creation failed:", error);
+      showToast.error("An error occured while creating coupon ");
     } finally {
       setLoading(false);
+      hideLoader();
     }
   };
 
@@ -90,18 +84,18 @@ const AddCoupon = () => {
           {
             label: "View Coupons",
             icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/admin/coupons")
+            onClick: () => navigate("/dashboard/admin/coupons"),
           },
           {
             label: "Add Gifts",
             icon: <AddOutlined />,
-            onClick: () => navigate("/dashboard/admin/add/gifts")
+            onClick: () => navigate("/dashboard/admin/add/gifts"),
           },
           {
             label: "View Orders",
             icon: <AddOutlined />,
-            onClick: () => navigate("/dashboard/admin/orders")
-          }
+            onClick: () => navigate("/dashboard/admin/orders"),
+          },
         ]}
       />
 
@@ -113,29 +107,12 @@ const AddCoupon = () => {
               borderRadius: 2,
               p: 3,
               bgcolor: "white",
-              mt: 2
+              mt: 2,
             }}
           >
             <Grid container spacing={3}>
               <Grid size={{ xs: 12, md: 6 }}>
                 <Grid container spacing={2}>
-                  <Grid size={{ xs: 12 }}>
-                    <InputLabel text="Code" />
-                    <Input
-                      disableUnderline
-                      fullWidth
-                      placeholder="Enter coupon code"
-                      value={code}
-                      onChange={(e) => setCode(e.target.value)}
-                      sx={{
-                        border: "1px solid #e0e0e0",
-                        borderRadius: 1,
-                        px: 2,
-                        py: 1.5,
-                        fontSize: "14px"
-                      }}
-                    />
-                  </Grid>
                   <Grid size={{ xs: 12 }}>
                     <InputLabel text="Valid From" />
                     <Input
@@ -149,7 +126,7 @@ const AddCoupon = () => {
                         borderRadius: 1,
                         px: 2,
                         py: 1.5,
-                        fontSize: "14px"
+                        fontSize: "14px",
                       }}
                     />
                   </Grid>
@@ -166,7 +143,7 @@ const AddCoupon = () => {
                         borderRadius: 1,
                         px: 2,
                         py: 1.5,
-                        fontSize: "14px"
+                        fontSize: "14px",
                       }}
                     />
                   </Grid>
@@ -184,8 +161,8 @@ const AddCoupon = () => {
                         </MenuItem>
 
                         {discountTypes.map((type, i) => (
-                          <MenuItem key={i} value={type.category}>
-                            {type.category}
+                          <MenuItem key={i} value={type.value}>
+                            {type.label}
                           </MenuItem>
                         ))}
                       </Select>
@@ -201,14 +178,15 @@ const AddCoupon = () => {
                     <Input
                       disableUnderline
                       fullWidth
-                      value={reusability}
-                      onChange={(e) => setReusability(e.target.value)}
+                      type="number"
+                      value={discount}
+                      onChange={(e) => setDiscount(e.target.value)}
                       sx={{
                         border: "1px solid #e0e0e0",
                         borderRadius: 1,
                         px: 2,
                         py: 1.5,
-                        fontSize: "14px"
+                        fontSize: "14px",
                       }}
                     />
                   </Grid>
@@ -217,6 +195,7 @@ const AddCoupon = () => {
                     <Input
                       disableUnderline
                       fullWidth
+                      type="number"
                       value={maxDiscount}
                       onChange={(e) => setMaxDiscount(e.target.value)}
                       sx={{
@@ -224,35 +203,9 @@ const AddCoupon = () => {
                         borderRadius: 1,
                         px: 2,
                         py: 1.5,
-                        fontSize: "14px"
+                        fontSize: "14px",
                       }}
                     />
-                  </Grid>
-                  <Grid size={{ xs: 12, md: 12 }}>
-                    <Box
-                      sx={{
-                        border: "1px solid #e0e0e0",
-                        borderRadius: 2,
-                        p: 3,
-                        bgcolor: "white",
-                        mt: 3
-                      }}
-                    >
-                      <Typography variant="subtitle1" fontWeight={600} mb={2}>
-                        Mode
-                      </Typography>
-                      <Stack direction="row" alignItems="center" spacing={2}>
-                        <Typography variant="body2" fontWeight={500}>
-                          {mode ? "ON" : "OFF"}
-                        </Typography>
-                        <Switch
-                          checked={mode}
-                          onChange={(e) => setMode(e.target.checked)}
-                          disabled={loading}
-                          color="warning"
-                        />
-                      </Stack>
-                    </Box>
                   </Grid>
                 </Grid>
               </Grid>
@@ -289,7 +242,7 @@ const AddCoupon = () => {
                     color="primary"
                     variant="filled"
                     disabled={loading}
-                    onClick={handleSubmitAdmin}
+                    onClick={handleSubmit}
                     sx={{ textTransform: "none", px: 4 }}
                   />
                 </Stack>

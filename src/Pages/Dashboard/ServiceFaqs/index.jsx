@@ -9,19 +9,26 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { CustomTable, StatusChip, PagesHeader } from "../../../Component";
+import { CustomTable, PagesHeader } from "../../../Component";
 import { headers } from "./data";
-import { AddOutlined, VisibilityOutlined } from "@mui/icons-material";
+import {
+  AddOutlined,
+  VisibilityOutlined,
+  EditOutlined,
+} from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useFetchServiceFaqs } from "../../../Hooks/Dashboard/service_faqs";
-import { formatDate, truncateText } from "../../../utils/functions";
+import { formatDate, truncateText, stripHtml } from "../../../utils/functions";
 import SingleServiceFaqModal from "./single";
+import EditServiceFaqModal from "./edit";
 
 const ServiceFaqsPage = () => {
   const [search, setSearch] = useState();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
+  const [editModal, setEditModal] = useState(false);
+  const [selectedFaq, setSelectedFaq] = useState(null);
 
   const handleOpen = (id) => {
     setSelectedId(id);
@@ -32,6 +39,17 @@ const ServiceFaqsPage = () => {
     setOpen(false);
     await refetch();
     setSelectedId(null);
+  };
+
+  const handleOpenEdit = (id) => {
+    setSelectedFaq(id);
+    setEditModal(true);
+  };
+
+  const handleCloseEdit = async () => {
+    setEditModal(false);
+    await refetch();
+    setSelectedFaq(null);
   };
 
   const {
@@ -88,7 +106,7 @@ const ServiceFaqsPage = () => {
                   }}
                 >
                   <Typography variant="body2" title={row.answer}>
-                    {truncateText(row.question, 80)}
+                    {truncateText(row.question, 30)}
                   </Typography>
                 </TableCell>
                 <TableCell
@@ -100,7 +118,7 @@ const ServiceFaqsPage = () => {
                   }}
                 >
                   <Typography variant="body2" title={row.answer}>
-                    {truncateText(row.answer, 80)}
+                    {truncateText(stripHtml(row.answer), 50)}
                   </Typography>
                 </TableCell>
                 <TableCell>{row.service_name}</TableCell>
@@ -109,9 +127,22 @@ const ServiceFaqsPage = () => {
                 <TableCell>{formatDate(row.updated_at)}</TableCell>
 
                 <TableCell>
-                  <IconButton size="small" onClick={() => handleOpen(row.id)}>
-                    <VisibilityOutlined fontSize="small" />
-                  </IconButton>
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="end"
+                    gap={0.5}
+                  >
+                    <IconButton size="small" onClick={() => handleOpen(row.id)}>
+                      <VisibilityOutlined fontSize="small" />
+                    </IconButton>
+                    <IconButton
+                      size="small"
+                      onClick={() => handleOpenEdit(row.id)}
+                    >
+                      <EditOutlined fontSize="small" />
+                    </IconButton>
+                  </Stack>
                 </TableCell>
               </TableRow>
             ))
@@ -135,7 +166,13 @@ const ServiceFaqsPage = () => {
       <SingleServiceFaqModal
         open={open}
         onClose={handleClose}
-        serviceId={selectedId}
+        faqId={selectedId}
+      />
+
+      <EditServiceFaqModal
+        open={editModal}
+        onClose={handleCloseEdit}
+        faqId={selectedFaq}
       />
     </div>
   );

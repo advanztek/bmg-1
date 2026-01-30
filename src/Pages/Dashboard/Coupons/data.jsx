@@ -10,6 +10,6 @@ export const headers = [
 ];
 
 export const discountTypes = [
-  { id: 1, type: "Percentage" },
-  { id: 5, type: "Amount" },
+  { value: "percentage", label: "Percentage" },
+  { value: "fixed", label: "Fixed" },
 ];

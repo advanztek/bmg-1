@@ -7,71 +7,70 @@ import {
   Button,
   Card,
   CardContent,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
   Alert,
   Grid,
   Chip,
   Stack,
-  InputAdornment
+  InputAdornment,
+  Collapse,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogActions,
+  CircularProgress,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import AddIcon from "@mui/icons-material/Add";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
-import MailIcon from "@mui/icons-material/Mail";
 import SubjectIcon from "@mui/icons-material/Subject";
-import EditIcon from "@mui/icons-material/Edit";
 import CloseIcon from "@mui/icons-material/Close";
 import {
   RecipientsTable,
   UserSearch,
   SideBar,
   CustomButton,
-  PagesHeader
+  PagesHeader,
+  RichTextEditor,
+  InboxList,
+  RecipientsSelectTable,
 } from "../../../Component";
 import {
   AddOutlined,
   MailOutlined,
   VisibilityOutlined,
-  PeopleOutlined
+  PeopleOutlined,
+  ExpandMore,
+  ExpandLess,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { useFetchMailRecipients } from "../../../Hooks/Dashboard/mails";
+import { showToast } from "../../../utils/toast";
+import { useLoader } from "../../../Contexts/LoaderContext";
+import { useSendMails } from "../../../Hooks/Dashboard/mails";
 
-// Main Compose Component
 const ComposeMailPage = () => {
+  const [recipientModalOpen, setRecipientModalOpen] = useState(false);
   const [selectedRecipients, setSelectedRecipients] = useState([]);
-  const [selectedUser, setSelectedUser] = useState("");
   const [subject, setSubject] = useState("");
   const [content, setContent] = useState("");
   const [attachment, setAttachment] = useState(null);
   const [errors, setErrors] = useState([]);
   const [search, setSearch] = useState("");
+  const [view, setView] = useState("compose");
+  const [showRecipients, setShowRecipients] = useState(false);
+  const { showLoader, hideLoader } = useLoader();
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  const allUsers = [
-    { email: "user1@example.com" },
-    { email: "user2@example.com" },
-    { email: "user3@example.com" },
-    { email: "admin@example.com" },
-    { email: "john.doe@company.com" }
-  ];
+  const { recipients, loading: recipientsLoading } = useFetchMailRecipients();
+  const sendMail = useSendMails();
 
-  const handleAddRecipient = () => {
-    if (selectedUser && !selectedRecipients.includes(selectedUser)) {
-      setSelectedRecipients([...selectedRecipients, selectedUser]);
-      setSelectedUser("");
-    }
-  };
+  console.log("Mail Recipients:", recipients);
 
   const handleSendToAll = () => {
-    const allEmails = allUsers.map((user) => user.email);
+    const allEmails = recipients.map((user) => user.email);
     setSelectedRecipients(allEmails);
-  };
-
-  const handleRemoveRecipient = (email) => {
-    setSelectedRecipients(selectedRecipients.filter((e) => e !== email));
+    showToast.info(`Sending Mail to ${selectedRecipients.length} Users`);
   };
 
   const handleAddFromSearch = (email) => {
@@ -89,7 +88,16 @@ const ComposeMailPage = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const formData = {
+    title: subject,
+    content,
+    attachment,
+    recipients: selectedRecipients,
+  };
+
+  console.log("sending res:", formData);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = [];
     if (selectedRecipients.length === 0)
@@ -102,20 +110,31 @@ const ComposeMailPage = () => {
       return;
     }
 
-    console.log("Sending email:", {
-      selectedRecipients,
-      subject,
-      content,
-      attachment
-    });
-    setErrors([]);
-    // Reset after successful submission
-    alert("Email sent successfully!");
+    setLoading(true);
+    showLoader("Sendingm Mail...");
+
+    try {
+      const response = await sendMail(formData);
+
+      if (response) {
+        showToast.success("Method added successfully!");
+        setSelectedRecipients([]);
+        setSubject("");
+        setContent("");
+        setAttachment(null);
+        setErrors([]);
+        navigate("/dashboard/manage/payment-methods");
+      }
+    } catch (error) {
+      showToast.error(error);
+    } finally {
+      setLoading(false);
+      hideLoader();
+    }
   };
 
   const handleDiscard = () => {
     setSelectedRecipients([]);
-    setSelectedUser("");
     setSubject("");
     setContent("");
     setAttachment(null);
@@ -135,18 +154,18 @@ const ComposeMailPage = () => {
           {
             label: "View Notifications",
             icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/admin/notifications")
+            onClick: () => navigate("/dashboard/admin/notifications"),
           },
           {
             label: "View Orders",
             icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/admin/orders")
+            onClick: () => navigate("/dashboard/admin/orders"),
           },
           {
             label: "Add Service",
             icon: <AddOutlined />,
-            onClick: () => navigate("/dashboard/admin/add/services")
-          }
+            onClick: () => navigate("/dashboard/admin/add/services"),
+          },
         ]}
       />
       <Box sx={{ minHeight: "100vh", py: 4 }}>
@@ -172,203 +191,219 @@ const ComposeMailPage = () => {
             {/* SideBar */}
             <Grid size={{ xs: 12, md: 3 }}>
               <CustomButton
-                title={"Go To Inbox"}
+                title={view === "compose" ? "Go To Inbox" : "Compose Mail"}
                 fullWidth
                 variant="filled"
                 color="primary"
                 endIcon={<MailOutlined />}
                 style={{ marginBottom: "10px", py: 2 }}
+                onClick={() =>
+                  view === "compose" ? setView("inbox") : setView("compose")
+                }
               />
+
               <SideBar mailCount={12} />
             </Grid>
 
             {/* Main Content */}
-            <Grid size={{ xs: 12, md: 9 }}>
-              <Card>
-                <Box
-                  sx={{
-                    p: 2,
-                    color: "#000000",
-                    m: 2
-                  }}
-                >
-                  <Typography variant="h3" fontWeight={600}>
-                    Compose New Message
-                  </Typography>
-                </Box>
+            {view === "compose" ? (
+              <Grid size={{ xs: 12, md: 9 }}>
+                <Card>
+                  <Box
+                    sx={{
+                      p: 2,
+                      color: "#000000",
+                      m: 2,
+                    }}
+                  >
+                    <Typography variant="h3" fontWeight={600}>
+                      Compose New Message
+                    </Typography>
+                  </Box>
 
-                <CardContent sx={{ p: 4 }}>
-                  <Box component="div" onSubmit={handleSubmit}>
-                    {/* Search Users */}
-                    <UserSearch onAddUser={handleAddFromSearch} />
+                  <CardContent sx={{ p: 4 }}>
+                    <Box component="div" onSubmit={handleSubmit}>
+                      {/* Search Users */}
+                      <UserSearch onAddUser={handleAddFromSearch} />
 
-                    {/* Select Recipients */}
-                    <Box sx={{ mb: 3 }}>
-                      <FormControl fullWidth sx={{ mb: 2 }}>
-                        <InputLabel id="select-recipients-label">
-                          Select Recipients
-                        </InputLabel>
-                        <Select
-                          labelId="select-recipients-label"
-                          value={selectedUser}
-                          onChange={(e) => setSelectedUser(e.target.value)}
-                          label="Select Recipients"
-                          startAdornment={
-                            <InputAdornment position="start">
-                              <PeopleOutlined />
-                            </InputAdornment>
-                          }
-                        >
-                          <MenuItem value="" disabled>
+                      {/* Select Recipients */}
+                      <Box sx={{ mb: 3 }}>
+                        <Stack direction="row" spacing={2}>
+                          <Button
+                            variant="outlined"
+                            startIcon={<PeopleOutlined />}
+                            onClick={() => setRecipientModalOpen(true)}
+                          >
                             Select Recipients
-                          </MenuItem>
-                          {allUsers.map((user, index) => (
-                            <MenuItem key={index} value={user.email}>
-                              {user.email}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                      <Stack direction="row" spacing={2}>
+                          </Button>
+                          <Button
+                            variant="contained"
+                            color="success"
+                            startIcon={<PeopleOutlined />}
+                            onClick={handleSendToAll}
+                          >
+                            Send to All Users
+                          </Button>
+                        </Stack>
+                      </Box>
+
+                      {/* Selected Recipients */}
+                      <Box sx={{ mb: 3 }}>
+                        <Stack
+                          direction="row"
+                          justifyContent="space-between"
+                          alignItems="center"
+                          onClick={() => setShowRecipients(!showRecipients)}
+                          sx={{ cursor: "pointer" }}
+                        >
+                          <Typography fontWeight={600}>
+                            Selected Recipients ({selectedRecipients.length})
+                          </Typography>
+                          {showRecipients ? <ExpandLess /> : <ExpandMore />}
+                        </Stack>
+
+                        <Collapse in={showRecipients}>
+                          <RecipientsTable
+                            recipients={selectedRecipients}
+                            onRemove={(id) =>
+                              setSelectedRecipients((prev) =>
+                                prev.filter((u) => u.id !== id),
+                              )
+                            }
+                          />
+                        </Collapse>
+                      </Box>
+
+                      {/* Subject */}
+                      <TextField
+                        fullWidth
+                        label="Subject"
+                        value={subject}
+                        onChange={(e) => setSubject(e.target.value)}
+                        sx={{ mb: 3 }}
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <SubjectIcon />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+
+                      {/* Content */}
+                      <RichTextEditor
+                        value={content}
+                        onChange={setContent}
+                        placeholder="Enter service type description..."
+                        minHeight="300px"
+                        maxHeight="500px"
+                      />
+
+                      {/* Attachment */}
+                      <Box sx={{ mb: 3 }}>
+                        <Typography
+                          variant="subtitle1"
+                          sx={{ mb: 1, fontWeight: 500 }}
+                        >
+                          <AttachFileIcon
+                            sx={{ mr: 1, verticalAlign: "middle" }}
+                          />
+                          Attachment
+                        </Typography>
+                        <Button
+                          variant="outlined"
+                          component="label"
+                          startIcon={<AttachFileIcon />}
+                        >
+                          Choose File
+                          <input
+                            type="file"
+                            hidden
+                            onChange={handleFileChange}
+                          />
+                        </Button>
+                        {attachment && (
+                          <Chip
+                            label={attachment.name}
+                            onDelete={() => setAttachment(null)}
+                            sx={{ ml: 2 }}
+                          />
+                        )}
+                        <Typography
+                          variant="caption"
+                          display="block"
+                          sx={{ mt: 1, color: "text.secondary" }}
+                        >
+                          Max. 32MB
+                        </Typography>
+                      </Box>
+
+                      {/* Actions */}
+                      <Stack
+                        direction="row"
+                        spacing={2}
+                        sx={{ pt: 2, borderTop: 1, borderColor: "divider" }}
+                      >
                         <Button
                           variant="contained"
-                          startIcon={<AddIcon />}
-                          onClick={handleAddRecipient}
+                          color="inherit"
+                          startIcon={<CloseIcon />}
+                          onClick={handleDiscard}
+                          sx={{
+                            bgcolor: "grey.800",
+                            "&:hover": { bgcolor: "grey.900" },
+                          }}
                         >
-                          Add
+                          Discard
                         </Button>
-                        <Button
-                          variant="contained"
-                          color="success"
-                          startIcon={<PeopleOutlined />}
-                          onClick={handleSendToAll}
-                        >
-                          Send to All Users
-                        </Button>
+
+                        <CustomButton
+                          title={loading ? "Sending..." : "Send"}
+                          color="primary"
+                          variant="filled"
+                          startIcon={
+                            loading ? <CircularProgress /> : <SendIcon />
+                          }
+                          disabled={loading}
+                          onClick={handleSubmit}
+                          sx={{ textTransform: "none", px: 4 }}
+                        />
                       </Stack>
                     </Box>
-
-                    {/* Selected Recipients */}
-                    <Box sx={{ mb: 3 }}>
-                      <Typography
-                        variant="subtitle1"
-                        sx={{ mb: 2, fontWeight: 500 }}
-                      >
-                        <MailIcon sx={{ mr: 1, verticalAlign: "middle" }} />
-                        Selected Recipients:
-                      </Typography>
-                      <RecipientsTable
-                        recipients={selectedRecipients}
-                        onRemove={handleRemoveRecipient}
-                      />
-                    </Box>
-
-                    {/* Subject */}
-                    <TextField
-                      fullWidth
-                      label="Subject"
-                      value={subject}
-                      onChange={(e) => setSubject(e.target.value)}
-                      sx={{ mb: 3 }}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <SubjectIcon />
-                          </InputAdornment>
-                        )
-                      }}
-                    />
-
-                    {/* Content */}
-                    <TextField
-                      fullWidth
-                      label="Compose"
-                      multiline
-                      rows={12}
-                      value={content}
-                      onChange={(e) => setContent(e.target.value)}
-                      sx={{ mb: 3 }}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment
-                            position="start"
-                            sx={{ alignSelf: "flex-start", mt: 1 }}
-                          >
-                            <EditIcon />
-                          </InputAdornment>
-                        )
-                      }}
-                    />
-
-                    {/* Attachment */}
-                    <Box sx={{ mb: 3 }}>
-                      <Typography
-                        variant="subtitle1"
-                        sx={{ mb: 1, fontWeight: 500 }}
-                      >
-                        <AttachFileIcon
-                          sx={{ mr: 1, verticalAlign: "middle" }}
-                        />
-                        Attachment
-                      </Typography>
-                      <Button
-                        variant="outlined"
-                        component="label"
-                        startIcon={<AttachFileIcon />}
-                      >
-                        Choose File
-                        <input type="file" hidden onChange={handleFileChange} />
-                      </Button>
-                      {attachment && (
-                        <Chip
-                          label={attachment.name}
-                          onDelete={() => setAttachment(null)}
-                          sx={{ ml: 2 }}
-                        />
-                      )}
-                      <Typography
-                        variant="caption"
-                        display="block"
-                        sx={{ mt: 1, color: "text.secondary" }}
-                      >
-                        Max. 32MB
-                      </Typography>
-                    </Box>
-
-                    {/* Actions */}
-                    <Stack
-                      direction="row"
-                      spacing={2}
-                      sx={{ pt: 2, borderTop: 1, borderColor: "divider" }}
-                    >
-                      <Button
-                        variant="contained"
-                        color="inherit"
-                        startIcon={<CloseIcon />}
-                        onClick={handleDiscard}
-                        sx={{
-                          bgcolor: "grey.800",
-                          "&:hover": { bgcolor: "grey.900" }
-                        }}
-                      >
-                        Discard
-                      </Button>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        startIcon={<SendIcon />}
-                        onClick={handleSubmit}
-                      >
-                        Send
-                      </Button>
-                    </Stack>
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ) : (
+              <InboxList />
+            )}
           </Grid>
         </Container>
       </Box>
+      <Dialog
+        open={recipientModalOpen}
+        onClose={() => setRecipientModalOpen(false)}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle>Select Users</DialogTitle>
+
+        <DialogContent>
+          <RecipientsSelectTable
+            selected={selectedRecipients}
+            onToggleUser={(user) => {
+              setSelectedRecipients((prev) =>
+                prev.some((u) => u.id === user.id)
+                  ? prev.filter((u) => u.id !== user.id)
+                  : [...prev, user],
+              );
+            }}
+          />
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={() => setRecipientModalOpen(false)}>Done</Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

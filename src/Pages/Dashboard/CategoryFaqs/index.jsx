@@ -17,7 +17,7 @@ import {
   VisibilityOutlined,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { formatDate, truncateText } from "../../../utils/functions";
+import { formatDate, truncateText, stripHtml } from "../../../utils/functions";
 import { useFetchCategoryFaqs } from "../../../Hooks/Dashboard/category_faq";
 import SingleCategoryFaqModal from "./single";
 import EditCategoryFaqModal from "./edit";
@@ -102,7 +102,7 @@ const CategoryFaqPage = () => {
                   }}
                 >
                   <Typography variant="body2" title={row.answer}>
-                    {truncateText(row.question, 80)}
+                    {truncateText(row.question, 30)}
                   </Typography>
                 </TableCell>
                 <TableCell
@@ -114,7 +114,7 @@ const CategoryFaqPage = () => {
                   }}
                 >
                   <Typography variant="body2" title={row.answer}>
-                    {truncateText(row.answer, 80)}
+                    {truncateText(stripHtml(row.answer), 50)}
                   </Typography>
                 </TableCell>
                 <TableCell>{row.category_name}</TableCell>

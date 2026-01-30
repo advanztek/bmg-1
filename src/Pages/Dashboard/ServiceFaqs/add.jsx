@@ -5,8 +5,6 @@ import {
   Input,
   Stack,
   TextField,
-  Switch,
-  Typography,
   FormControl,
   Select,
   MenuItem,
@@ -17,7 +15,12 @@ import {
   VisibilityOutlined,
   ArrowBackOutlined,
 } from "@mui/icons-material";
-import { InputLabel, CustomButton, PagesHeader } from "../../../Component";
+import {
+  InputLabel,
+  CustomButton,
+  PagesHeader,
+  RichTextEditor,
+} from "../../../Component";
 import { styles } from "../../../styles/dashboard";
 import { useNavigate } from "react-router-dom";
 import { showToast } from "../../../utils/toast";
@@ -130,15 +133,11 @@ const AddServiceFaqs = () => {
                   </Grid>
                   <Grid size={{ xs: 12, md: 12 }}>
                     <InputLabel text="Answer" />
-                    <TextField
-                      id="content"
-                      multiline
-                      rows={7}
-                      disableUnderline
-                      fullWidth
-                      placeholder="Enter the answer to the question..."
+                    <RichTextEditor
                       value={answer}
-                      onChange={(e) => setAnswer(e.target.value)}
+                      onChange={setAnswer}
+                      placeholder="Enter the answer to the question..."
+                      minHeight="150px"
                     />
                   </Grid>
                 </Grid>

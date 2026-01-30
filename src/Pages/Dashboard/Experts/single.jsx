@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -13,11 +13,9 @@ import {
   Avatar,
   Skeleton,
   Grid,
-  CircularProgress,
 } from "@mui/material";
 import {
   CloseOutlined,
-  EditOutlined,
   CalendarTodayOutlined,
   UpdateOutlined,
   EmailOutlined,
@@ -27,19 +25,11 @@ import {
   VerifiedOutlined,
 } from "@mui/icons-material";
 import { formatDate } from "../../../utils/functions";
-import {
-  useFetchExperts,
-  useGetExpert,
-  useUpdateExpertStatus,
-} from "../../../Hooks/Dashboard/experts";
-import { showToast } from "../../../utils/toast";
+import { useGetExpert } from "../../../Hooks/Dashboard/experts";
+import { BASE_IMAGE_URL } from "../../../Config/paths";
 
 const SingleExpertModal = ({ open, onClose, userId }) => {
   const { expertData, loading: dataLoading, getExpert } = useGetExpert();
-  const { refetch } = useFetchExperts();
-  const updateStatus = useUpdateExpertStatus();
-
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (open && userId) {
@@ -47,27 +37,6 @@ const SingleExpertModal = ({ open, onClose, userId }) => {
       getExpert(userId);
     }
   }, [open, userId]);
-
-  const handleUserStatus = async () => {
-    if (!userId) return;
-
-    try {
-      setLoading(true);
-
-      const res = await updateStatus(userId, status);
-      if (res) {
-        showToast.success("Role updated successfully.");
-        await refetch();
-      }
-
-      onclose();
-    } catch (error) {
-      console.error(error);
-      showToast.error("User status update failed.");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <Dialog
@@ -114,7 +83,6 @@ const SingleExpertModal = ({ open, onClose, userId }) => {
           </Box>
         ) : expertData ? (
           <>
-            {/* Header Section with Profile Picture */}
             <Box
               sx={{
                 bgcolor: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
@@ -126,7 +94,7 @@ const SingleExpertModal = ({ open, onClose, userId }) => {
               <Stack direction="row" spacing={3} alignItems="center">
                 <Box sx={{ position: "relative" }}>
                   <Avatar
-                    src={expertData?.profile_image || expertData?.avatar}
+                    src={`${BASE_IMAGE_URL}${expertData?.profile_image || expertData?.avatar}`}
                     alt={`${expertData?.first_name} ${expertData?.last_name}`}
                     sx={{
                       width: 120,
@@ -185,7 +153,7 @@ const SingleExpertModal = ({ open, onClose, userId }) => {
                     />
                     {expertData?.role && (
                       <Chip
-                        label={expertData?.role}
+                        label={expertData?.role === 4 ? "Expert" : "User"}
                         size="small"
                         sx={{
                           bgcolor: "rgba(255, 255, 255, 0.2)",
@@ -433,7 +401,7 @@ const SingleExpertModal = ({ open, onClose, userId }) => {
                       </Typography>
                       <Typography variant="body2" fontWeight={500}>
                         {formatDate(
-                          expertData?.updated_at || expertData?.last_login
+                          expertData?.updated_at || expertData?.last_login,
                         )}
                       </Typography>
                     </Box>
@@ -457,16 +425,6 @@ const SingleExpertModal = ({ open, onClose, userId }) => {
                   sx={{ textTransform: "none", px: 3 }}
                 >
                   Close
-                </Button>
-
-                <Button
-                  variant="contained"
-                  startIcon={loading ? <CircularProgress /> : <EditOutlined />}
-                  onClick={handleUserStatus}
-                  sx={{ textTransform: "none", px: 3 }}
-                  disabled={loading}
-                >
-                  Update Status
                 </Button>
               </Stack>
             </Box>
