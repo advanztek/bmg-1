@@ -66,6 +66,7 @@ import {
   AddCurrency,
   UserCreditsPage,
   AddEbooks,
+  OrderDetailsPage,
 } from "../Pages/Dashboard";
 
 const AdminRoutes = () => {
@@ -150,6 +151,8 @@ const AdminRoutes = () => {
       <Route path="admin/add/blog-category" element={<AddBlogCategory />} />
       <Route path="admin/blog-categories" element={<BlogCategoryPage />} />
       <Route path="admin/user-credits" element={<UserCreditsPage />} />
+
+      <Route path="/admin/order/details" element={<OrderDetailsPage />} />
     </Routes>
   );
 };

@@ -63,3 +63,4 @@ export { default as AddBlogCategory } from "./BlogCategory/add";
 export { default as BlogCategoryPage } from "./BlogCategory";
 export { default as UserCreditsPage } from "./UserCredits";
 export { default as AddEbooks } from "./Ebooks/add";
+export { default as OrderDetailsPage } from "./OrderDetailsPage";

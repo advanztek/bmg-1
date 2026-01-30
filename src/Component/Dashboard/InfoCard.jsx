@@ -18,7 +18,7 @@ const InfoCard = ({
     <Box
       sx={{
         display: "flex",
-        background: "#fff",
+        background: "#FFFFFF",
         borderRadius: "18px",
         boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
         overflow: "hidden",

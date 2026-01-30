@@ -148,9 +148,15 @@ function AnalyticsOverview({ data }) {
               onClose={handlePeriodClose}
             >
               <MenuItem onClick={() => handlePeriodSelect("Day")}>Day</MenuItem>
-              <MenuItem onClick={() => handlePeriodSelect("Week")}>Week</MenuItem>
-              <MenuItem onClick={() => handlePeriodSelect("Month")}>Month</MenuItem>
-              <MenuItem onClick={() => handlePeriodSelect("Year")}>Year</MenuItem>
+              <MenuItem onClick={() => handlePeriodSelect("Week")}>
+                Week
+              </MenuItem>
+              <MenuItem onClick={() => handlePeriodSelect("Month")}>
+                Month
+              </MenuItem>
+              <MenuItem onClick={() => handlePeriodSelect("Year")}>
+                Year
+              </MenuItem>
             </Menu>
 
             <IconButton size="small" onClick={handleMenuClick}>
@@ -172,10 +178,10 @@ function AnalyticsOverview({ data }) {
         <Box sx={{ height: 280, mt: 2 }}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={chartData}>
-              <CartesianGrid 
-                strokeDasharray="3 3" 
-                vertical={false} 
-                stroke="#f0f0f0" 
+              <CartesianGrid
+                strokeDasharray="3 3"
+                vertical={false}
+                stroke="#f0f0f0"
               />
               <XAxis
                 dataKey="month"
@@ -190,7 +196,10 @@ function AnalyticsOverview({ data }) {
                 tick={{ fontSize: 12, fill: "#999" }}
                 tickFormatter={(value) => `${value / 1000}K`}
                 domain={[0, 110000]}
-                ticks={[0, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000, 110000]}
+                ticks={[
+                  0, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000,
+                  90000, 100000, 110000,
+                ]}
               />
               <Line
                 type="monotone"
@@ -209,4 +218,3 @@ function AnalyticsOverview({ data }) {
 }
 
 export default AnalyticsOverview;
-

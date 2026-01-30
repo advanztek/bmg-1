@@ -12,7 +12,7 @@ function useAddOrder() {
       const response = await axios.post(
         `${BASE_SERVER_URL}/admin/create/service`,
         data,
-        config
+        config,
       );
 
       const result = response.data;
@@ -41,14 +41,14 @@ function useAddOrder() {
 const useFetchOrders = () => {
   const { config } = useUserContext();
   const [loading, setLoading] = useState(false);
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState({});
 
   const fetchData = async () => {
     setLoading(true);
     try {
       const response = await axios.get(
         `${BASE_SERVER_URL}/admin/orders`,
-        config
+        config,
       );
 
       const result = response.data;

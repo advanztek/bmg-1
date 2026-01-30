@@ -16,16 +16,20 @@ import {
   PagesHeader,
   InfoCard,
 } from "../../../Component";
-import { headers } from "./data";
+import { headers, statusLabel } from "./data";
 import { VisibilityOutlined, AddOutlined } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { EMOJI_ICONS } from "../../../Config/emojiIcons";
 import { useFetchOrders } from "../../../Hooks/Dashboard/orders";
+import { formatGHS } from "../../../utils/currency";
 
 const OrdersPage = () => {
   const [search, setSearch] = useState();
   const navigate = useNavigate();
   const { orders, loading: ordersLoading } = useFetchOrders();
+
+  console.log("order history ");
+  console.log(orders);
 
   return (
     <div>
@@ -107,26 +111,25 @@ const OrdersPage = () => {
                 />
               </TableCell>
             </TableRow>
-          ) : orders.length > 0 ? (
-            orders.map((row, index) => (
+          ) : orders?.orders?.length > 0 ? (
+            orders?.orders?.map((row, index) => (
               <TableRow hover key={index}>
                 <TableCell>
                   <Checkbox />
                 </TableCell>
-
-                <TableCell>{row.id}</TableCell>
-                <TableCell>{row.subject}</TableCell>
-                <TableCell>{row.image}</TableCell>
-                <TableCell>{row.description}</TableCell>
-                <TableCell>{row.dueDate}</TableCell>
-                <TableCell>{row.amount}</TableCell>
+                <TableCell>{row.order_number}</TableCell>
+                <TableCell>{formatGHS(row?.amount)}</TableCell>
+                <TableCell>{row?.payment_method}</TableCell>
+                <TableCell>{row?.items?.length}</TableCell>
 
                 <TableCell>
                   <StatusChip
-                    status={row.status === true ? "active" : "inactive"}
-                    label={row.status === true ? "Active" : "Disabled"}
+                    status={row?.status}
+                    label={statusLabel[row?.status]}
                   />
                 </TableCell>
+
+                <TableCell>{row?.created_at}</TableCell>
 
                 <TableCell>
                   <IconButton size="small">
