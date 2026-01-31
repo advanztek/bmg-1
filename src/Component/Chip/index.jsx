@@ -20,6 +20,7 @@ export default function Chip({ color, label, size = "md" }) {
         fontSize: size == "sm" ? "10px" : "13px",
         fontWeight: 500,
         color: _color[color],
+        width: "fit-content",
       }}
     >
       {label}

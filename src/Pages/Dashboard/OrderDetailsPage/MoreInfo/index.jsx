@@ -7,7 +7,6 @@ import {
   DiversityFilled,
   GiftFilled,
   KeyMultipleFilled,
-  MoneyFilled,
   QrCodeFilled,
   WalletCreditCardFilled,
 } from "@fluentui/react-icons";
@@ -25,8 +24,9 @@ export default function MoreInfo({ data }) {
       gap="22px"
       sx={{
         backgroundColor: "#FFFFFF",
-        borderRadius: "16px",
-        border: "1px solid rgb(224, 224, 234)",
+        borderRadius: "12px",
+        // border: "1px solid rgb(224, 224, 234)",
+        boxShadow: "1px 1px 1px rgba(0, 0, 0, 0.25)",
         padding: { xs: "16px", md: "22px" },
       }}
     >
@@ -48,7 +48,7 @@ export default function MoreInfo({ data }) {
       <LabelValue
         icon={DiversityFilled}
         label="Payment Channel"
-        value={data?.payment_channel}
+        value={toTitleCase(data?.payment_channel)}
       />
       <LabelValue
         icon={GiftFilled}

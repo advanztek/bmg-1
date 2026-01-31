@@ -4,10 +4,17 @@ import Chip from "../../../../Component/Chip";
 import { toTitleCase } from "../../../../utils/functions";
 import { formatGHS } from "../../../../utils/currency";
 import { statusColors, statusLabels } from "./data";
+import { useNavigate } from "react-router-dom";
 
 export default function OrderItem({ data }) {
-  console.log("order details");
-  console.log(data);
+  const navigate = useNavigate();
+
+  function previewOrderItem() {
+    navigate("/dashboard/admin/order/item/details", {
+      state: { details: data },
+    });
+  }
+
   return (
     <Box
       display="grid"
@@ -16,7 +23,8 @@ export default function OrderItem({ data }) {
       sx={{
         backgroundColor: "#FFFFFF",
         borderRadius: "12px",
-        border: "1px solid rgb(224, 224, 234)",
+        // border: "1px solid rgb(224, 224, 234)",
+        boxShadow: "1px 1px 1px rgba(0, 0, 0, 0.25)",
         padding: { xs: "8px", md: "10px" },
       }}
     >
@@ -28,6 +36,7 @@ export default function OrderItem({ data }) {
           width: "100%",
           height: { xs: "auto", md: "100%" },
           objectFit: "cover",
+          display: "block",
         }}
       />
       <Stack gap="10px">
@@ -80,9 +89,16 @@ export default function OrderItem({ data }) {
           >
             {formatGHS(data?.final_price)}
           </Typography>
-          <Button variant="contained" size="small">
-            Assign
-          </Button>
+          <Stack>
+            <Button
+              variant="contained"
+              size="small"
+              sx={{ borderRadius: "6px" }}
+              onClick={previewOrderItem}
+            >
+              Preview
+            </Button>
+          </Stack>
         </Stack>
       </Stack>
     </Box>

@@ -68,6 +68,7 @@ import {
   UserCreditsPage,
   AddEbooks,
   OrderDetailsPage,
+  OrderItemDetailsPage,
 } from "../Pages/Dashboard";
 
 const AdminRoutes = () => {
@@ -153,6 +154,10 @@ const AdminRoutes = () => {
       <Route path="admin/user-credits" element={<UserCreditsPage />} />
 
       <Route path="/admin/order/details" element={<OrderDetailsPage />} />
+      <Route
+        path="/admin/order/item/details"
+        element={<OrderItemDetailsPage />}
+      />
     </Routes>
   );
 };
