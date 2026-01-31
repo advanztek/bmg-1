@@ -46,9 +46,10 @@ export const getTheme = (mode) => {
             borderRadius: 8,
             textTransform: "none",
             fontWeight: 500,
-            padding: "8px 22px",
+            padding: "12px 22px",
             fontSize: "0.9375rem",
             boxShadow: "none",
+            lineHeight: 1,
             "&:hover": {
               boxShadow: "none",
             },
@@ -65,12 +66,12 @@ export const getTheme = (mode) => {
             },
           },
           sizeLarge: {
-            padding: "12px 28px",
+            padding: "16px 28px",
             fontSize: "1rem",
           },
           sizeSmall: {
-            padding: "6px 16px",
-            fontSize: "0.8125rem",
+            padding: "8px 12px",
+            fontSize: "0.7125rem",
           },
         },
       },

@@ -20,7 +20,7 @@ import { getTimeGreeting, getFormattedDate } from "../../../utils/functions";
 import CreditBox from "./CreditBox";
 import { useLogout } from "../../../Hooks/auth";
 import { useDispatch } from "react-redux";
-import { logoutUser } from "../../../store/slices/userSlice";
+import { logoutUser } from "../../../Store/slices/userSlice";
 
 function NavBar({ sideNavWidth, layoutPadding, navHeight, onMenuClick }) {
   const [anchorEl, setAnchorEl] = useState(null);

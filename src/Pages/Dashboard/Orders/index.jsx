@@ -22,14 +22,17 @@ import { useNavigate } from "react-router-dom";
 import { EMOJI_ICONS } from "../../../Config/emojiIcons";
 import { useFetchOrders } from "../../../Hooks/Dashboard/orders";
 import { formatGHS } from "../../../utils/currency";
+import { toTitleCase } from "../../../utils/functions";
 
 const OrdersPage = () => {
   const [search, setSearch] = useState();
   const navigate = useNavigate();
   const { orders, loading: ordersLoading } = useFetchOrders();
 
-  console.log("order history ");
-  console.log(orders);
+  function viewOrderHistory(details) {
+    if (!details) return;
+    navigate("/dashboard/admin/order/details", { state: { details } });
+  }
 
   return (
     <div>
@@ -119,7 +122,7 @@ const OrdersPage = () => {
                 </TableCell>
                 <TableCell>{row.order_number}</TableCell>
                 <TableCell>{formatGHS(row?.amount)}</TableCell>
-                <TableCell>{row?.payment_method}</TableCell>
+                <TableCell>{toTitleCase(row?.payment_method)}</TableCell>
                 <TableCell>{row?.items?.length}</TableCell>
 
                 <TableCell>
@@ -132,7 +135,10 @@ const OrdersPage = () => {
                 <TableCell>{row?.created_at}</TableCell>
 
                 <TableCell>
-                  <IconButton size="small">
+                  <IconButton
+                    size="small"
+                    onClick={() => viewOrderHistory(row)}
+                  >
                     <VisibilityOutlined fontSize="medium" />
                   </IconButton>
                 </TableCell>

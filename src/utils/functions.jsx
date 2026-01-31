@@ -153,7 +153,7 @@ const stripHtml = (html = "") => {
 };
 
 const formatGHS = (amount) => {
-  return `GHS ${Number(amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  return `GHS ${Number(amount).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 };
 
 function slugify(text) {
@@ -161,16 +161,16 @@ function slugify(text) {
     .toString()
     .toLowerCase()
     .trim()
-    .replace(/[\s_]+/g, "-")        // spaces & underscores → -
-    .replace(/[^\w-]+/g, "")        // remove non-word chars
-    .replace(/--+/g, "-");          // collapse multiple -
+    .replace(/[\s_]+/g, "-") // spaces & underscores → -
+    .replace(/[^\w-]+/g, "") // remove non-word chars
+    .replace(/--+/g, "-"); // collapse multiple -
 }
 
 function deslugify(slug) {
   return slug
     .toString()
     .replace(/[-_]+/g, " ")
-    .replace(/\b\w/g, char => char.toUpperCase());
+    .replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
 // Add this function at the top of your component or in a separate utils file
@@ -186,7 +186,7 @@ const convertFileToBase64 = (file) => {
     reader.onload = () => {
       // Keep the full data URL (includes the prefix)
       const dataUrl = reader.result;
-      const base64String = dataUrl.split(',')[1];
+      const base64String = dataUrl.split(",")[1];
 
       resolve({
         base64: base64String,
@@ -205,6 +205,12 @@ const convertFileToBase64 = (file) => {
   });
 };
 
+export function toTitleCase(text) {
+  if (!text) return "";
+  if (typeof text !== "string") return "";
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
 export {
   validateEmail,
   validatePassword,
@@ -221,5 +227,5 @@ export {
   formatGHS,
   slugify,
   deslugify,
-  convertFileToBase64
+  convertFileToBase64,
 };
