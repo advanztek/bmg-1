@@ -70,7 +70,7 @@ export const getTheme = (mode) => {
             fontSize: "1rem",
           },
           sizeSmall: {
-            padding: "8px 12px",
+            padding: "10px 12px",
             fontSize: "0.7125rem",
           },
         },
