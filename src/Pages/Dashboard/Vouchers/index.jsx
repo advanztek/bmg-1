@@ -17,16 +17,48 @@ import {
   InfoCard,
 } from "../../../Component";
 import { headers } from "./data";
-import { AddOutlined, VisibilityOutlined } from "@mui/icons-material";
+import {
+  AddOutlined,
+  VisibilityOutlined,
+  EditOutlined,
+} from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { EMOJI_ICONS } from "../../../Config/emojiIcons";
 import { formatDate } from "../../../utils/functions";
 import { useFetchVouchers } from "../../../Hooks/Dashboard/vouchers";
+import EditVoucherModal from "./edit";
+import SingleVoucherModal from "./single";
 
 const VouchersPage = () => {
   const [search, setSearch] = useState();
   const navigate = useNavigate();
-  const { vouchers, loading: vouchersLoading } = useFetchVouchers();
+  const { vouchers, loading: vouchersLoading, refetch } = useFetchVouchers();
+  const [open, setOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+  const [editModal, setEditModal] = useState(false);
+  const [selectedVoucher, setSelectedVoucher] = useState(null);
+
+  const handleOpen = (id) => {
+    setSelectedId(id);
+    setOpen(true);
+  };
+
+  const handleClose = async () => {
+    setOpen(false);
+    await refetch();
+    setSelectedId(null);
+  };
+
+  const handleOpenEdit = (id) => {
+    setSelectedVoucher(id);
+    setEditModal(true);
+  };
+
+  const handleCloseEdit = async () => {
+    setEditModal(false);
+    await refetch();
+    setSelectedVoucher(null);
+  };
 
   return (
     <div>
@@ -68,7 +100,7 @@ const VouchersPage = () => {
             <InfoCard
               icon={EMOJI_ICONS.cardGift}
               title="Total Vouchers"
-              value="70"
+              value={vouchers.length}
               onAction={() => console.log("View Users")}
             />
           </Grid>
@@ -76,7 +108,7 @@ const VouchersPage = () => {
             <InfoCard
               icon={EMOJI_ICONS.category}
               title="Vouchers Sold"
-              value="50"
+              value="0"
               onAction={() => console.log("View Users")}
             />
           </Grid>
@@ -114,9 +146,22 @@ const VouchersPage = () => {
                 </TableCell>
 
                 <TableCell>
-                  <IconButton size="small">
-                    <VisibilityOutlined fontSize="small" />
-                  </IconButton>
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="end"
+                    gap={0.5}
+                  >
+                    <IconButton size="small" onClick={() => handleOpen(row.id)}>
+                      <VisibilityOutlined fontSize="small" />
+                    </IconButton>
+                    <IconButton
+                      size="small"
+                      onClick={() => handleOpenEdit(row.id)}
+                    >
+                      <EditOutlined fontSize="small" />
+                    </IconButton>
+                  </Stack>
                 </TableCell>
               </TableRow>
             ))
@@ -136,6 +181,18 @@ const VouchersPage = () => {
           )}
         </CustomTable>
       </Box>
+
+      <SingleVoucherModal
+        open={open}
+        onClose={handleClose}
+        couponId={selectedId}
+      />
+
+      <EditVoucherModal
+        open={editModal}
+        onClose={handleCloseEdit}
+        couponId={selectedVoucher}
+      />
     </div>
   );
 };

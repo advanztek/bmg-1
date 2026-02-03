@@ -26,7 +26,33 @@ import { formatDate } from "../../../utils/functions";
 const GiftsPage = () => {
   const [search, setSearch] = useState();
   const navigate = useNavigate();
-  const { gifts, loading: giftsLoading } = useFetchGifts();
+  const { gifts, loading: giftsLoading, refetch } = useFetchGifts();
+  const [selectedId, setSelectedId] = useState(null);
+  const [editModal, setEditModal] = useState(false);
+  const [selectedVoucher, setSelectedGift] = useState(null);
+  const [open, setOpen] = useState(false);
+
+  const handleOpenEdit = (id) => {
+    setSelectedGift(id);
+    setEditModal(true);
+  };
+
+  const handleCloseEdit = async () => {
+    setEditModal(false);
+    await refetch();
+    setSelectedGift(null);
+  };
+
+  const handleOpen = (id) => {
+    setSelectedId(id);
+    setOpen(true);
+  };
+
+  const handleClose = async () => {
+    setOpen(false);
+    await refetch();
+    setSelectedId(null);
+  };
 
   return (
     <div>
@@ -114,9 +140,22 @@ const GiftsPage = () => {
                 </TableCell>
 
                 <TableCell>
-                  <IconButton size="small">
-                    <VisibilityOutlined fontSize="small" />
-                  </IconButton>
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="end"
+                    gap={0.5}
+                  >
+                    <IconButton size="small" onClick={() => handleOpen(row.id)}>
+                      <VisibilityOutlined fontSize="small" />
+                    </IconButton>
+                    <IconButton
+                      size="small"
+                      onClick={() => handleOpenEdit(row.id)}
+                    >
+                      <EditOutlined fontSize="small" />
+                    </IconButton>
+                  </Stack>
                 </TableCell>
               </TableRow>
             ))
@@ -136,6 +175,18 @@ const GiftsPage = () => {
           )}
         </CustomTable>
       </Box>
+
+      <SingleVoucherModal
+        open={open}
+        onClose={handleClose}
+        couponId={selectedId}
+      />
+
+      <EditVoucherModal
+        open={editModal}
+        onClose={handleCloseEdit}
+        couponId={selectedVoucher}
+      />
     </div>
   );
 };

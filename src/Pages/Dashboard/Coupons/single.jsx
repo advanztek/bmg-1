@@ -24,8 +24,6 @@ import {
   LocalOfferOutlined,
   PercentOutlined,
   AttachMoneyOutlined,
-  PeopleOutlined,
-  TrendingUpOutlined,
   EventAvailableOutlined,
   EventBusyOutlined,
   PublicOutlined,
@@ -34,7 +32,7 @@ import {
 } from "@mui/icons-material";
 import { formatDate } from "../../../utils/functions";
 import { showToast } from "../../../utils/toast";
-import { ConfirmDeleteModal } from "../../../Component";
+import { ConfirmDeleteModal, InfoItem, TimelineCard } from "../../../Component";
 import {
   useFetchCoupons,
   useGetCoupon,
@@ -354,7 +352,6 @@ const SingleCouponModal = ({ open, onClose, couponId }) => {
                 </Grid>
               </Grid>
 
-              {/* Validity Period */}
               <Typography
                 variant="overline"
                 fontWeight={700}
@@ -397,6 +394,11 @@ const SingleCouponModal = ({ open, onClose, couponId }) => {
                 </Grid>
 
                 <Grid item size={{ xs: 12, sm: 6 }}>
+                  <TimelineCard
+                    icon={<CalendarTodayOutlined sx={{ fontSize: 20 }} />}
+                    label="Joined Date"
+                    value={formatDate(data.created_at)}
+                  />
                   <Card
                     sx={{
                       border: "2px solid #ffebee",
@@ -427,7 +429,6 @@ const SingleCouponModal = ({ open, onClose, couponId }) => {
                 </Grid>
               </Grid>
 
-              {/* Usage Statistics */}
               <Typography
                 variant="overline"
                 fontWeight={700}
@@ -532,7 +533,6 @@ const SingleCouponModal = ({ open, onClose, couponId }) => {
                 </Grid>
               </Grid>
 
-              {/* Target Information */}
               {data.target_id && (
                 <>
                   <Typography
@@ -561,7 +561,6 @@ const SingleCouponModal = ({ open, onClose, couponId }) => {
                 </>
               )}
 
-              {/* Timeline Section */}
               <Typography
                 variant="overline"
                 fontWeight={700}
@@ -632,7 +631,6 @@ const SingleCouponModal = ({ open, onClose, couponId }) => {
 
               <Divider sx={{ my: 3 }} />
 
-              {/* Action Buttons */}
               <Stack
                 direction={{ xs: "column", sm: "row" }}
                 spacing={2}

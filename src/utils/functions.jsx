@@ -156,6 +156,27 @@ const formatGHS = (amount) => {
   return `GHS ${Number(amount).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 };
 
+const getDiscountDisplay = (data) => {
+  if (!data) return "";
+  if (data.discount_type === "percentage") {
+    return `${data.discount_value}% OFF`;
+  }
+  return `$${data.discount_value} OFF`;
+};
+
+const isActive = (data) => {
+  if (!data) return false;
+  const now = new Date();
+  const start = new Date(data.start_date);
+  const end = new Date(data.end_date);
+  return data.status && now >= start && now <= end;
+};
+
+const getUsagePercentage = (data) => {
+  if (!data || !data.usage_limit) return 0;
+  return (data.used_count / data.usage_limit) * 100;
+};
+
 function slugify(text) {
   return text
     .toString()
@@ -228,4 +249,7 @@ export {
   slugify,
   deslugify,
   convertFileToBase64,
+  getDiscountDisplay,
+  isActive,
+  getUsagePercentage,
 };

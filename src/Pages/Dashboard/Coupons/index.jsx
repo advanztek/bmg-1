@@ -37,7 +37,7 @@ const CouponsPage = () => {
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
   const [editModal, setEditModal] = useState(false);
-  const [selectedFaq, setSelectedFaq] = useState(null);
+  const [selectedCode, setSelectedCode] = useState(null);
 
   const handleOpen = (id) => {
     setSelectedId(id);
@@ -51,14 +51,14 @@ const CouponsPage = () => {
   };
 
   const handleOpenEdit = (id) => {
-    setSelectedFaq(id);
+    setSelectedCode(id);
     setEditModal(true);
   };
 
   const handleCloseEdit = async () => {
     setEditModal(false);
     await refetch();
-    setSelectedFaq(null);
+    setSelectedCode(null);
   };
   return (
     <div>
@@ -189,7 +189,7 @@ const CouponsPage = () => {
       <EditCouponModal
         open={editModal}
         onClose={handleCloseEdit}
-        couponId={selectedFaq}
+        couponId={selectedCode}
       />
     </div>
   );
