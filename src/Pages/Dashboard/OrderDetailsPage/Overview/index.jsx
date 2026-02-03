@@ -13,7 +13,7 @@ export default function Overview({ data }) {
       justifyContent="space-between"
       sx={{
         backgroundColor: "#FFFFFF",
-        borderRadius: "12px",
+        borderRadius: "16px",
         boxShadow: "1px 1px 1px rgba(0, 0, 0, 0.25)",
         padding: { xs: "16px 20px", md: "22px 42px" },
       }}
@@ -39,7 +39,7 @@ export default function Overview({ data }) {
         </Stack>
       </Stack>
 
-      <Stack>
+      <Stack gap="4px">
         <Typography
           color="rgb(150, 150, 170)"
           fontSize={{ xs: "14px", md: "16px" }}

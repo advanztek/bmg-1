@@ -12,7 +12,7 @@ function useCreateCustomOrder() {
       const response = await axios.post(
         `${BASE_SERVER_URL}/admin/create/service`,
         data,
-        config
+        config,
       );
 
       const result = response.data;
@@ -48,7 +48,7 @@ const useFetchUserOrders = () => {
     try {
       const response = await axios.get(
         `${BASE_SERVER_URL}/user/user/orders`,
-        config
+        config,
       );
 
       const result = response.data;

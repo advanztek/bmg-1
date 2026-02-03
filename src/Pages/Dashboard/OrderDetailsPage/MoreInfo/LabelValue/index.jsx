@@ -24,12 +24,12 @@ export default function LabelValue({ icon: Icon, label, value }) {
         <Typography
           fontSize="12px"
           color="rgb(150, 150, 170)"
-          fontWeight={400}
+          fontWeight={600}
           lineHeight={1}
         >
           {label}
         </Typography>
-        <Typography fontSize="12px" lineHeight={1} fontWeight={600}>
+        <Typography fontSize="14px" lineHeight={1} fontWeight={400}>
           {value}
         </Typography>
       </Stack>

@@ -5,6 +5,7 @@ import OrderItem from "./OrderItem";
 import Overview from "./Overview";
 import MoreInfo from "./MoreInfo";
 import { ChevronLeft } from "@mui/icons-material";
+import { useGetOrderDetails } from "../../../Hooks/Dashboard/orders";
 
 export default function OrderDetailsPage() {
   const { state } = useLocation();
@@ -18,11 +19,24 @@ export default function OrderDetailsPage() {
 
   const details = state?.details;
 
+  const { data, loading } = useGetOrderDetails(details?.id);
+
+  console.log("the order details");
+  console.log(data);
+
   function goBackToOrder() {
     navigate("/dashboard/admin/orders");
   }
 
-  return (
+  function previewOrderItem(orderItem) {
+    navigate("/dashboard/admin/order/service", {
+      state: { details: orderItem, customerId: details?.user_id },
+    });
+  }
+
+  return loading ? (
+    "..."
+  ) : (
     <Stack
       gap="22px"
       sx={{
@@ -36,14 +50,17 @@ export default function OrderDetailsPage() {
       <Box
         display="grid"
         gridTemplateColumns={{ xs: "1fr", md: "2fr 1fr" }}
+        alignItems="start"
         gap="12px"
       >
-        <Box>
-          <MoreInfo data={details} />
-        </Box>
+        <MoreInfo data={details} />
         <Stack gap="22px">
           {details?.items?.map((orderItem, index) => (
-            <OrderItem key={index} data={orderItem} />
+            <OrderItem
+              key={index}
+              data={orderItem}
+              onPreview={() => previewOrderItem(orderItem)}
+            />
           ))}
           <Stack alignItems="end">
             <Button

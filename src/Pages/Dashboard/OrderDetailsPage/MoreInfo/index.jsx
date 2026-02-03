@@ -24,10 +24,10 @@ export default function MoreInfo({ data }) {
       gap="22px"
       sx={{
         backgroundColor: "#FFFFFF",
-        borderRadius: "12px",
+        borderRadius: "16px",
         // border: "1px solid rgb(224, 224, 234)",
         boxShadow: "1px 1px 1px rgba(0, 0, 0, 0.25)",
-        padding: { xs: "16px", md: "22px" },
+        padding: { xs: "18px 16px", md: "32px 26px" },
       }}
     >
       <LabelValue

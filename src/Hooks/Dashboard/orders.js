@@ -71,4 +71,33 @@ const useFetchOrders = () => {
   return { orders, refetch: fetchData, loading };
 };
 
+export function useGetOrderDetails(orderId) {
+  const { config } = useUserContext();
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState(null);
+
+  async function getOrderDetails() {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `${BASE_SERVER_URL}/admin/order/${orderId}`,
+        config,
+      );
+      const result = response.data;
+      if (result.code === 0) {
+        setData(result.result);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    getOrderDetails();
+  }, []);
+
+  return { data, getOrderDetails, loading };
+}
 export { useAddOrder, useFetchOrders };

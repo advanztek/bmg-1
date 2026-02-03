@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 
-export default function Chip({ color, label, size = "md" }) {
+export default function Chip({ color, label, size = "md", noShadow = false }) {
   const _color = {
     success: "#05970F",
     warning: "#F7941D",
@@ -13,11 +13,11 @@ export default function Chip({ color, label, size = "md" }) {
     <Box
       sx={{
         backgroundColor: `${_color[color]}25`,
-        boxShadow: "1px 1px 1px rgba(0, 0, 0, 0.35)",
-        padding: size == "sm" ? "3px 9px" : "4px 12px",
-        borderRadius: "4px",
+        boxShadow: noShadow ? "none" : "1px 1px 1px rgba(0, 0, 0, 0.35)",
+        padding: size == "sm" ? "4px 8px" : "6px 12px",
+        borderRadius: size == "sm" ? "6px" : "8px",
         lineHeight: 1,
-        fontSize: size == "sm" ? "10px" : "13px",
+        fontSize: size == "sm" ? "11px" : "13px",
         fontWeight: 500,
         color: _color[color],
         width: "fit-content",

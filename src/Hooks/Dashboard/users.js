@@ -15,7 +15,7 @@ const useFetchUsers = () => {
     try {
       const response = await axios.get(
         `${BASE_SERVER_URL}/admin/all-customers`,
-        config
+        config,
       );
 
       const result = response.data;
@@ -45,7 +45,7 @@ function useAddUser() {
       const response = await axios.post(
         `${BASE_SERVER_URL}/admin/add/customers`,
         data,
-        config
+        config,
       );
 
       const result = response.data;
@@ -57,7 +57,7 @@ function useAddUser() {
       }
       if (result?.code !== 0) {
         showToast.error(
-          result?.message?.message || "An error occured, please try again..."
+          result?.message?.message || "An error occured, please try again...",
         );
         return false;
       }
@@ -83,7 +83,7 @@ const useUpdateUserStatus = () => {
     try {
       const response = await axios.put(
         `${BASE_SERVER_URL}/admin/update/user/status/${id}`,
-        data
+        data,
       );
 
       const result = response.data;
@@ -94,10 +94,42 @@ const useUpdateUserStatus = () => {
     } catch (error) {
       console.error("Error:", error.response?.data || error.message);
       showToast.error(
-        error?.response?.data?.message || "Error occurred while updating."
+        error?.response?.data?.message || "Error occurred while updating.",
       );
     }
   };
 };
+
+export function useGetUserDetails(userId) {
+  const { config } = useUserContext();
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState(null);
+
+  async function getUserDetails() {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `${BASE_SERVER_URL}/admin/customer/${userId}`,
+        config,
+      );
+
+      const result = response.data;
+
+      if (result.code === 0) {
+        setData(result.result);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    getUserDetails();
+  }, []);
+
+  return { data, getUserDetails, loading };
+}
 
 export { useAddUser, useFetchUsers, useUpdateUserStatus };

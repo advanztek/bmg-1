@@ -4,35 +4,28 @@ import Chip from "../../../../Component/Chip";
 import { toTitleCase } from "../../../../utils/functions";
 import { formatGHS } from "../../../../utils/currency";
 import { statusColors, statusLabels } from "./data";
-import { useNavigate } from "react-router-dom";
 
-export default function OrderItem({ data }) {
-  const navigate = useNavigate();
-
-  function previewOrderItem() {
-    navigate("/dashboard/admin/order/item/details", {
-      state: { details: data },
-    });
-  }
-
+export default function OrderItem({ data, onPreview }) {
   return (
     <Box
       display="grid"
       gridTemplateColumns={{ xs: "1fr", md: "1fr 3fr" }}
-      gap="14px"
+      gap="12px"
       sx={{
         backgroundColor: "#FFFFFF",
-        borderRadius: "12px",
+        borderRadius: "16px",
         // border: "1px solid rgb(224, 224, 234)",
         boxShadow: "1px 1px 1px rgba(0, 0, 0, 0.25)",
-        padding: { xs: "8px", md: "10px" },
+        padding: { xs: "10px", md: "14px" },
       }}
     >
       <Box
         component="img"
-        src={STORAGE_URL + "/" + data?.image}
+        // src={STORAGE_URL + "/" + data?.image}
+        src="/service.png"
+        loading="lazy"
         sx={{
-          borderRadius: "8px",
+          borderRadius: "14px",
           width: "100%",
           height: { xs: "auto", md: "100%" },
           objectFit: "cover",
@@ -48,7 +41,7 @@ export default function OrderItem({ data }) {
         >
           <Typography
             color="#272629"
-            fontSize="12px"
+            fontSize="14px"
             fontWeight={600}
             lineHeight={1}
           >
@@ -58,11 +51,12 @@ export default function OrderItem({ data }) {
             label={statusLabels[data?.status]}
             size="sm"
             color={statusColors[data?.status]}
+            noShadow
           />
         </Stack>
 
         <Typography
-          fontSize="11px"
+          fontSize="12px"
           fontWeight={600}
           color="rgb(100, 100, 120)"
         >{`${toTitleCase(data?.order_type)} • ${data?.quantity}X`}</Typography>
@@ -75,6 +69,7 @@ export default function OrderItem({ data }) {
           {data?.description?.length > 70
             ? `${data?.description?.slice(0, 68)}...`
             : data?.description}
+          .
         </Typography>
         <Stack
           direction="row"
@@ -94,7 +89,7 @@ export default function OrderItem({ data }) {
               variant="contained"
               size="small"
               sx={{ borderRadius: "6px" }}
-              onClick={previewOrderItem}
+              onClick={onPreview}
             >
               Preview
             </Button>

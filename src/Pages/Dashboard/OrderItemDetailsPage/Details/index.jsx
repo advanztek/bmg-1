@@ -12,7 +12,7 @@ export default function Details({ data }) {
     <Box
       sx={{
         backgroundColor: "#FFFFFF",
-        borderRadius: "12px",
+        borderRadius: "16px",
         // boxShadow: "1px 1px 1px rgba(0, 0, 0, 0.25)",
         border: "1px solid rgb(224, 224, 234)",
         padding: { xs: "14px", md: "16px" },
@@ -20,21 +20,25 @@ export default function Details({ data }) {
     >
       <Box
         component="img"
-        src={STORAGE_URL + "/" + data?.image}
+        // src={STORAGE_URL + "/" + data?.image}
+        src="/service.png"
+        loading="lazy"
         sx={{
           display: "block",
-          borderRadius: "8px",
+          borderRadius: "14px",
           width: "100%",
           objectFit: "cover",
           maxHeight: "140px",
+          userSelect: "none",
         }}
       />
-      <Stack gap="18px" py="22px">
-        <Stack gap="8px">
+      <Stack gap="22px" py="22px">
+        <Stack gap="10px">
           <Typography
-            fontSize="13px"
+            fontSize="14px"
             fontWeight={600}
             lineHeight={1}
+            // color="rgb(100, 100, 120)"
             color="#2C3891"
           >
             {data?.service_name}
@@ -54,7 +58,7 @@ export default function Details({ data }) {
           justifyContent="space-between"
         >
           <Typography
-            fontSize="13px"
+            fontSize="16px"
             fontWeight={600}
             sx={{ textDecoration: "line-through" }}
           >
@@ -63,19 +67,20 @@ export default function Details({ data }) {
               : formatGHS("0")}
           </Typography>
           <Chip
-            label={statusLabels[data?.status]}
             size="sm"
+            label={statusLabels[data?.status]}
             color={statusColors[data?.status]}
+            noShadow
           />
         </Stack>
         <Typography
           color="rgb(100, 100, 120)"
-          fontSize="12px"
+          fontSize="14px"
           lineHeight={1.25}
         >
-          {data?.description}
+          {data?.description}.
         </Typography>
-        <Box borderTop="2px solid rgb(224, 224, 234)" />
+        <Box borderTop="2px solid rgba(224, 224, 234, 0.79)" />
         <Stack gap="20px">
           <LabelValue
             icon={CircleSmallFilled}

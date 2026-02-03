@@ -154,10 +154,7 @@ const AdminRoutes = () => {
       <Route path="admin/user-credits" element={<UserCreditsPage />} />
 
       <Route path="/admin/order/details" element={<OrderDetailsPage />} />
-      <Route
-        path="/admin/order/item/details"
-        element={<OrderItemDetailsPage />}
-      />
+      <Route path="/admin/order/service" element={<OrderItemDetailsPage />} />
     </Routes>
   );
 };
