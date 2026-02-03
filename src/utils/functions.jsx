@@ -177,6 +177,7 @@ const getUsagePercentage = (data) => {
   return (data.used_count / data.usage_limit) * 100;
 };
 
+
 function slugify(text) {
   return text
     .toString()
