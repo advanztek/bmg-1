@@ -10,28 +10,24 @@ import {
   Typography,
   CircularProgress,
 } from "@mui/material";
-import {
-  CustomTable,
-  StatusChip,
-  PagesHeader,
-  InfoCard,
-} from "../../../Component";
-import { headers, statusLabel } from "./data";
+import { CustomTable, PagesHeader, InfoCard } from "../../../Component";
+import { headers, statusColors, statusLabels } from "./data";
 import { VisibilityOutlined, AddOutlined } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { EMOJI_ICONS } from "../../../Config/emojiIcons";
 import { useFetchOrders } from "../../../Hooks/Dashboard/orders";
 import { formatGHS } from "../../../utils/currency";
 import { toTitleCase } from "../../../utils/functions";
+import Chip from "../../../Component/Chip";
 
 const OrdersPage = () => {
   const [search, setSearch] = useState();
   const navigate = useNavigate();
   const { orders, loading: ordersLoading } = useFetchOrders();
 
-  function viewOrderHistory(details) {
-    if (!details) return;
-    navigate("/dashboard/admin/order/details", { state: { details } });
+  function viewOrderDetails(orderId) {
+    if (!orderId) return;
+    navigate("/dashboard/admin/order/details", { state: { orderId } });
   }
 
   return (
@@ -126,9 +122,10 @@ const OrdersPage = () => {
                 <TableCell>{row?.items?.length}</TableCell>
 
                 <TableCell>
-                  <StatusChip
-                    status={row?.status}
-                    label={statusLabel[row?.status]}
+                  <Chip
+                    label={statusLabels[row?.status]}
+                    color={statusColors[row?.status]}
+                    noShadow
                   />
                 </TableCell>
 
@@ -137,7 +134,7 @@ const OrdersPage = () => {
                 <TableCell>
                   <IconButton
                     size="small"
-                    onClick={() => viewOrderHistory(row)}
+                    onClick={() => viewOrderDetails(row?.id)}
                   >
                     <VisibilityOutlined fontSize="medium" />
                   </IconButton>

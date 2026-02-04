@@ -12,7 +12,13 @@ import {
   Box,
 } from "@mui/material";
 
-const CustomTable = ({ title, headers = [], children, totalCount }) => {
+const CustomTable = ({
+  title,
+  headers = [],
+  children,
+  totalCount,
+  hidePagination = false,
+}) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -21,7 +27,7 @@ const CustomTable = ({ title, headers = [], children, totalCount }) => {
 
   const paginatedRows = rows.slice(
     page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
+    page * rowsPerPage + rowsPerPage,
   );
 
   const count = totalCount ?? rows.length;
@@ -67,19 +73,21 @@ const CustomTable = ({ title, headers = [], children, totalCount }) => {
         </Table>
       </TableContainer>
 
-      <TablePagination
-        component="div"
-        count={count}
-        page={page}
-        rowsPerPage={rowsPerPage}
-        onPageChange={(e, newPage) => setPage(newPage)}
-        onRowsPerPageChange={(e) => {
-          setRowsPerPage(parseInt(e.target.value, 10));
-          setPage(0);
-        }}
-      />
+      {!hidePagination && (
+        <TablePagination
+          component="div"
+          count={count}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          onPageChange={(e, newPage) => setPage(newPage)}
+          onRowsPerPageChange={(e) => {
+            setRowsPerPage(parseInt(e.target.value, 10));
+            setPage(0);
+          }}
+        />
+      )}
     </Paper>
   );
 };
 
-export default CustomTable
+export default CustomTable;

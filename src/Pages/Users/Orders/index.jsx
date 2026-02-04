@@ -10,14 +10,9 @@ import {
   CircularProgress,
   Typography,
 } from "@mui/material";
-import {
-  CustomTable,
-  StatusChip,
-  PagesHeader,
-  InfoCard,
-} from "../../../Component";
+import { CustomTable, PagesHeader, InfoCard } from "../../../Component";
 import { Visibility } from "@mui/icons-material";
-import { headers } from "./data";
+import { headers, statusColors, statusLabels } from "./data";
 import {
   VisibilityOutlined,
   TipsAndUpdatesOutlined,
@@ -25,10 +20,21 @@ import {
 import { useNavigate } from "react-router-dom";
 import { EMOJI_ICONS } from "../../../Config/emojiIcons";
 import { useFetchUserOrders } from "../../../Hooks/Users/orders";
+import Chip from "../../../Component/Chip";
+import { formatGHS } from "../../../utils/currency";
+import { toTitleCase } from "../../../utils/functions";
 
 const UserOrders = () => {
   const navigate = useNavigate();
   const { orders, loading } = useFetchUserOrders();
+
+  function viewOrderDetails(orderId) {
+    console.log("order id");
+    console.log(orderId);
+
+    if (!orderId) return;
+    navigate("/dashboard/user/order/details", { state: { orderId } });
+  }
 
   return (
     <div>
@@ -104,43 +110,42 @@ const UserOrders = () => {
         <CustomTable title="Total Orders" headers={headers}>
           {loading ? (
             <TableRow>
-              <TableCell colSpan={6}>
+              <TableCell colSpan={headers.length}>
                 <CircularProgress
                   color="secondary"
                   sx={{ display: "block", marginX: "auto" }}
                 />
               </TableCell>
             </TableRow>
-          ) : orders.length > 0 ? (
-            orders.map((row, index) => (
+          ) : orders?.orders?.length > 0 ? (
+            orders?.orders.map((row, index) => (
               <TableRow hover key={index}>
                 <TableCell>
                   <Checkbox />
                 </TableCell>
 
-                <TableCell>{row.id}</TableCell>
-                <TableCell>{row.subject}</TableCell>
-                <TableCell>{row.image}</TableCell>
-                <TableCell>{row.description}</TableCell>
-                <TableCell>{row.dueDate}</TableCell>
-                <TableCell>{row.amount}</TableCell>
+                <TableCell>{row.order_number}</TableCell>
+                <TableCell>{formatGHS(row?.amount)}</TableCell>
+                <TableCell>{toTitleCase(row?.payment_method)}</TableCell>
+                <TableCell>{row?.items?.length}</TableCell>
 
                 <TableCell>
-                  <StatusChip
-                    status={row.status === true ? "active" : "inactive"}
-                    label={row.status === true ? "Active" : "Disabled"}
+                  <Chip
+                    label={statusLabels[row?.status]}
+                    color={statusColors[row?.status]}
+                    noShadow
                   />
                 </TableCell>
 
+                <TableCell>{row?.created_at}</TableCell>
+
                 <TableCell>
                   <Stack direction={"row"} gap={1}>
-                    <IconButton size="small">
-                      <Visibility
-                        fontSize="small"
-                        onClick={() =>
-                          navigate("/dashboard/user/orders/single")
-                        }
-                      />
+                    <IconButton
+                      size="small"
+                      onClick={() => viewOrderDetails(row?.id)}
+                    >
+                      <Visibility fontSize="small" />
                     </IconButton>
                   </Stack>
                 </TableCell>
@@ -148,7 +153,7 @@ const UserOrders = () => {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={7}>
+              <TableCell colSpan={headers.length}>
                 <Stack alignItems="center" spacing={2}>
                   <Typography
                     variant="body1"

@@ -13,8 +13,16 @@ import { useState } from "react";
 import styles, { buttonStyles } from "./style";
 import FilePicker from "./FilePicker";
 import { useNavigate, useParams } from "react-router-dom";
-import { convertFileToBase64, decodeServiceId, deslugify, resolveAwsImage } from "../../../../utils/functions";
-import { useGetService, calculateServicePrice } from "../../../../Hooks/services";
+import {
+  convertFileToBase64,
+  decodeServiceId,
+  deslugify,
+  resolveAwsImage,
+} from "../../../../utils/functions";
+import {
+  useGetService,
+  calculateServicePrice,
+} from "../../../../Hooks/services";
 import { useUserContext } from "../../../../Contexts";
 import useCheckout from "../../../../Hooks/cart";
 import { toast } from "react-toastify";
@@ -55,7 +63,10 @@ export default function Order() {
 
   const handleDescriptionBlur = () => {
     if (description.trim() && description.trim().length < 20) {
-      setErrors({ ...errors, description: "Description must be at least 20 characters" });
+      setErrors({
+        ...errors,
+        description: "Description must be at least 20 characters",
+      });
     }
   };
 
@@ -92,7 +103,9 @@ export default function Order() {
       }
     }
 
-    const serviceType = service.service_types?.find(st => st.id === Number(serviceTypeId)) || {
+    const serviceType = service.service_types?.find(
+      (st) => st.id === Number(serviceTypeId),
+    ) || {
       id: service.id,
       service_type_name: "Custom Order",
       description: "",
@@ -138,7 +151,14 @@ export default function Order() {
   if (serviceLoading) {
     return (
       <Container>
-        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "50vh" }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            minHeight: "50vh",
+          }}
+        >
           <CircularProgress />
         </Box>
       </Container>
@@ -163,8 +183,9 @@ export default function Order() {
         <Box className="header">
           <Typography className="title">{deslugify(serviceName)}</Typography>
           <Typography className="description">
-            What kind of {deslugify(serviceName).toLowerCase()} do you want? Describe your project in
-            detail. The more information you provide, the better we can understand your vision.
+            What kind of {deslugify(serviceName).toLowerCase()} do you want?
+            Describe your project in detail. The more information you provide,
+            the better we can understand your vision.
           </Typography>
         </Box>
 
@@ -172,7 +193,7 @@ export default function Order() {
           <FilePicker
             error={errors.attachment}
             onChange={handleFileChange}
-            onBlur={() => { }}
+            onBlur={() => {}}
             tag="Upload your order file here (optional)"
             caption="JPG, PNG, PDF, MP3 and MP4 formats, at most 5MB"
             label="Attachment"

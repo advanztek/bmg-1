@@ -71,7 +71,7 @@ const useFetchOrders = () => {
   return { orders, refetch: fetchData, loading };
 };
 
-export function useGetOrderDetails(orderId) {
+export function useGetOrderDetails(orderId, { load = true }) {
   const { config } = useUserContext();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState(null);
@@ -95,9 +95,54 @@ export function useGetOrderDetails(orderId) {
   }
 
   useEffect(() => {
-    getOrderDetails();
-  }, []);
+    if (load) {
+      getOrderDetails();
+    }
+  }, [load]);
 
   return { data, getOrderDetails, loading };
 }
+
+export function useAssignOrder() {
+  const { config } = useUserContext();
+  const [loading, setLoading] = useState(false);
+
+  async function assignOrder(body) {
+    setLoading(true);
+
+    try {
+      const response = await axios.post(
+        `${BASE_SERVER_URL}/admin/assign/order`,
+        body,
+        config,
+      );
+
+      const result = response.data;
+      console.log(result);
+
+      if (result?.code === 0) {
+        showToast.success(result.message);
+        return true;
+      }
+      if (result?.code !== 0) {
+        showToast.error(result.message);
+        return false;
+      }
+    } catch (error) {
+      console.log(error);
+      console.error("Error:", error.response.data);
+      if (error.response.data?.error) {
+        showToast.error(error.response.data.message);
+      } else {
+        showToast.error("An error occurred while assigning order.");
+      }
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return { loading, assignOrder };
+}
+
 export { useAddOrder, useFetchOrders };
