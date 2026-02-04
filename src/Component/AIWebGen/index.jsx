@@ -43,6 +43,7 @@ import {
     Cloud as CloudIcon,
     Speed as SpeedIcon
 } from '@mui/icons-material';
+import PricingSection from '../PricingSection';
 
 // Styled Components
 const HeroSection = styled(Box)(({ theme }) => ({
@@ -203,52 +204,6 @@ export default function AIWebGeneratorHome() {
             icon: <GlobeIcon sx={{ fontSize: 40 }} />,
             title: "SEO Optimized",
             desc: "Built-in best practices for maximum search engine visibility and performance"
-        }
-    ];
-
-    const plans = [
-        {
-            name: "Starter",
-            price: "Free",
-            period: "",
-            features: [
-                "5 websites per month",
-                "Basic templates library",
-                "Standard support",
-                "Export code",
-                "Community access"
-            ],
-            popular: false
-        },
-        {
-            name: "Professional",
-            price: "$29",
-            period: "/month",
-            features: [
-                "Unlimited websites",
-                "Premium templates",
-                "Priority support",
-                "Advanced customization",
-                "Custom domains",
-                "Analytics dashboard",
-                "API access"
-            ],
-            popular: true
-        },
-        {
-            name: "Enterprise",
-            price: "Custom",
-            period: "",
-            features: [
-                "Everything in Pro",
-                "White-label solution",
-                "Dedicated account manager",
-                "SLA guarantee",
-                "Custom integrations",
-                "Advanced security",
-                "Team collaboration"
-            ],
-            popular: false
         }
     ];
 
@@ -630,131 +585,7 @@ export default function AIWebGeneratorHome() {
             {/* Pricing Section */}
             <Box sx={{ py: 12, position: 'relative', zIndex: 10 }} id="pricing">
                 <Container maxWidth="lg">
-                    <Box sx={{ textAlign: 'center', mb: 8 }}>
-                        <Chip
-                            label="PRICING"
-                            sx={{
-                                mb: 2,
-                                background: alpha(theme.palette.primary.main, 0.2),
-                                color: theme.palette.primary.main,
-                                fontWeight: 600,
-                            }}
-                        />
-                        <Typography
-                            variant="h2"
-                            sx={{
-                                fontSize: { xs: '2rem', md: '3rem' },
-                                fontWeight: 800,
-                                mb: 2,
-                            }}
-                        >
-                            Choose Your Perfect Plan
-                        </Typography>
-                        <Typography
-                            variant="h6"
-                            sx={{
-                                color: theme.palette.text.secondary,
-                                maxWidth: '700px',
-                                mx: 'auto',
-                            }}
-                        >
-                            Flexible pricing for individuals, teams, and enterprises
-                        </Typography>
-                    </Box>
-
-                    <Grid container spacing={4} alignItems="stretch">
-                        {plans.map((plan, index) => (
-                            <Grid size={{ xs: 12, md: 4 }} key={index}>
-                                <PricingCard popular={plan.popular}>
-                                    {plan.popular && (
-                                        <Chip
-                                            label="MOST POPULAR"
-                                            sx={{
-                                                position: 'absolute',
-                                                top: 20,
-                                                right: 20,
-                                                background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
-                                                color: theme.palette.primary.contrastText,
-                                                fontWeight: 700,
-                                                fontSize: '11px',
-                                            }}
-                                        />
-                                    )}
-                                    <CardContent sx={{ p: 0 }}>
-                                        <Typography
-                                            variant="h6"
-                                            sx={{
-                                                fontWeight: 600,
-                                                mb: 1,
-                                                color: theme.palette.text.secondary,
-                                            }}
-                                        >
-                                            {plan.name}
-                                        </Typography>
-                                        <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 3 }}>
-                                            <Typography
-                                                variant="h2"
-                                                sx={{
-                                                    fontWeight: 800,
-                                                    fontSize: '3rem',
-                                                }}
-                                            >
-                                                {plan.price}
-                                            </Typography>
-                                            <Typography
-                                                variant="body1"
-                                                sx={{
-                                                    color: theme.palette.text.disabled,
-                                                    ml: 1,
-                                                }}
-                                            >
-                                                {plan.period}
-                                            </Typography>
-                                        </Box>
-
-                                        <List sx={{ mb: 4 }}>
-                                            {plan.features.map((feature, idx) => (
-                                                <ListItem key={idx} sx={{ px: 0, py: 1 }}>
-                                                    <ListItemIcon sx={{ minWidth: 36 }}>
-                                                        <CheckIcon sx={{ color: theme.palette.primary.main }} />
-                                                    </ListItemIcon>
-                                                    <ListItemText
-                                                        primary={feature}
-                                                        sx={{
-                                                            '& .MuiListItemText-primary': {
-                                                                color: theme.palette.text.primary,
-                                                                fontSize: '15px',
-                                                            },
-                                                        }}
-                                                    />
-                                                </ListItem>
-                                            ))}
-                                        </List>
-
-                                        <StyledButton
-                                            variant={plan.popular ? 'contained' : 'outlined'}
-                                            fullWidth
-                                            size="large"
-                                            sx={{
-                                                background: plan.popular
-                                                    ? `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`
-                                                    : 'transparent',
-                                                borderColor: plan.popular ? 'transparent' : alpha(theme.palette.text.primary, 0.3),
-                                                '&:hover': {
-                                                    background: plan.popular
-                                                        ? `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.secondary.dark} 100%)`
-                                                        : alpha(theme.palette.primary.main, 0.1),
-                                                    borderColor: theme.palette.primary.main,
-                                                },
-                                            }}
-                                        >
-                                            Get Started
-                                        </StyledButton>
-                                    </CardContent>
-                                </PricingCard>
-                            </Grid>
-                        ))}
-                    </Grid>
+                    <PricingSection />
                 </Container>
             </Box>
 

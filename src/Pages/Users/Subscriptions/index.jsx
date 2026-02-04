@@ -1,334 +1,219 @@
-import React, { useState } from "react";
-import {
-  Box,
-  Grid,
-  Card,
-  CardContent,
-  Typography,
-  Button,
-  Chip,
-  Stack,
-  Divider,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  LinearProgress,
-  Avatar,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions
-} from "@mui/material";
-import { Check, Star, Receipt, AddOutlined, VisibilityOutlined } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
-import { plans, billingHistory, usageStats } from "./data";
+import React, { useState, useMemo } from "react";
+import { Box, Grid, Stack, Typography, Alert, Button, Snackbar } from "@mui/material";
+import { TrendingUp } from "@mui/icons-material";
 import { PagesHeader } from "../../../Component";
+import { useBuyCredits, useGetCreditPackages } from "../../../Hooks/general";
+import InfoBanner from "../../../Component/Subscriptions/InfoBanner";
+import PackageCard from "../../../Component/Subscriptions/PackageCard";
+import PurchaseDialog from "../../../Component/Subscriptions/PurchaseDialog";
+import LoadingSkeleton from "../../../Component/Subscriptions/LoadingSkeleton";
+import EmptyState from "../../../Component/Subscriptions/EmptyState";
+import { calculatePrice, getPackageGradient } from "../../../Component/Subscriptions/constants";
+import CustomCreditPurchase from "../../../Component/Subscriptions/CustomCreditPurchase";
 
 const UserSubscriptionsPage = () => {
-  const [selectedPlan, setSelectedPlan] = useState("pro");
-  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
-  const navigate = useNavigate();
+  const { data: creditPackages, loading, error } = useGetCreditPackages();
+  const { buyCredits } = useBuyCredits();
+
+  const [selectedPackage, setSelectedPackage] = useState(null);
+  const [customCredits, setCustomCredits] = useState("");
+  const [purchaseDialogOpen, setPurchaseDialogOpen] = useState(false);
+  const [processing, setProcessing] = useState(false);
+  const [purchaseError, setPurchaseError] = useState(null);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success'
+  });
+
+  // Get the best value package
+  const bestValuePackage = useMemo(() => {
+    if (!creditPackages || creditPackages.length === 0) return null;
+
+    return creditPackages.reduce((best, current) => {
+      const currentValue = current.credits / parseFloat(current.price);
+      const bestValue = best ? best.credits / parseFloat(best.price) : 0;
+      return currentValue > bestValue ? current : best;
+    }, null);
+  }, [creditPackages]);
+
+  // Handle custom credit purchase
+  const handleCustomPurchase = () => {
+    const credits = parseInt(customCredits);
+    if (credits && credits > 0) {
+      const price = calculatePrice(credits);
+      setSelectedPackage({
+        id: 'custom',
+        name: "Custom Credit Package",
+        credits: credits,
+        price: price,
+        description: `Custom package with ${credits} credits at standard rate`,
+        is_active: true,
+        is_custom: true
+      });
+      setPurchaseDialogOpen(true);
+    }
+  };
+
+  // Handle package selection
+  const handlePackageSelect = (pkg) => {
+    setSelectedPackage(pkg);
+    setPurchaseDialogOpen(true);
+  };
+
+  // Handle purchase
+  const handlePurchase = async () => {
+    setPurchaseError(null);
+    setProcessing(true);
+
+    try {
+      const creditData = {
+        package_id: selectedPackage.is_custom ? null : selectedPackage.id,
+        credits: selectedPackage.is_custom ? selectedPackage.credits : undefined,
+        amount: selectedPackage.is_custom ? parseFloat(selectedPackage.price).toFixed(2) : undefined
+      };
+
+      const response = await buyCredits(creditData);
+
+      if (response?.data?.success) {
+        setSnackbar({
+          open: true,
+          message: 'Credit purchase initiated successfully! Redirecting to payment...',
+          severity: 'success'
+        });
+
+        setPurchaseDialogOpen(false);
+        setSelectedPackage(null);
+        setCustomCredits("");
+
+        setTimeout(() => {
+          const payment_link = response?.data?.result?.authorization_url;
+          if (payment_link) {
+            window.location.href = payment_link;
+          }
+        }, 2000);
+      }
+    } catch (err) {
+      console.error('Error purchasing credits:', err);
+      const errorMessage = err.response?.data?.message || err.message || 'Failed to purchase credits. Please try again.';
+      setPurchaseError(errorMessage);
+      setSnackbar({
+        open: true,
+        message: errorMessage,
+        severity: 'error'
+      });
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handleDialogClose = () => {
+    setPurchaseDialogOpen(false);
+    setSelectedPackage(null);
+    setPurchaseError(null);
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   return (
     <Box>
       <PagesHeader
-        label="My Subscriptions"
-        desc={"Manage your subscription plan and billing."}
-        actions={[
-          {
-            label: "Book Consultation",
-            icon: <AddOutlined />,
-            onClick: () => navigate("/dashboard/user/book-consultation")
-          },
-          {
-            label: "My Orders",
-            icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/user/orders")
-          },
-          {
-            label: "AI Services",
-            icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/user/artificial-intelligence")
-          }
-        ]}
+        label="Credit Packages"
+        desc="Purchase credits for AI-powered services including image, video, and audio generation."
       />
 
       <Grid container spacing={3}>
-        <Grid size={{ xs: 12, md: 4 }}>
-          <Card sx={{ height: "100%" }}>
-            <CardContent>
-              <Typography variant="h6" fontWeight={600} mb={2}>
-                Current Plan
-              </Typography>
-              <Box
-                sx={{
-                  p: 3,
-                  bgcolor: "primary.light",
-                  borderRadius: 2,
-                  mb: 2
-                }}
-              >
-                <Typography variant="h4" fontWeight={700} color="#fff">
-                  Pro Plan
-                </Typography>
-                <Typography variant="h5" fontWeight={600} mt={1} color="#fff">
-                  $29
-                  <Typography component="span" variant="body1">
-                    /month
-                  </Typography>
-                </Typography>
-              </Box>
-
-              <Stack spacing={2} mb={3}>
-                <Stack direction="row" justifyContent="space-between">
-                  <Typography variant="body2" color="text.secondary">
-                    Status
-                  </Typography>
-                  <Chip label="Active" color="success" size="small" />
-                </Stack>
-                <Stack direction="row" justifyContent="space-between">
-                  <Typography variant="body2" color="text.secondary">
-                    Next Billing
-                  </Typography>
-                  <Typography variant="body2" fontWeight={600}>
-                    Dec 1, 2024
-                  </Typography>
-                </Stack>
-                <Stack direction="row" justifyContent="space-between">
-                  <Typography variant="body2" color="text.secondary">
-                    Auto-Renewal
-                  </Typography>
-                  <Chip
-                    label="Enabled"
-                    color="success"
-                    size="small"
-                    variant="outlined"
-                  />
-                </Stack>
-              </Stack>
-
-              <Divider sx={{ my: 2 }} />
-
-              <Stack spacing={1}>
-                <Button
-                  variant="contained"
-                  fullWidth
-                  sx={{ textTransform: "none" }}
-                >
-                  Upgrade Plan
-                </Button>
-                <Button
-                  variant="outlined"
-                  fullWidth
-                  sx={{ textTransform: "none" }}
-                  onClick={() => setCancelDialogOpen(true)}
-                >
-                  Cancel Subscription
-                </Button>
-              </Stack>
-            </CardContent>
-          </Card>
+        {/* Info Banner */}
+        <Grid item xs={12}>
+          <InfoBanner />
         </Grid>
 
-        <Grid size={{ xs: 12, md: 8 }}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" fontWeight={600} mb={3}>
-                Usage Statistics
-              </Typography>
-              <Grid container spacing={3}>
-                {usageStats.map((stat, index) => (
-                  <Grid item xs={12} md={4} key={index}>
-                    <Card variant="outlined">
-                      <CardContent>
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          mb={1}
-                        >
-                          {stat.label}
-                        </Typography>
-                        <Typography variant="h5" fontWeight={600} mb={2}>
-                          {stat.used}
-                          {stat.unit || ""} / {stat.total}
-                          {stat.unit || ""}
-                        </Typography>
-                        <LinearProgress
-                          variant="determinate"
-                          value={stat.percentage}
-                          sx={{ height: 8, borderRadius: 4 }}
-                        />
-                        <Typography
-                          variant="caption"
-                          color="text.secondary"
-                          sx={{ display: "block", mt: 1 }}
-                        >
-                          {stat.percentage}% used
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                ))}
-              </Grid>
-            </CardContent>
-          </Card>
-
-          <Card sx={{ mt: 3 }}>
-            <CardContent>
-              <Typography variant="h6" fontWeight={600} mb={2}>
-                Billing History
-              </Typography>
-              <Stack spacing={2}>
-                {billingHistory.map((bill, index) => (
-                  <Card key={index} variant="outlined">
-                    <CardContent>
-                      <Stack
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                      >
-                        <Stack direction="row" spacing={2} alignItems="center">
-                          <Avatar sx={{ bgcolor: "primary.light" }}>
-                            <Receipt color="primary" />
-                          </Avatar>
-                          <Box>
-                            <Typography variant="body1" fontWeight={600}>
-                              {bill.invoice}
-                            </Typography>
-                            <Typography
-                              variant="caption"
-                              color="text.secondary"
-                            >
-                              {bill.date}
-                            </Typography>
-                          </Box>
-                        </Stack>
-                        <Stack direction="row" spacing={2} alignItems="center">
-                          <Typography variant="h6" fontWeight={600}>
-                            {bill.amount}
-                          </Typography>
-                          <Chip
-                            label={bill.status}
-                            color="success"
-                            size="small"
-                          />
-                          <Button size="small" sx={{ textTransform: "none" }}>
-                            Download
-                          </Button>
-                        </Stack>
-                      </Stack>
-                    </CardContent>
-                  </Card>
-                ))}
-              </Stack>
-            </CardContent>
-          </Card>
+        {/* Custom Credit Purchase */}
+        <Grid item xs={12}>
+          <CustomCreditPurchase
+            customCredits={customCredits}
+            setCustomCredits={setCustomCredits}
+            onPurchase={handleCustomPurchase}
+          />
         </Grid>
 
-        <Grid size={{ xs: 12 }}>
-          <Typography variant="h5" fontWeight={600} mb={3}>
-            Available Plans
-          </Typography>
-          <Grid container spacing={3}>
-            {plans.map((plan) => (
-              <Grid item xs={12} md={4} key={plan.id}>
-                <Card
-                  sx={{
-                    height: "100%",
-                    position: "relative",
-                    border: plan.popular ? 2 : 1,
-                    borderColor: plan.popular ? "primary.main" : "divider",
-                    transition: "all 0.3s",
-                    "&:hover": {
-                      transform: "translateY(-8px)",
-                      boxShadow: 6
-                    }
-                  }}
-                >
-                  {plan.popular && (
-                    <Chip
-                      label="Most Popular"
-                      color="primary"
-                      size="small"
-                      icon={<Star />}
-                      sx={{
-                        position: "absolute",
-                        top: 16,
-                        right: 16
-                      }}
-                    />
-                  )}
-                  <CardContent sx={{ p: 3 }}>
-                    <Typography variant="h5" fontWeight={700} mb={1}>
-                      {plan.name}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" mb={3}>
-                      {plan.description}
-                    </Typography>
-                    <Typography variant="h3" fontWeight={700} mb={1}>
-                      {plan.price}
-                      <Typography component="span" variant="body1">
-                        {plan.period}
-                      </Typography>
-                    </Typography>
-                    <Button
-                      fullWidth
-                      variant={
-                        plan.id === selectedPlan ? "outlined" : "contained"
-                      }
-                      sx={{
-                        my: 3,
-                        textTransform: "none",
-                        fontWeight: 600
-                      }}
-                      disabled={plan.id === selectedPlan}
-                    >
-                      {plan.id === selectedPlan
-                        ? "Current Plan"
-                        : "Choose Plan"}
-                    </Button>
-                    <List dense>
-                      {plan.features.map((feature, idx) => (
-                        <ListItem key={idx} disableGutters>
-                          <ListItemIcon sx={{ minWidth: 32 }}>
-                            <Check color="success" fontSize="small" />
-                          </ListItemIcon>
-                          <ListItemText
-                            primary={feature}
-                            primaryTypographyProps={{ variant: "body2" }}
-                          />
-                        </ListItem>
-                      ))}
-                    </List>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
+        {/* Available Credit Packages */}
+        <Grid item xs={12}>
+          <Box sx={{ mb: 4 }}>
+            <Stack direction="row" spacing={2} alignItems="center" mb={1}>
+              <TrendingUp color="primary" sx={{ fontSize: 32 }} />
+              <Typography variant="h4" fontWeight={700}>
+                Pre-Packaged Deals
+              </Typography>
+            </Stack>
+            <Typography variant="body1" color="text.secondary">
+              Choose from our specially curated packages for the best value
+            </Typography>
+          </Box>
+
+          {loading ? (
+            <LoadingSkeleton />
+          ) : error ? (
+            <Alert
+              severity="error"
+              sx={{ borderRadius: 2 }}
+              action={
+                <Button color="inherit" size="small" onClick={() => window.location.reload()}>
+                  Retry
+                </Button>
+              }
+            >
+              Failed to load credit packages. Please try again.
+            </Alert>
+          ) : creditPackages && creditPackages.length > 0 ? (
+            <Grid container spacing={3}>
+              {creditPackages
+                .filter(pkg => pkg.is_active)
+                .map((pkg, index) => {
+                  const gradientConfig = getPackageGradient(index);
+                  const isBestValue = bestValuePackage?.id === pkg.id;
+
+                  return (
+                    <Grid item xs={12} md={4} key={pkg.id}>
+                      <PackageCard
+                        pkg={pkg}
+                        gradientConfig={gradientConfig}
+                        isBestValue={isBestValue}
+                        onSelect={handlePackageSelect}
+                      />
+                    </Grid>
+                  );
+                })}
+            </Grid>
+          ) : (
+            <EmptyState />
+          )}
         </Grid>
       </Grid>
 
-      <Dialog
-        open={cancelDialogOpen}
-        onClose={() => setCancelDialogOpen(false)}
+      {/* Purchase Confirmation Dialog */}
+      <PurchaseDialog
+        open={purchaseDialogOpen}
+        onClose={handleDialogClose}
+        selectedPackage={selectedPackage}
+        processing={processing}
+        onConfirm={handlePurchase}
+        error={purchaseError}
+      />
+
+      {/* Snackbar for notifications */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
-        <DialogTitle>Cancel Subscription</DialogTitle>
-        <DialogContent>
-          <Typography>
-            Are you sure you want to cancel your subscription? You'll lose
-            access to all Pro features at the end of your billing period.
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setCancelDialogOpen(false)}>
-            Keep Subscription
-          </Button>
-          <Button onClick={() => setCancelDialogOpen(false)} color="error">
-            Cancel Subscription
-          </Button>
-        </DialogActions>
-      </Dialog>
+        <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: '100%' }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

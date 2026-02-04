@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useRef } from 'react';
 import {
     Box,
@@ -32,6 +33,8 @@ import {
 } from '@mui/icons-material';
 import FAQSection from '../FAQ';
 import ConsultantForm from '../ConsultantForm';
+import PricingSection from '../PricingSection';
+import { useGetAllFAQ } from '../../Hooks/general';
 
 // Keyframe Animations
 const float = keyframes`
@@ -48,21 +51,6 @@ const fadeInUp = keyframes`
         opacity: 1;
         transform: translateY(0);
     }
-`;
-
-const shimmer = keyframes`
-    0% { background-position: -1000px 0; }
-    100% { background-position: 1000px 0; }
-`;
-
-const filmRoll = keyframes`
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-`;
-
-const pulse = keyframes`
-    0%, 100% { opacity: 0.4; transform: scale(1); }
-    50% { opacity: 0.8; transform: scale(1.05); }
 `;
 
 // Styled Components
@@ -84,26 +72,6 @@ const HeroSection = styled(Box)(({ theme }) => ({
                      radial-gradient(circle at 80% 80%, ${alpha(theme.palette.secondary.main, 0.15)} 0%, transparent 50%)`,
         pointerEvents: 'none'
     }
-}));
-
-const FilmStrip = styled(Box)(({ theme }) => ({
-    position: 'absolute',
-    top: '15%',
-    left: 0,
-    width: '200%',
-    height: '120px',
-    background: `repeating-linear-gradient(
-        90deg,
-        ${alpha(theme.palette.primary.main, 0.1)} 0px,
-        ${alpha(theme.palette.primary.main, 0.1)} 10px,
-        transparent 10px,
-        transparent 20px
-    )`,
-    borderTop: `2px solid ${alpha(theme.palette.primary.main, 0.2)}`,
-    borderBottom: `2px solid ${alpha(theme.palette.primary.main, 0.2)}`,
-    animation: `${filmRoll} 20s linear infinite`,
-    opacity: 0.3,
-    zIndex: 0
 }));
 
 const GradientText = styled(Typography)(({ theme }) => ({
@@ -156,25 +124,6 @@ const FeatureBox = styled(Box)(({ theme }) => ({
         background: alpha(theme.palette.background.paper, 0.7),
         borderColor: theme.palette.primary.main,
         transform: 'translateY(-4px)',
-    }
-}));
-
-const PricingBox = styled(Box)(({ theme, featured }) => ({
-    background: featured
-        ? `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.15)} 0%, ${alpha(theme.palette.secondary.main, 0.15)} 100%)`
-        : alpha(theme.palette.background.paper, 0.5),
-    backdropFilter: 'blur(20px)',
-    border: featured
-        ? `2px solid ${theme.palette.primary.main}`
-        : `1px solid ${alpha(theme.palette.text.primary, 0.1)}`,
-    borderRadius: theme.spacing(3),
-    padding: theme.spacing(5),
-    position: 'relative',
-    transition: 'all 0.4s ease',
-    height: '100%',
-    '&:hover': {
-        transform: featured ? 'translateY(-12px) scale(1.02)' : 'translateY(-8px)',
-        boxShadow: `0 20px 60px ${alpha(theme.palette.primary.main, 0.3)}`
     }
 }));
 
@@ -235,6 +184,7 @@ const StatBox = styled(Box)(({ theme }) => ({
 export default function AIVideoGeneratorHome() {
     const theme = useTheme();
     const [hoveredVideo, setHoveredVideo] = useState(null);
+    const { data: faqs, loading: faqLoading } = useGetAllFAQ()
 
     const videoExamples = [
         { id: 1, title: 'Product Showcase', duration: '0:30', thumbnail: '🎬' },
@@ -263,52 +213,6 @@ export default function AIVideoGeneratorHome() {
             icon: <PaletteIcon sx={{ fontSize: 48 }} />,
             title: 'Full Customization',
             description: 'Fine-tune every aspect - styles, transitions, effects, music, voiceover, and timing to match your vision'
-        }
-    ];
-
-    const plans = [
-        {
-            name: 'Starter',
-            price: '29',
-            period: 'month',
-            features: [
-                '10 videos per month',
-                'Up to 1080p resolution',
-                'Basic AI styles',
-                'Watermark included',
-                'Email support'
-            ],
-            featured: false
-        },
-        {
-            name: 'Professional',
-            price: '79',
-            period: 'month',
-            features: [
-                'Unlimited videos',
-                'Up to 4K resolution',
-                'Advanced AI styles',
-                'No watermark',
-                'Priority support',
-                'Custom branding',
-                'API access'
-            ],
-            featured: true
-        },
-        {
-            name: 'Enterprise',
-            price: 'Custom',
-            period: '',
-            features: [
-                'Everything in Pro',
-                'Dedicated account manager',
-                'Custom AI training',
-                'White-label solution',
-                'SLA guarantee',
-                'Team collaboration',
-                'Advanced analytics'
-            ],
-            featured: false
         }
     ];
 
@@ -673,118 +577,7 @@ export default function AIVideoGeneratorHome() {
             {/* Pricing Section */}
             <Box sx={{ py: { xs: 10, md: 16 } }}>
                 <Container maxWidth="lg">
-                    <Box sx={{ textAlign: 'center', mb: 10 }}>
-                        <Chip
-                            label="PRICING"
-                            sx={{
-                                mb: 2,
-                                background: alpha(theme.palette.primary.main, 0.15),
-                                color: theme.palette.primary.main,
-                                fontWeight: 700,
-                                letterSpacing: '1px'
-                            }}
-                        />
-                        <Typography
-                            variant="h2"
-                            sx={{
-                                fontSize: { xs: '2rem', md: '3.5rem' },
-                                fontWeight: 900,
-                                mb: 2,
-                                letterSpacing: '-0.02em'
-                            }}
-                        >
-                            Choose Your Perfect Plan
-                        </Typography>
-                        <Typography
-                            variant="h6"
-                            sx={{
-                                color: theme.palette.text.secondary,
-                                maxWidth: '700px',
-                                mx: 'auto',
-                                fontSize: '1.1rem'
-                            }}
-                        >
-                            Flexible pricing for creators, businesses, and enterprises
-                        </Typography>
-                    </Box>
-
-                    <Grid container spacing={4} alignItems="stretch">
-                        {plans.map((plan, index) => (
-                            <Grid size={{ xs: 12, md: 4 }} key={index}>
-                                <PricingBox featured={plan.featured}>
-                                    {plan.featured && (
-                                        <Chip
-                                            label="MOST POPULAR"
-                                            sx={{
-                                                position: 'absolute',
-                                                top: 20,
-                                                right: 20,
-                                                background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
-                                                color: theme.palette.primary.contrastText,
-                                                fontWeight: 700,
-                                                fontSize: '11px',
-                                                letterSpacing: '0.5px'
-                                            }}
-                                        />
-                                    )}
-
-                                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 1, color: theme.palette.text.secondary }}>
-                                        {plan.name}
-                                    </Typography>
-
-                                    <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 4 }}>
-                                        <Typography variant="h2" sx={{ fontWeight: 900, fontSize: '3.5rem' }}>
-                                            {plan.price === 'Custom' ? plan.price : `$${plan.price}`}
-                                        </Typography>
-                                        {plan.period && (
-                                            <Typography variant="body1" sx={{ color: theme.palette.text.disabled, ml: 1 }}>
-                                                /{plan.period}
-                                            </Typography>
-                                        )}
-                                    </Box>
-
-                                    <Box sx={{ mb: 4 }}>
-                                        {plan.features.map((feature, idx) => (
-                                            <Box
-                                                key={idx}
-                                                sx={{
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    mb: 2
-                                                }}
-                                            >
-                                                <CheckIcon sx={{ color: theme.palette.primary.main, mr: 2, fontSize: 20 }} />
-                                                <Typography variant="body1" sx={{ color: theme.palette.text.primary }}>
-                                                    {feature}
-                                                </Typography>
-                                            </Box>
-                                        ))}
-                                    </Box>
-
-                                    <StyledButton
-                                        variant={plan.featured ? 'contained' : 'outlined'}
-                                        fullWidth
-                                        size="large"
-                                        sx={{
-                                            background: plan.featured
-                                                ? `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`
-                                                : 'transparent',
-                                            color: plan.featured ? theme.palette.primary.contrastText : theme.palette.text.primary,
-                                            borderColor: plan.featured ? 'transparent' : alpha(theme.palette.text.primary, 0.3),
-                                            '&:hover': {
-                                                background: plan.featured
-                                                    ? `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.secondary.dark} 100%)`
-                                                    : alpha(theme.palette.primary.main, 0.1),
-                                                borderColor: theme.palette.primary.main
-                                            }
-                                        }}
-                                    >
-                                        Get Started
-                                    </StyledButton>
-                                </PricingBox>
-                            </Grid>
-                        ))}
-                    </Grid>
+                    <PricingSection />
                 </Container>
             </Box>
 
@@ -931,7 +724,7 @@ export default function AIVideoGeneratorHome() {
                 </Container>
             </Box>
             <ConsultantForm />
-            <FAQSection />
+            <FAQSection data={faqs} loading={faqLoading} />
         </Box>
     );
 }
