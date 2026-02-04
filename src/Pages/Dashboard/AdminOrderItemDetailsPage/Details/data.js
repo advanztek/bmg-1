@@ -1,11 +1,13 @@
 export const statusColors = {
-  pending: "primary",
   completed: "success",
-  in_progress: "info",
+  assigned: "info",
+  declined: "error",
+  cancelled: "warning",
 };
 
 export const statusLabels = {
-  pending: "Pending",
   completed: "Completed",
-  in_progress: "Progress",
+  assigned: "Processing",
+  declined: "Declined",
+  cancelled: "Terminated",
 };

@@ -68,9 +68,10 @@ export default function AdminOrderItemDetailsPage() {
       <Stack gap="22px">
         <Requirement data={details?.requirements} />
         {expert && <Expert data={expert} />}
-        {/* check if not assigned */}
-        {!expert && !assignOpen && <AssignCTA onAssign={openAssign} />}
-        {!expert && assignOpen && experts?.length > 0 && (
+        {details?.status == "pending" && !assignOpen && (
+          <AssignCTA onAssign={openAssign} />
+        )}
+        {details?.status == "pending" && assignOpen && experts?.length > 0 && (
           <Assign
             experts={experts}
             orderId={details?.order_id}
@@ -78,10 +79,9 @@ export default function AdminOrderItemDetailsPage() {
             onSuccess={goToOrders}
           />
         )}
-        {!expert &&
-          details?.status == "pending" &&
-          assignOpen &&
-          experts?.length < 1 && <ExpertsCTA onAdd={goToAddExpert} />}
+        {details?.status == "pending" && assignOpen && experts?.length < 1 && (
+          <ExpertsCTA onAdd={goToAddExpert} />
+        )}
       </Stack>
     </Box>
   );
