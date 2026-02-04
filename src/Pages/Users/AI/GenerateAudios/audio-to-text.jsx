@@ -105,7 +105,7 @@ const AudioToTextInput = ({ onGeneratingChange, onTextGenerated }) => {
       const base64Audio = await fileToBase64(audioFile);
 
       const payload = {
-        input: base64Audio,
+        file: base64Audio,
         language,
         model: "gpt-4o-mini-transcribe",
         response_format: "json",
@@ -113,8 +113,6 @@ const AudioToTextInput = ({ onGeneratingChange, onTextGenerated }) => {
         stream: false,
         timestamp_granularities: ["segment"],
       };
-
-      console.log("Audio-to-Text Payload:", payload);
 
       const response = await transcribeAudio(payload);
 
@@ -132,7 +130,7 @@ const AudioToTextInput = ({ onGeneratingChange, onTextGenerated }) => {
   };
 
   return (
-    <Box maxWidth={800} mx="auto" mb={4}>
+    <Box mx="auto" mb={4}>
       <Card
         elevation={0}
         sx={{

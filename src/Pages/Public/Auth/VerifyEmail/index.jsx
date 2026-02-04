@@ -120,8 +120,6 @@ const VerifyEmailPage = () => {
           otp: otp,
           otp_type: "login",
         });
-        // After successful login verification, the useEffect hook will handle redirect
-        showToast.success("Login successful! Redirecting...");
       } else if (mode === OTP_MODES.FORGOT_PASSWORD) {
         const success = await verifyOtp(otp, email);
         if (success) {
@@ -164,7 +162,6 @@ const VerifyEmailPage = () => {
       }
 
       setCountdown(60);
-      showToast.success("OTP resent successfully!");
     } catch (error) {
       showToast.error(error || "OTP Resend Failed");
     }

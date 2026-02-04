@@ -32,6 +32,7 @@ export { default as OtpModal } from "./Auth/OtpModal";
 export { default as CustomToast } from "./CustomToast";
 export { default as GlobalLoader } from "./Loader";
 export { default as CategoryServices } from "./CategoryServices";
+export { default as PaymentDetailsModal } from "./PaymentDetailsModal";
 
 //---DASHBOARD COMPONENT PATHS----//
 export { default as InfoCard } from "./Dashboard/InfoCard";

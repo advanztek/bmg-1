@@ -1,4 +1,4 @@
-// ImageToVideoInput.jsx
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import {
   Box,
@@ -18,6 +18,10 @@ import {
   Tabs,
   Tab,
   alpha,
+  Switch,
+  FormControlLabel,
+  Collapse,
+  Slider,
 } from "@mui/material";
 import {
   Send,
@@ -28,29 +32,61 @@ import {
   Timer,
   HighQuality,
   AutoAwesome,
+  Settings,
+  VolumeUp,
+  PhotoLibrary,
+  SmartDisplay,
 } from "@mui/icons-material";
-import { quality, timeframe } from "../data";
 import { CustomButton } from "../../../../Component";
 import { useGenerateImageToVideo } from "../../../../Hooks/Users/generate_videos";
 import { showToast } from "../../../../utils/toast";
 
+// Configuration based on Joi schema for Pollo provider
+const POLLO_LENGTHS = [
+  { id: 1, name: "1 second", label: "Ultra Short" },
+  { id: 2, name: "2 seconds", label: "Very Short" },
+  { id: 3, name: "3 seconds", label: "Short" },
+  { id: 4, name: "4 seconds", label: "Short" },
+  { id: 5, name: "5 seconds", label: "Medium", recommended: true },
+  { id: 6, name: "6 seconds", label: "Medium" },
+  { id: 7, name: "7 seconds", label: "Long" },
+  { id: 8, name: "8 seconds", label: "Long" },
+  { id: 9, name: "9 seconds", label: "Very Long" },
+  { id: 10, name: "10 seconds", label: "Ultra Long" },
+];
+
+const POLLO_RESOLUTIONS = [
+  { id: "720p", name: "720p (HD)", description: "1280×720" },
+];
+
 const MOTION_SUGGESTIONS = [
-  "Slow cinematic zoom in",
-  "Gentle camera pan right",
-  "Subtle wind and movement",
-  "Dynamic action sequence",
-  "Smooth rotate 360 degrees",
+  "Slow cinematic zoom in with subtle depth",
+  "Gentle camera pan right, smooth transition",
+  "Subtle wind and movement, natural atmosphere",
+  "Dynamic action sequence with camera tracking",
+  "Smooth 360-degree rotation, revealing environment",
+  "Time-lapse effect with light changes",
 ];
 
 const ImageToVideoInput = ({ onGeneratingChange, onImageGenerated }) => {
+  // Image input state
   const [inputMode, setInputMode] = useState(0); // 0 = Upload, 1 = URL
   const [imageUrl, setImageUrl] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+
+  // Form state matching Joi schema defaults for Pollo
+  const [provider] = useState("pollo");
   const [prompt, setPrompt] = useState("");
+  const [enhancePrompt, setEnhancePrompt] = useState(true);
+  const [length, setLength] = useState(5); // Default 5 seconds
+  const [resolution, setResolution] = useState("720p");
+  const [generateAudio, setGenerateAudio] = useState(true);
+  const [seed, setSeed] = useState("");
+  const [showAdvanced, setShowAdvanced] = useState(false);
+
+  // UI state
   const [isGenerating, setIsGenerating] = useState(false);
-  const [duration, setDuration] = useState("");
-  const [resolution, setResolution] = useState("");
 
   const generateVideo = useGenerateImageToVideo();
 
@@ -71,22 +107,35 @@ const ImageToVideoInput = ({ onGeneratingChange, onImageGenerated }) => {
     try {
       const formData = new FormData();
 
+      // Add image
       if (imageFile) {
         formData.append("image", imageFile);
-      } else {
-        formData.append("imageUrl", imageUrl);
+      } else if (imageUrl.trim()) {
+        formData.append("image", imageUrl.trim());
       }
 
-      formData.append("prompt", prompt);
-      formData.append("duration", duration);
+      // Add required fields
+      formData.append("provider", provider);
+      formData.append("prompt", prompt.trim() || "Animate this image with smooth, natural motion");
+      formData.append("enhance_prompt", enhancePrompt);
+      formData.append("length", length);
       formData.append("resolution", resolution);
+      formData.append("generateAudio", generateAudio);
 
-      console.log("PayLoad:", {
-        imageFile,
-        imageUrl,
-        prompt,
-        duration,
+      // Add optional seed if provided
+      if (seed && !isNaN(parseInt(seed))) {
+        formData.append("seed", parseInt(seed));
+      }
+
+      console.log("Video Generation Payload:", {
+        provider,
+        hasImage: !!imageFile || !!imageUrl,
+        prompt: prompt.trim() || "Animate this image with smooth, natural motion",
+        enhancePrompt,
+        length,
         resolution,
+        generateAudio,
+        seed: seed ? parseInt(seed) : undefined,
       });
 
       const response = await generateVideo(formData);
@@ -96,10 +145,10 @@ const ImageToVideoInput = ({ onGeneratingChange, onImageGenerated }) => {
         setImageFile(null);
         setImageUrl("");
         setImagePreview(null);
-        showToast.success("Video generation started!");
+        showToast.success("Video generation started successfully!");
       }
     } catch (error) {
-      showToast.error(error || "Failed to generate video");
+      showToast.error(error?.message || "Failed to generate video");
     } finally {
       setIsGenerating(false);
     }
@@ -131,8 +180,14 @@ const ImageToVideoInput = ({ onGeneratingChange, onImageGenerated }) => {
 
   const handleUrlLoad = () => {
     if (imageUrl.trim()) {
-      setImagePreview(imageUrl);
-      setImageFile(null);
+      // Basic URL validation
+      try {
+        new URL(imageUrl.trim());
+        setImagePreview(imageUrl.trim());
+        setImageFile(null);
+      } catch (error) {
+        showToast.error("Please enter a valid URL");
+      }
     }
   };
 
@@ -146,8 +201,12 @@ const ImageToVideoInput = ({ onGeneratingChange, onImageGenerated }) => {
     setPrompt(suggestion);
   };
 
+  const handleRandomSeed = () => {
+    setSeed(Math.floor(Math.random() * 1000000).toString());
+  };
+
   return (
-    <Box maxWidth={800} mx="auto" mb={4}>
+    <Box mx="auto" mb={4}>
       <Card
         elevation={0}
         sx={{
@@ -160,7 +219,7 @@ const ImageToVideoInput = ({ onGeneratingChange, onImageGenerated }) => {
         {/* Header with gradient */}
         <Box
           sx={{
-            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            background: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
             p: 3,
             color: "white",
           }}
@@ -181,7 +240,7 @@ const ImageToVideoInput = ({ onGeneratingChange, onImageGenerated }) => {
                 Image to Video Generator
               </Typography>
               <Typography variant="body2" sx={{ opacity: 0.9 }}>
-                Transform static images into dynamic videos with AI
+                Transform static images into dynamic videos with AI motion
               </Typography>
             </Box>
           </Stack>
@@ -190,9 +249,13 @@ const ImageToVideoInput = ({ onGeneratingChange, onImageGenerated }) => {
         <CardContent sx={{ p: 4 }}>
           {/* Image Input Section */}
           <Box sx={{ mb: 4 }}>
-            <Typography variant="subtitle1" fontWeight={600} gutterBottom>
-              Source Image
-            </Typography>
+            <Stack direction="row" spacing={1} alignItems="center" mb={2}>
+              <PhotoLibrary sx={{ color: "primary.main" }} />
+              <Typography variant="subtitle1" fontWeight={600}>
+                Source Image
+              </Typography>
+              <Chip label="Required" size="small" color="error" />
+            </Stack>
 
             {/* Tab Selector for Upload/URL */}
             <Tabs
@@ -203,12 +266,6 @@ const ImageToVideoInput = ({ onGeneratingChange, onImageGenerated }) => {
               }}
               sx={{ mb: 2, borderBottom: 1, borderColor: "divider" }}
             >
-              <Tab
-                icon={<CloudUpload />}
-                iconPosition="start"
-                label="Upload Image"
-                sx={{ textTransform: "none", fontWeight: 600 }}
-              />
               <Tab
                 icon={<LinkIcon />}
                 iconPosition="start"
@@ -228,12 +285,12 @@ const ImageToVideoInput = ({ onGeneratingChange, onImageGenerated }) => {
                       borderRadius: 2,
                       p: 4,
                       textAlign: "center",
-                      bgcolor: alpha("#667eea", 0.03),
+                      bgcolor: alpha("#f093fb", 0.03),
                       cursor: "pointer",
                       transition: "all 0.3s",
                       "&:hover": {
                         borderColor: "primary.main",
-                        bgcolor: alpha("#667eea", 0.08),
+                        bgcolor: alpha("#f093fb", 0.08),
                       },
                     }}
                     onClick={() =>
@@ -254,7 +311,7 @@ const ImageToVideoInput = ({ onGeneratingChange, onImageGenerated }) => {
                       Supports JPG, PNG, WEBP (Max 10MB)
                     </Typography>
                     <Chip
-                      label="Recommended: High quality, clear images"
+                      label="Recommended: High quality, clear images work best"
                       size="small"
                       color="primary"
                       variant="outlined"
@@ -331,6 +388,7 @@ const ImageToVideoInput = ({ onGeneratingChange, onImageGenerated }) => {
                     value={imageUrl}
                     onChange={(e) => setImageUrl(e.target.value)}
                     placeholder="https://example.com/image.jpg"
+                    helperText="Enter a direct link to an image file"
                     InputProps={{
                       startAdornment: (
                         <LinkIcon sx={{ mr: 1, color: "primary.main" }} />
@@ -363,6 +421,10 @@ const ImageToVideoInput = ({ onGeneratingChange, onImageGenerated }) => {
                       component="img"
                       src={imagePreview}
                       alt="Preview"
+                      onError={() => {
+                        showToast.error("Failed to load image from URL");
+                        setImagePreview(null);
+                      }}
                       sx={{
                         width: "100%",
                         maxHeight: 400,
@@ -397,9 +459,13 @@ const ImageToVideoInput = ({ onGeneratingChange, onImageGenerated }) => {
 
           {/* Motion Description */}
           <Box sx={{ mb: 3 }}>
-            <Typography variant="subtitle1" fontWeight={600} gutterBottom>
-              Motion & Style Description
-            </Typography>
+            <Stack direction="row" spacing={1} alignItems="center" mb={2}>
+              <SmartDisplay sx={{ color: "primary.main" }} />
+              <Typography variant="subtitle1" fontWeight={600}>
+                Motion & Animation
+              </Typography>
+              <Chip label="Optional" size="small" variant="outlined" />
+            </Stack>
 
             <TextField
               fullWidth
@@ -407,25 +473,55 @@ const ImageToVideoInput = ({ onGeneratingChange, onImageGenerated }) => {
               minRows={3}
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Describe how the image should animate..."
-              helperText="Example: Slow zoom in, cinematic lighting, subtle wind effect."
+              placeholder="Describe how the image should animate (optional - AI will create natural motion if left empty)"
+              helperText={`${prompt.length}/10000 characters. Example: "Slow zoom in with cinematic lighting"`}
               size="small"
+              sx={{
+                mb: 2,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 2,
+                },
+              }}
+            />
+
+            {/* AI Enhancement Toggle */}
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={enhancePrompt}
+                  onChange={(e) => setEnhancePrompt(e.target.checked)}
+                  color="primary"
+                />
+              }
+              label={
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <AutoAwesome sx={{ fontSize: 18, color: "primary.main" }} />
+                  <Typography variant="body2" fontWeight={500}>
+                    AI Prompt Enhancement
+                  </Typography>
+                  <Chip
+                    label="Recommended"
+                    size="small"
+                    color="primary"
+                    variant="outlined"
+                    sx={{ height: 20 }}
+                  />
+                </Stack>
+              }
               sx={{ mb: 2 }}
             />
 
             {/* Motion Suggestions */}
-            <Box sx={{ mt: 2 }}>
-              <Stack direction="row" spacing={1} alignItems="center" mb={1}>
-                <AutoAwesome sx={{ fontSize: 16, color: "primary.main" }} />
-                <Typography
-                  variant="caption"
-                  fontWeight={600}
-                  color="text.secondary"
-                >
-                  Quick Suggestions
-                </Typography>
-              </Stack>
-              <Stack direction="row" flexWrap="wrap" gap={1}>
+            <Box>
+              <Typography
+                variant="caption"
+                fontWeight={600}
+                color="text.secondary"
+                gutterBottom
+              >
+                Quick Motion Suggestions
+              </Typography>
+              <Stack direction="row" flexWrap="wrap" gap={1} mt={1}>
                 {MOTION_SUGGESTIONS.map((suggestion, index) => (
                   <Chip
                     key={index}
@@ -438,6 +534,14 @@ const ImageToVideoInput = ({ onGeneratingChange, onImageGenerated }) => {
                       borderColor: "primary.light",
                       bgcolor: "background.paper",
                       transition: "all 0.2s",
+                      maxWidth: "100%",
+                      height: "auto",
+                      minHeight: 32,
+                      py: 0.5,
+                      "& .MuiChip-label": {
+                        whiteSpace: "normal",
+                        textAlign: "left",
+                      },
                       "&:hover": {
                         bgcolor: "primary.main",
                         color: "white",
@@ -455,24 +559,56 @@ const ImageToVideoInput = ({ onGeneratingChange, onImageGenerated }) => {
 
           {/* Video Settings */}
           <Box sx={{ mb: 3 }}>
-            <Typography variant="subtitle1" fontWeight={600} gutterBottom>
-              Video Settings
-            </Typography>
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+              mb={2}
+            >
+              <Typography variant="subtitle1" fontWeight={600}>
+                Video Settings
+              </Typography>
+              <Chip
+                icon={<Settings />}
+                label={showAdvanced ? "Hide Advanced" : "Show Advanced"}
+                onClick={() => setShowAdvanced(!showAdvanced)}
+                size="small"
+                variant="outlined"
+                clickable
+              />
+            </Stack>
 
-            <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={2} mb={2}>
               <FormControl fullWidth>
                 <InputLabel>Duration</InputLabel>
                 <Select
-                  value={duration}
+                  value={length}
                   label="Duration"
-                  onChange={(e) => setDuration(e.target.value)}
+                  onChange={(e) => setLength(e.target.value)}
                   startAdornment={
                     <Timer sx={{ mr: 1, color: "action.active" }} />
                   }
                 >
-                  {timeframe.map((item) => (
+                  {POLLO_LENGTHS.map((item) => (
                     <MenuItem key={item.id} value={item.id}>
-                      {item.name}
+                      <Stack
+                        direction="row"
+                        justifyContent="space-between"
+                        width="100%"
+                        alignItems="center"
+                      >
+                        <span>{item.name}</span>
+                        <Stack direction="row" spacing={0.5}>
+                          <Chip label={item.label} size="small" />
+                          {item.recommended && (
+                            <Chip
+                              label="★"
+                              size="small"
+                              color="primary"
+                            />
+                          )}
+                        </Stack>
+                      </Stack>
                     </MenuItem>
                   ))}
                 </Select>
@@ -488,13 +624,144 @@ const ImageToVideoInput = ({ onGeneratingChange, onImageGenerated }) => {
                     <HighQuality sx={{ mr: 1, color: "action.active" }} />
                   }
                 >
-                  {quality.map((item) => (
+                  {POLLO_RESOLUTIONS.map((item) => (
                     <MenuItem key={item.id} value={item.id}>
-                      {item.name}
+                      <Stack direction="row" spacing={1} alignItems="center">
+                        <span>{item.name}</span>
+                        <Typography variant="caption" color="text.secondary">
+                          ({item.description})
+                        </Typography>
+                      </Stack>
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
+            </Stack>
+
+            {/* Audio Toggle */}
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={generateAudio}
+                  onChange={(e) => setGenerateAudio(e.target.checked)}
+                  color="primary"
+                />
+              }
+              label={
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <VolumeUp sx={{ fontSize: 18 }} />
+                  <Typography variant="body2">
+                    Generate Audio Track
+                  </Typography>
+                </Stack>
+              }
+            />
+
+            {/* Advanced Settings */}
+            <Collapse in={showAdvanced}>
+              <Box
+                sx={{
+                  mt: 2,
+                  p: 2,
+                  bgcolor: alpha("#f093fb", 0.05),
+                  borderRadius: 2,
+                  border: "1px solid",
+                  borderColor: "divider",
+                }}
+              >
+                <Typography
+                  variant="subtitle2"
+                  fontWeight={600}
+                  gutterBottom
+                  color="primary"
+                >
+                  Advanced Options
+                </Typography>
+
+                <Box sx={{ mt: 2 }}>
+                  <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    mb={1}
+                  >
+                    <Typography variant="body2" fontWeight={500}>
+                      Random Seed (Optional)
+                    </Typography>
+                    <CustomButton
+                      title="Random"
+                      size="small"
+                      onClick={handleRandomSeed}
+                      sx={{ minWidth: 80 }}
+                    />
+                  </Stack>
+                  <TextField
+                    fullWidth
+                    size="small"
+                    value={seed}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value === "" || /^\d+$/.test(value)) {
+                        setSeed(value);
+                      }
+                    }}
+                    placeholder="Enter integer or click Random"
+                    helperText="Use same seed for reproducible results"
+                    type="number"
+                  />
+                </Box>
+              </Box>
+            </Collapse>
+          </Box>
+
+          {/* Summary Info */}
+          <Box
+            sx={{
+              p: 2,
+              bgcolor: "background.default",
+              borderRadius: 2,
+              mb: 3,
+            }}
+          >
+            <Typography variant="caption" color="text.secondary" gutterBottom>
+              Generation Settings Summary
+            </Typography>
+            <Stack direction="row" spacing={1} flexWrap="wrap" mt={1}>
+              <Chip
+                label={`${length}s`}
+                size="small"
+                icon={<Timer />}
+              />
+              <Chip
+                label={resolution}
+                size="small"
+                icon={<HighQuality />}
+              />
+              {generateAudio && (
+                <Chip
+                  label="Audio Enabled"
+                  size="small"
+                  icon={<VolumeUp />}
+                  color="info"
+                  variant="outlined"
+                />
+              )}
+              {enhancePrompt && (
+                <Chip
+                  label="AI Enhanced"
+                  size="small"
+                  icon={<AutoAwesome />}
+                  color="success"
+                  variant="outlined"
+                />
+              )}
+              {seed && (
+                <Chip
+                  label={`Seed: ${seed}`}
+                  size="small"
+                  variant="outlined"
+                />
+              )}
             </Stack>
           </Box>
 
@@ -514,18 +781,30 @@ const ImageToVideoInput = ({ onGeneratingChange, onImageGenerated }) => {
               )
             }
             sx={{
-              mt: 2,
               textTransform: "none",
               py: 1.5,
               borderRadius: 2,
               fontWeight: 600,
               fontSize: "1rem",
-              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+              background: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
               "&:hover": {
-                background: "linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%)",
+                background: "linear-gradient(135deg, #e082ea 0%, #e4465b 100%)",
+              },
+              "&:disabled": {
+                background: "rgba(0, 0, 0, 0.12)",
+                color: "rgba(0, 0, 0, 0.26)",
               },
             }}
           />
+
+          {/* Helper Info */}
+          <Typography
+            variant="caption"
+            color="text.secondary"
+            sx={{ mt: 2, display: "block", textAlign: "center" }}
+          >
+            Video generation typically takes 1-3 minutes depending on settings
+          </Typography>
         </CardContent>
       </Card>
     </Box>
