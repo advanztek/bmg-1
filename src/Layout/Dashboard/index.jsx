@@ -55,7 +55,7 @@ function DashboardLayout({ children }) {
         component="nav"
         sx={{
           width: { sm: SIDE_NAV_WIDTH },
-          flexShrink: { sm: 0 }
+          flexShrink: { sm: 0 },
         }}
         aria-label="side-navigation"
       >
@@ -84,7 +84,7 @@ function DashboardLayout({ children }) {
           pb: `${LAYOUT_PADDING}px`,
           backgroundColor: lightModeColors.background.default,
           maxWidth: "100%",
-          minHeight: "100vh"
+          minHeight: "100vh",
         }}
       >
         {children}

@@ -18,3 +18,5 @@ export { default as TextToImageInput } from "./AI/GenerateImages/text-to-image";
 export { default as TextToVideoInput } from "./AI/GenerateVideos/text-to-video";
 export { default as ImageToVideoInput } from "./AI/GenerateVideos/image-to-video";
 export { default as UserGenerateStrategy } from "./AI/GenerateStrategy";
+export { default as CustomerOrderDetailsPage } from "./CustomerOrderDetailsPage";
+export { default as CustomerOrderItemDetailsPage } from "./CustomerOrderItemDetailsPage";

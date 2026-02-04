@@ -1,69 +1,20 @@
 export const headers = [
-  { key: "select", label: "", width: "40px" },
-  { key: "id", label: "ID" },
-  { key: "subject", label: "Subject" },
-  { key: "description", label: "Description" },
-  { key: "dueDate", label: "Due Date" },
-  { key: "amount", label: "Amount" },
+  { key: "order", label: "Order" },
   { key: "status", label: "Status" },
-  { key: "actions", label: "", width: "40px" }
+  { key: "deadline", label: "Deadline" },
+  { key: "actions", label: "", width: "40px" },
 ];
 
-export const orders = [
-  {
-    id: "4YBJ6",
-    subject: "Logo",
-    description: "Landing Page",
-    dueDate: "Today",
-    amount: "GHS 700",
-    status: "pending"
-  },
-  {
-    id: "9B112",
-    subject: "Logo",
-    description: "Landing Page",
-    dueDate: "Today",
-    amount: "GHS 700",
-    status: "completed"
-  },
-  {
-    id: "5KD88",
-    subject: "Logo",
-    description: "Landing Page",
-    dueDate: "Today",
-    amount: "GHS 700",
-    status: "cancelled"
-  },
-  {
-    id: "5KD678",
-    subject: "Logo",
-    description: "Landing Page",
-    dueDate: "Today",
-    amount: "GHS 700",
-    status: "cancelled"
-  },
-  {
-    id: "5KAS488",
-    subject: "Logo",
-    description: "Landing Page",
-    dueDate: "Today",
-    amount: "GHS 700",
-    status: "cancelled"
-  },
-  {
-    id: "34FG8",
-    subject: "Logo",
-    description: "Landing Page",
-    dueDate: "Today",
-    amount: "GHS 700",
-    status: "cancelled"
-  },
-  {
-    id: "88KD5",
-    subject: "Logo",
-    description: "Landing Page",
-    dueDate: "Today",
-    amount: "GHS 700",
-    status: "cancelled"
-  }
-];
+export const statusColors = {
+  completed: "success",
+  assigned: "info",
+  declined: "error",
+  cancelled: "warning",
+};
+
+export const statusLabels = {
+  completed: "Completed",
+  assigned: "Processing",
+  declined: "Declined",
+  cancelled: "Terminated",
+};

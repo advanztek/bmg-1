@@ -139,4 +139,36 @@ const useUpdateExpertStatus = () => {
   return { updateStatus, loading };
 };
 
+export function useGetExpertsByService(serviceId) {
+  const { config } = useUserContext();
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState([]);
+
+  async function getExpertsByService() {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `${BASE_SERVER_URL}/expert/by-service/${serviceId}`,
+        config,
+      );
+
+      const result = response.data;
+
+      if (result.code === 0) {
+        setData(result.result || []);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    getExpertsByService();
+  }, []);
+
+  return { data, getExpertsByService, loading };
+}
+
 export { useAddExpert, useFetchExperts, useGetExpert, useUpdateExpertStatus };

@@ -9,8 +9,14 @@ export const headers = [
   { key: "actions", label: "", width: "40px" },
 ];
 
-export const statusLabel = {
+export const statusColors = {
+  pending: "primary",
+  completed: "success",
+  processing: "info",
+};
+
+export const statusLabels = {
   pending: "Pending",
   completed: "Completed",
-  cancelled: "Cancelled",
+  processing: "Progress",
 };

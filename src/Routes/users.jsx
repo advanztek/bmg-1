@@ -18,6 +18,8 @@ import {
   UserGenerateWebsites,
   UserGenerateAudio,
   UserGenerateStrategy,
+  CustomerOrderDetailsPage,
+  CustomerOrderItemDetailsPage,
 } from "../Pages/Users";
 
 const UsersRoutes = () => {
@@ -40,6 +42,15 @@ const UsersRoutes = () => {
       <Route path="user/generate-website" element={<UserGenerateWebsites />} />
       <Route path="user/generate-audio" element={<UserGenerateAudio />} />
       <Route path="user/generate-strategy" element={<UserGenerateStrategy />} />
+
+      <Route
+        path="/user/order/details"
+        element={<CustomerOrderDetailsPage />}
+      />
+      <Route
+        path="/user/order/service"
+        element={<CustomerOrderItemDetailsPage />}
+      />
     </Routes>
   );
 };
