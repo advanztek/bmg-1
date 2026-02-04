@@ -76,7 +76,7 @@ const TextToAudioInput = ({ onGeneratingChange, onAudioGenerated }) => {
   };
 
   return (
-    <Box maxWidth={800} mx="auto" mb={4}>
+    <Box mx="auto" mb={4}>
       <Card
         elevation={0}
         sx={{

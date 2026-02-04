@@ -17,7 +17,7 @@ function useGenerateTextToAudio() {
       const response = await axios.post(
         `${BASE_SERVER_URL}/ai/text-to-voice`,
         payload,
-        config
+        config,
       );
 
       const { success, message, result, code } = response.data;
@@ -61,16 +61,15 @@ function useGenerateAudioToText() {
       const response = await axios.post(
         `${BASE_SERVER_URL}/ai/audio-to-text`,
         payload,
-        config
+        config,
       );
 
       const { success, message, result, code } = response.data;
       console.log("Audio response:", response.data);
 
-      if (success === true && code === 0 && result?.audio) {
+      if (success === true && code === 0 && result?.transcription) {
         return {
-          audioBase64: result.audio,
-          format: result.format || "mp3",
+          transcription: result.transcription,
           model: result.model,
           message,
         };
@@ -93,27 +92,61 @@ function useGenerateAudioToText() {
   return generateAudio;
 }
 
-const useFetchGeneratedAudios = () => {
+// Hook for fetching all user audios (paginated)
+const useFetchGeneratedAudios = (page = 1, limit = 50) => {
   const { config } = useUserContext();
   const [loading, setLoading] = useState(false);
-  const [images, setImages] = useState([]);
+  const [data, setData] = useState([]);
 
   const fetchData = async () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `${BASE_SERVER_URL}/ai/ai-images`,
-        config
+        `${BASE_SERVER_URL}/ai/user-audios?page=${page}&limit=${limit}`,
+        config,
       );
 
       const result = response.data;
 
       if (result.code === 0) {
-        setImages(result.result);
+        setData(result.result);
       }
       setLoading(false);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("Error fetching audios:", error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [page, limit]);
+
+  return { data, refetch: fetchData, loading };
+};
+
+// Hook for fetching latest user audio
+const useFetchLatestAudio = () => {
+  const { config } = useUserContext();
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState(null);
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `${BASE_SERVER_URL}/ai/user-audio`,
+        config,
+      );
+
+      const result = response.data;
+
+      if (result.code === 0) {
+        setData(result.result);
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching latest audio:", error);
       setLoading(false);
     }
   };
@@ -122,11 +155,80 @@ const useFetchGeneratedAudios = () => {
     fetchData();
   }, []);
 
-  return { images, refetch: fetchData, loading };
+  return { data, refetch: fetchData, loading };
+};
+
+// Hook for fetching all user transcriptions (paginated)
+const useFetchGeneratedTranscriptions = (page = 1, limit = 50) => {
+  const { config } = useUserContext();
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState([]);
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `${BASE_SERVER_URL}/ai/user-transcriptions?page=${page}&limit=${limit}`,
+        config,
+      );
+
+      const result = response.data;
+
+      if (result.code === 0) {
+        setData(result.result);
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching transcriptions:", error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [page, limit]);
+
+  return { data, refetch: fetchData, loading };
+};
+
+// Hook for fetching latest user transcription
+const useFetchLatestTranscription = () => {
+  const { config } = useUserContext();
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState(null);
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `${BASE_SERVER_URL}/ai/user-transcription`,
+        config,
+      );
+
+      const result = response.data;
+
+      if (result.code === 0) {
+        setData(result.result);
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching latest transcription:", error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  return { data, refetch: fetchData, loading };
 };
 
 export {
   useGenerateTextToAudio,
   useFetchGeneratedAudios,
   useGenerateAudioToText,
+  useFetchLatestAudio,
+  useFetchGeneratedTranscriptions,
+  useFetchLatestTranscription,
 };

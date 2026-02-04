@@ -5,6 +5,39 @@ import { BASE_SERVER_URL } from "../../Config/paths";
 import { useUserContext } from "../../Contexts";
 import { showToast } from "../../utils/toast";
 
+const useFetchGeneratedVideos = () => {
+  const { config } = useUserContext();
+  const [loading, setLoading] = useState(false);
+  const [videos, setVideos] = useState([]);
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `${BASE_SERVER_URL}/ai/user-videos`,
+        config,
+      );
+
+      const result = response.data;
+      console.log("single res:", result);
+
+      if (result.code === 0) {
+        setVideos(result.result);
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  return { videos, refetch: fetchData, loading };
+};
+
 function useGenerateTextToVideo() {
   const { config } = useUserContext();
 
@@ -13,7 +46,7 @@ function useGenerateTextToVideo() {
       const response = await axios.post(
         `${BASE_SERVER_URL}/ai/create-video`,
         data,
-        config
+        config,
       );
 
       const result = response.data;
@@ -40,39 +73,6 @@ function useGenerateTextToVideo() {
   };
 }
 
-const useFetchGeneratedVideos = () => {
-  const { config } = useUserContext();
-  const [loading, setLoading] = useState(false);
-  const [videos, setVideos] = useState([]);
-
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const response = await axios.get(
-        `${BASE_SERVER_URL}/ai/user-videos`,
-        config
-      );
-
-      const result = response.data;
-      console.log("single res:", result);
-
-      if (result.code === 0) {
-        setVideos(result.result);
-      }
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  return { videos, refetch: fetchData, loading };
-};
-
 function useGenerateImageToVideo() {
   const { config } = useUserContext();
 
@@ -81,7 +81,7 @@ function useGenerateImageToVideo() {
       const response = await axios.post(
         `${BASE_SERVER_URL}/ai/create-video`,
         data,
-        config
+        config,
       );
 
       const result = response.data;
