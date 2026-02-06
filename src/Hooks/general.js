@@ -249,6 +249,48 @@ const useGetBlogs = (page = 1, limit = 8) => {
   return { data, total, refetch: fetchData, loading };
 };
 
+const useGetCreditPackages = (page = 1, limit = 8) => {
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState([]);
+  const [total, setTotal] = useState(0);
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `${BASE_SERVER_URL}/web/credit-packages`,
+        {
+          params: { page, limit },
+        },
+      );
+
+      const result = response.data;
+
+      if (result.code === 0) {
+        // If backend returns nested structure with data and total
+        if (result.result.data) {
+          setData(result.result.data);
+          setTotal(result.result.total);
+        } else {
+          // Fallback for simple array response
+          setData(result.result);
+          setTotal(result.result.length);
+        }
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching credit packages:", error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [page, limit]);
+
+  return { data, total, refetch: fetchData, loading };
+};
+
 function useSubmitConsultation() {
   const [loading, setLoading] = useState(false);
   const { config } = useUserContext();
@@ -327,6 +369,49 @@ function useBuyGiftCard() {
   return { buyGiftCard, loading };
 }
 
+function useBuyCredits() {
+  const [loading, setLoading] = useState(false);
+  const { config } = useUserContext();
+
+  /**
+   * Purchases a gift card with the provided data
+   * @param {object} data - Gift card purchase data
+   * @returns {Promise<object|boolean>} Response data on success, false on error
+   */
+  const buyCredits = async (data) => {
+    setLoading(true);
+    try {
+      console.log("data:", data);
+      const response = await axios.post(
+        `${BASE_SERVER_URL}/user/initiate/credit-purchase`,
+        data,
+        config,
+      );
+
+      const result = response.data;
+      console.log("result:", result);
+      if (result?.code === 0) {
+        toast.success(result.message);
+        return response;
+      }
+
+      return response;
+    } catch (error) {
+      console.error("Error:", error.response?.data);
+      if (error?.response?.data?.code !== 0) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("An error occurred while purchasing gift card!");
+      }
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { buyCredits, loading };
+}
+
 function useVerifyPaystackTxn() {
   const [loading, setLoading] = useState(false);
   const { config } = useUserContext();
@@ -378,4 +463,6 @@ export {
   useSubmitConsultation,
   useBuyGiftCard,
   useVerifyPaystackTxn,
+  useGetCreditPackages,
+  useBuyCredits,
 };

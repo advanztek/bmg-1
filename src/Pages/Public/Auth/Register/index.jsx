@@ -635,7 +635,7 @@ const LoginPage = () => {
             >
               Own an Account?{" "}
               <Link
-                href="/login"
+                onClick={() => navigate("/login")}
                 sx={{
                   color: theme.palette.primary.main,
                   fontWeight: 600,

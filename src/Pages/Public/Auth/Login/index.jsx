@@ -479,7 +479,7 @@ const LoginPage = () => {
             >
               Don't have an Account?{" "}
               <Link
-                href="/register"
+                onClick={() => navigate("/register")}
                 sx={{
                   color: theme.palette.primary.main,
                   fontWeight: 600,

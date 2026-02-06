@@ -32,14 +32,10 @@ import {
 } from '@mui/icons-material';
 import ConsultantForm from '../ConsultantForm';
 import FAQSection from '../FAQ';
+import PricingSection from '../PricingSection';
+import { useGetAllFAQ } from '../../Hooks/general';
 
 // Keyframe Animations
-const dataFlow = keyframes`
-    0% { transform: translateX(-100%); opacity: 0; }
-    50% { opacity: 1; }
-    100% { transform: translateX(100%); opacity: 0; }
-`;
-
 const chartGrow = keyframes`
     from { transform: scaleY(0); }
     to { transform: scaleY(1); }
@@ -171,11 +167,11 @@ const MetricCard = styled(Box)(({ theme }) => ({
 }));
 
 const PricingCard = styled(Box)(({ theme, featured }) => ({
-    background: featured 
+    background: featured
         ? `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.15)} 0%, ${alpha(theme.palette.secondary.main, 0.15)} 100%)`
         : alpha(theme.palette.background.paper, 0.5),
     backdropFilter: 'blur(20px)',
-    border: featured 
+    border: featured
         ? `2px solid ${theme.palette.primary.main}`
         : `1px solid ${alpha(theme.palette.text.primary, 0.1)}`,
     borderRadius: theme.spacing(3),
@@ -189,7 +185,7 @@ const PricingCard = styled(Box)(({ theme, featured }) => ({
     }
 }));
 
-const StyledButton = styled(Button)(({ theme }) => ({
+const StyledButton = styled(Button)(() => ({
     borderRadius: '50px',
     padding: '16px 40px',
     fontSize: '16px',
@@ -227,6 +223,7 @@ const InsightBox = styled(Box)(({ theme, delay }) => ({
 export default function AIBusinessStrategyHome() {
     const theme = useTheme();
     const [activeMetric, setActiveMetric] = useState(0);
+    const { data: faqs, loading: faqLoading } = useGetAllFAQ()
 
     const metrics = [
         { value: '45%', label: 'Revenue Growth', icon: <TrendingUpIcon /> },
@@ -268,53 +265,6 @@ export default function AIBusinessStrategyHome() {
         }
     ];
 
-    const plans = [
-        {
-            name: 'Startup',
-            price: '99',
-            period: '/month',
-            features: [
-                '5 strategic analyses',
-                'Basic market insights',
-                'Quarterly reports',
-                'Email support',
-                'Core AI features'
-            ],
-            featured: false
-        },
-        {
-            name: 'Growth',
-            price: '299',
-            period: '/month',
-            features: [
-                'Unlimited analyses',
-                'Advanced insights',
-                'Monthly reports',
-                'Priority support',
-                'Full AI capabilities',
-                'Custom dashboards',
-                'Team collaboration',
-                'API access'
-            ],
-            featured: true
-        },
-        {
-            name: 'Enterprise',
-            price: 'Custom',
-            period: '',
-            features: [
-                'Everything in Growth',
-                'Dedicated strategist',
-                'Custom AI training',
-                'White-label solution',
-                'SLA guarantee',
-                'Advanced integrations',
-                'Executive workshops'
-            ],
-            featured: false
-        }
-    ];
-
     const insights = [
         { icon: '📊', text: 'Market Analysis' },
         { icon: '💡', text: 'Innovation' },
@@ -343,7 +293,7 @@ export default function AIBusinessStrategyHome() {
 
                 <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 10, py: { xs: 8, md: 12 } }}>
                     <Grid container spacing={6} alignItems="center">
-                        <Grid size={{ xs:12, md:6 }}>
+                        <Grid size={{ xs: 12, md: 6 }}>
                             <Box sx={{ animation: `${fadeInUp} 1s ease forwards` }}>
                                 <Chip
                                     icon={<BusinessIcon sx={{ fontSize: 18, color: `${theme.palette.primary.main} !important` }} />}
@@ -389,7 +339,7 @@ export default function AIBusinessStrategyHome() {
                                         maxWidth: '540px'
                                     }}
                                 >
-                                    Transform your business with AI-driven strategic insights. Make smarter decisions, 
+                                    Transform your business with AI-driven strategic insights. Make smarter decisions,
                                     accelerate growth, and stay ahead of the competition.
                                 </Typography>
 
@@ -447,17 +397,17 @@ export default function AIBusinessStrategyHome() {
                             </Box>
                         </Grid>
 
-                        <Grid size={{ xs:12, md:6 }}>
+                        <Grid size={{ xs: 12, md: 6 }}>
                             <Box sx={{ position: 'relative' }}>
                                 {/* Key Metrics Grid */}
                                 <Grid container spacing={2}>
                                     {metrics.map((metric, idx) => (
-                                        <Grid size={{ xs:6 }} key={idx}>
+                                        <Grid size={{ xs: 6 }} key={idx}>
                                             <MetricCard
                                                 sx={{
                                                     animation: activeMetric === idx ? `${pulse} 2s ease infinite` : 'none',
-                                                    border: activeMetric === idx 
-                                                        ? `2px solid ${theme.palette.primary.main}` 
+                                                    border: activeMetric === idx
+                                                        ? `2px solid ${theme.palette.primary.main}`
                                                         : `1px solid ${alpha(theme.palette.text.primary, 0.1)}`
                                                 }}
                                             >
@@ -479,7 +429,7 @@ export default function AIBusinessStrategyHome() {
                                 <Box sx={{ mt: 3 }}>
                                     <Grid container spacing={1.5}>
                                         {insights.map((insight, idx) => (
-                                            <Grid size={{ xs:4 }} key={idx}>
+                                            <Grid size={{ xs: 4 }} key={idx}>
                                                 <InsightBox delay={idx}>
                                                     <Typography variant="body2" sx={{ fontSize: '1.5rem', textAlign: 'center', mb: 0.5 }}>
                                                         {insight.icon}
@@ -538,7 +488,7 @@ export default function AIBusinessStrategyHome() {
 
                     <Grid container spacing={4}>
                         {features.map((feature, index) => (
-                            <Grid size={{ xs:12, sm:6,  md:4 }} key={index}>
+                            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={index}>
                                 <FeatureCard>
                                     <Box
                                         sx={{
@@ -622,7 +572,7 @@ export default function AIBusinessStrategyHome() {
                                 desc: 'Implement strategies with continuous monitoring and optimization'
                             }
                         ].map((step, index) => (
-                            <Grid size={{ xs:12,sm:6, md:3 }} key={index}>
+                            <Grid size={{ xs: 12, sm: 6, md: 3 }} key={index}>
                                 <Box sx={{ textAlign: 'center' }}>
                                     <Typography
                                         variant="h2"
@@ -656,115 +606,11 @@ export default function AIBusinessStrategyHome() {
             {/* Pricing Section */}
             <Box sx={{ py: { xs: 10, md: 16 } }}>
                 <Container maxWidth="lg">
-                    <Box sx={{ textAlign: 'center', mb: 10 }}>
-                        <Chip
-                            label="PRICING"
-                            sx={{
-                                mb: 2,
-                                background: alpha(theme.palette.primary.main, 0.15),
-                                color: theme.palette.primary.main,
-                                fontWeight: 700,
-                                letterSpacing: '1px'
-                            }}
-                        />
-                        <Typography
-                            variant="h2"
-                            sx={{
-                                fontSize: { xs: '2rem', md: '3.5rem' },
-                                fontWeight: 900,
-                                mb: 2,
-                                letterSpacing: '-0.02em'
-                            }}
-                        >
-                            Investment That Drives Returns
-                        </Typography>
-                        <Typography
-                            variant="h6"
-                            sx={{
-                                color: theme.palette.text.secondary,
-                                maxWidth: '700px',
-                                mx: 'auto',
-                                fontSize: '1.1rem'
-                            }}
-                        >
-                            Scalable solutions for startups, growth companies, and enterprises
-                        </Typography>
-                    </Box>
-
-                    <Grid container spacing={4} alignItems="stretch">
-                        {plans.map((plan, index) => (
-                            <Grid size={{ xs:12, md:4, }} key={index}>
-                                <PricingCard featured={plan.featured}>
-                                    {plan.featured && (
-                                        <Chip
-                                            label="RECOMMENDED"
-                                            sx={{
-                                                position: 'absolute',
-                                                top: 20,
-                                                right: 20,
-                                                background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
-                                                color: theme.palette.primary.contrastText,
-                                                fontWeight: 700,
-                                                fontSize: '11px',
-                                                letterSpacing: '0.5px'
-                                            }}
-                                        />
-                                    )}
-                                    
-                                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 1, color: theme.palette.text.secondary }}>
-                                        {plan.name}
-                                    </Typography>
-                                    
-                                    <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 4 }}>
-                                        <Typography variant="h2" sx={{ fontWeight: 900, fontSize: '3.5rem' }}>
-                                            {plan.price === 'Custom' ? plan.price : `$${plan.price}`}
-                                        </Typography>
-                                        {plan.period && (
-                                            <Typography variant="body1" sx={{ color: theme.palette.text.disabled, ml: 1 }}>
-                                                {plan.period}
-                                            </Typography>
-                                        )}
-                                    </Box>
-
-                                    <Box sx={{ mb: 4 }}>
-                                        {plan.features.map((feature, idx) => (
-                                            <Box key={idx} sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                                                <CheckIcon sx={{ color: theme.palette.primary.main, mr: 2, fontSize: 20 }} />
-                                                <Typography variant="body1" sx={{ color: theme.palette.text.primary }}>
-                                                    {feature}
-                                                </Typography>
-                                            </Box>
-                                        ))}
-                                    </Box>
-
-                                    <StyledButton
-                                        variant={plan.featured ? 'contained' : 'outlined'}
-                                        fullWidth
-                                        size="large"
-                                        sx={{
-                                            background: plan.featured
-                                                ? `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`
-                                                : 'transparent',
-                                            color: plan.featured ? theme.palette.primary.contrastText : theme.palette.text.primary,
-                                            borderColor: plan.featured ? 'transparent' : alpha(theme.palette.text.primary, 0.3),
-                                            '&:hover': {
-                                                background: plan.featured
-                                                    ? `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.secondary.dark} 100%)`
-                                                    : alpha(theme.palette.primary.main, 0.1),
-                                                borderColor: theme.palette.primary.main
-                                            }
-                                        }}
-                                    >
-                                        {plan.price === 'Custom' ? 'Contact Sales' : 'Get Started'}
-                                    </StyledButton>
-                                </PricingCard>
-                            </Grid>
-                        ))}
-                    </Grid>
+                    <PricingSection />
                 </Container>
             </Box>
             <ConsultantForm />
-            <FAQSection/>
+            <FAQSection data={faqs} loading={faqLoading} />
         </Box>
     );
 }
