@@ -1,6 +1,6 @@
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, FormHelperText, Stack, Typography } from "@mui/material";
 
-export default function DatePicker({ value, onChange }) {
+export default function DatePicker({ value, onChange, error }) {
   return (
     <Stack gap="10px">
       <Stack alignItems="end">
@@ -20,8 +20,8 @@ export default function DatePicker({ value, onChange }) {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         sx={{
-          border: "1px solid rgb(224, 224, 234)",
-          backgroundColor: "#ffffff",
+          border: error ? "1px dashed #ff00042a" : "1px solid #e0e0ea",
+          backgroundColor: error ? "#ff00040c" : "#ffffff",
           outline: "none",
           borderRadius: "8px",
           padding: "0px 10px",
@@ -30,6 +30,11 @@ export default function DatePicker({ value, onChange }) {
           height: "32px",
         }}
       />
+      {error && (
+        <FormHelperText error sx={{ fontSize: "12px", fontWeight: 500 }}>
+          {error}
+        </FormHelperText>
+      )}
     </Stack>
   );
 }

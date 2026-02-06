@@ -8,7 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import { CustomTable, PagesHeader } from "../../../Component";
-import { Visibility } from "@mui/icons-material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { headers, statusLabels, statusColors } from "./data";
 import { useGetExpertOrders } from "../../../Hooks/experts/orders";
 import Chip from "../../../Component/Chip";
@@ -22,10 +22,10 @@ const ExpertOrders = () => {
   console.log("Expert Orders ");
   console.log(data);
 
-  function viewOrderDetails(orderId) {
-    if (!orderId) return;
-    navigate("/dashboard/expert/order/service", {
-      state: { details: orderItem, customerId: details?.user_id },
+  function viewOrderDetails(details) {
+    if (!details) return;
+    navigate("/dashboard/expert/order/details", {
+      state: { details },
     });
   }
 
@@ -62,9 +62,16 @@ const ExpertOrders = () => {
                 <TableCell>{formatDate(row?.delivery_deadline)}</TableCell>
                 <TableCell>
                   <Stack direction={"row"} gap={1}>
-                    <IconButton size="small" onClick={viewOrderDetails}>
-                      <Visibility fontSize="small" />
-                    </IconButton>
+                    {row?.status == "rejected" ? (
+                      <VisibilityOff style={{ color: "rgba(0, 0, 0, 0.1)" }} />
+                    ) : (
+                      <IconButton
+                        size="small"
+                        onClick={() => viewOrderDetails(row)}
+                      >
+                        <Visibility fontSize="small" />
+                      </IconButton>
+                    )}
                   </Stack>
                 </TableCell>
               </TableRow>

@@ -70,3 +70,4 @@ export { default as InfoItem } from "./Dashboard/InfoItem";
 export { default as InboxList } from "./Dashboard/Mails/InboxList";
 export { default as RecipientsSelectTable } from "./Dashboard/Mails/RecipientsSelectTable";
 export { default as ConfirmCloseModal } from "./Dashboard/ConfirmCloseModal";
+export { default as SubmitOrderModal } from "./SubmitOrderModal";

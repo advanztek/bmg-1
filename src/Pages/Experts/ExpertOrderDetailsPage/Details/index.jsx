@@ -1,6 +1,5 @@
 import { Box, Stack, Typography } from "@mui/material";
 import { STORAGE_URL } from "../../../../Config/paths";
-import { formatGHS } from "../../../../utils/currency";
 import Chip from "../../../../Component/Chip";
 import { statusColors, statusLabels } from "./data";
 import LabelValue from "./LabelValue";
@@ -34,46 +33,22 @@ export default function Details({ data }) {
         />
       )}
       <Stack gap="24px" py="22px">
-        <Stack gap="10px">
-          <Typography
-            fontSize="14px"
-            fontWeight={600}
-            lineHeight={1}
-            color="rgb(100, 100, 120)"
-            // color="#2C3891"
-          >
-            {data?.service_name}
-          </Typography>
-          <Typography
-            fontSize="22px"
-            fontWeight={700}
-            color="#272629"
-            lineHeight={1}
-          >
-            {formatGHS(data?.final_price)}
-          </Typography>
-        </Stack>
-        <Stack
-          direction="row"
-          alignItems="center"
-          justifyContent="space-between"
+        <Typography
+          fontSize="14px"
+          fontWeight={600}
+          lineHeight={1}
+          color="rgb(100, 100, 120)"
+          // color="#2C3891"
         >
-          <Typography
-            fontSize="16px"
-            fontWeight={700}
-            sx={{ textDecoration: "line-through", color: "#2C3891" }}
-          >
-            {data?.discount_price
-              ? formatGHS(data?.discount_amount)
-              : formatGHS("0")}
-          </Typography>
+          {data?.service_name || "-"}
+        </Typography>
+        <Box>
           <Chip
-            size="sm"
             label={statusLabels[data?.status]}
             color={statusColors[data?.status]}
             noShadow
           />
-        </Stack>
+        </Box>
         <Typography
           color="rgb(100, 100, 120)"
           fontSize="14px"
@@ -87,22 +62,17 @@ export default function Details({ data }) {
           <LabelValue
             icon={CircleSmallFilled}
             label="Category"
-            value={toTitleCase(data?.service_type_name)}
+            value={toTitleCase(data?.service_type_name || "-")}
           />
           <LabelValue
             icon={CircleSmallFilled}
             label="Quantity"
-            value={String(data?.quantity).padStart(3, "0")}
+            value={String(data?.quantity || 1).padStart(3, "0")}
           />
           <LabelValue
             icon={CircleSmallFilled}
-            label="Order At"
-            value={formatDate(data?.created_at)}
-          />
-          <LabelValue
-            icon={CircleSmallFilled}
-            label="Last Updated"
-            value={formatDate(data?.updated_at)}
+            label="Deadline"
+            value={formatDate(data?.delivery_deadline)}
           />
         </Stack>
       </Stack>

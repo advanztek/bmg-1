@@ -14,13 +14,14 @@ export default function Chip({ color, label, size = "md", noShadow = false }) {
       sx={{
         backgroundColor: `${_color[color]}25`,
         boxShadow: noShadow ? "none" : "1px 1px 1px rgba(0, 0, 0, 0.35)",
-        padding: size == "sm" ? "4px 8px" : "6px 12px",
+        padding: size == "sm" ? "5px 8px" : "7px 12px",
         borderRadius: size == "sm" ? "6px" : "8px",
         lineHeight: 1,
-        fontSize: size == "sm" ? "11px" : "13px",
+        fontSize: size == "sm" ? "10px" : "12px",
         fontWeight: 500,
         color: _color[color],
         width: "fit-content",
+        userSelect: "none",
       }}
     >
       {label}

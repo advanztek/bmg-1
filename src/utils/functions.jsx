@@ -30,7 +30,7 @@ const formatDate = (dateString) => {
     hour12: true,
   });
 
-  return `${datePart} | ${timePart.toLowerCase()}`;
+  return `${datePart} • ${timePart.toLowerCase()}`;
 };
 
 // Decode the hashed service ID
@@ -210,6 +210,45 @@ export function toTitleCase(text) {
   if (typeof text !== "string") return "";
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
+
+export const getOrdinal = (day) => {
+  if (day > 3 && day < 21) return "th";
+
+  switch (day % 10) {
+    case 1:
+      return "st";
+    case 2:
+      return "nd";
+    case 3:
+      return "rd";
+    default:
+      return "th";
+  }
+};
+
+export const formatShortDate = (timestamp) => {
+  if (!timestamp) return "-";
+
+  const date = new Date(timestamp);
+  if (isNaN(date.getTime())) return "invalid-date";
+
+  const day = date.getDate();
+  const ordinal = getOrdinal(day);
+
+  const month = date.toLocaleString("en-US", { month: "short" });
+  const year = date.getFullYear();
+
+  let hours = date.getHours();
+  const minutes = date.getMinutes();
+  const ampm = hours >= 12 ? "pm" : "am";
+
+  hours = hours % 12 || 12;
+
+  const minutesPart =
+    minutes === 0 ? "" : `:${minutes.toString().padStart(2, "0")}`;
+
+  return `${day}${ordinal} ${month} ${year} • ${hours}${minutesPart}${ampm}`;
+};
 
 export {
   validateEmail,
