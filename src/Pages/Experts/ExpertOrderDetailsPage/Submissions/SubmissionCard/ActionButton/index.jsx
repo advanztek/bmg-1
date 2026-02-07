@@ -1,9 +1,10 @@
 import { FolderLinkFilled } from "@fluentui/react-icons";
 import { Stack, Typography } from "@mui/material";
 
-export default function LinkButton({
+export default function ActionButton({
   tag = "Link to your order",
   caption = "Click link to access your order",
+  icon: Icon = FolderLinkFilled,
   onClick,
 }) {
   return (
@@ -22,7 +23,7 @@ export default function LinkButton({
       borderRadius="14px"
       onClick={onClick}
     >
-      <FolderLinkFilled fontSize={42} color="#2C3891" />
+      <Icon fontSize={42} color="#2C3891" />
 
       <Stack alignItems="center" gap="4px">
         <Typography

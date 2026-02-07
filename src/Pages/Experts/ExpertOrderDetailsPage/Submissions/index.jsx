@@ -51,7 +51,11 @@ export default function Submissions({ data, orderDetails }) {
         {data &&
           data?.length > 0 &&
           data?.map((item, index) => (
-            <SubmissionCard key={index} data={item} />
+            <SubmissionCard
+              key={index}
+              data={item}
+              onSubmit={() => openSubmitModal(item)}
+            />
           ))}
 
         {!data && (

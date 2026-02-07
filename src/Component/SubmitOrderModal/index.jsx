@@ -121,10 +121,15 @@ export default function SubmitOrderModal({
         );
       }
 
+      const transformedBase64 = base64Files.map((item) => item.base64?.base64);
+
+      console.log("Transformed based 64");
+      console.log(transformedBase64);
+
       const data = {
         link: link.trim() || null,
         description: description.trim(),
-        files: base64Files,
+        files: transformedBase64,
         order_id: orderDetails?.order_id,
         order_item_id: orderDetails?.order_item_id,
       };
@@ -132,6 +137,9 @@ export default function SubmitOrderModal({
       if (submitHeadId) {
         data["parent_submission_id"] = submitHeadId;
       }
+
+      console.log("Submit data ");
+      console.log(data);
 
       const response = await submitOrder(data);
 

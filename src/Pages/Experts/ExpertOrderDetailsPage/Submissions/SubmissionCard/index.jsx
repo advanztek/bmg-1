@@ -1,10 +1,12 @@
-import { Stack, Typography } from "@mui/material";
+import { Button, Stack, Typography } from "@mui/material";
 import { formatShortDate, toTitleCase } from "../../../../../utils/functions";
 import Chip from "../../../../../Component/Chip";
 import { statusColors } from "./data";
-import LinkButton from "./LinkButton";
+import ActionButton from "./ActionButton";
+import { STORAGE_URL } from "../../../../../Config/paths";
+import { DocumentFolderFilled } from "@fluentui/react-icons";
 
-export default function SubmissionCard({ data }) {
+export default function SubmissionCard({ data, onSubmit }) {
   return (
     <Stack
       gap="16px"
@@ -37,12 +39,32 @@ export default function SubmissionCard({ data }) {
         </Typography>
       )}
       {data?.link && (
-        <LinkButton
+        <ActionButton
           onClick={() => {
             window.location.href = data?.link;
           }}
         />
       )}
+      {data?.files?.length > 0 &&
+        data?.files?.map((item, index) => (
+          <ActionButton
+            icon={DocumentFolderFilled}
+            tag={`File ${index + 1}`}
+            caption="Click to view submission file"
+            onClick={() => {
+              window.location.href = STORAGE_URL + "/" + item;
+            }}
+          />
+        ))}
+      <Stack alignItems="end">
+        <Button
+          sx={{ borderRadius: "10px" }}
+          variant="contained"
+          onClick={onSubmit}
+        >
+          Re-Submit
+        </Button>
+      </Stack>
     </Stack>
   );
 }
